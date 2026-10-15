@@ -1,0 +1,577 @@
+{
+  "slug": "practice-exam-2",
+  "title": "Practice Exam 2",
+  "timeLimitMinutes": 60,
+  "totalPoints": 100,
+  "description": "10 free-response challenges across Electric Vehicles, Libraries, Robotics, Accounting, Gastronomy, Automotive, Instrumentation, Networking, Finance, and Space Exploration themes.",
+  "questions": [
+    {
+      "id": "q1-ev-charging-station",
+      "order": 1,
+      "title": "EV Charging Station",
+      "points": 6,
+      "theme": "Electric Vehicles",
+      "prompt": "Create a class `EVStation` in `EVStation.java`:\n* **Private fields:** `String stationId`, `String city`, `int totalPorts`, `double pricePerKWh`.\n* **Constructor 1:** `EVStation(String stationId, String city, int totalPorts, double pricePerKWh)`.\n* **Constructor 2:** `EVStation(String stationId, String city)` which assigns `totalPorts = 4` and `pricePerKWh = 0.35`.\n* **Getters and Setters:** For all four fields.\n  * In `setTotalPorts(int totalPorts)`: Must have at least 1 port and at most 32. If `< 1`, set to `1`. If `> 32`, set to `32`.\n  * In `setPricePerKWh(double price)`: If `< 0.05`, set to `0.05`.",
+      "sampleRun": "EVStation s = new EVStation(\"EV-IN-01\", \"West Lafayette\");\nSystem.out.println(s.getStationId() + \" (\" + s.getCity() + \"): \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());\ns.setTotalPorts(50);\ns.setPricePerKWh(0.01);\nSystem.out.println(\"Updated: \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());",
+      "expectedOutput": "EV-IN-01 (West Lafayette): 4 ports @ $0.35\nUpdated: 32 ports @ $0.05",
+      "starterFiles": [
+        {
+          "filename": "EVStation.java",
+          "contents": "public class EVStation {\n    // TODO: private fields stationId, city, totalPorts, pricePerKWh\n\n    // TODO: 4-arg + 2-arg constructors (defaults 4 ports, 0.35)\n\n    // TODO: getters/setters (ports clamped [1,32]; price floor 0.05)\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Default constructor fields; port upper clamp (50 -> 32); minimum price clamp (0.01 -> 0.05)."
+        },
+        {
+          "name": "Test 2 [Hidden] (Lower Port Clamp)",
+          "visible": false,
+          "description": "setTotalPorts(0) and setTotalPorts(-2) clamp to 1."
+        },
+        {
+          "name": "Test 3 [Hidden] (Port Boundaries)",
+          "visible": false,
+          "description": "Setting ports to 1 and 32 preserved."
+        },
+        {
+          "name": "Test 4 [Hidden] (4-Arg Constructor)",
+          "visible": false,
+          "description": "All 4 arguments initialized directly."
+        },
+        {
+          "name": "Test 5 [Hidden] (Price Exact Threshold)",
+          "visible": false,
+          "description": "Price of 0.05 accepted without change."
+        },
+        {
+          "name": "Test 6 [Hidden] (City and ID Mutators)",
+          "visible": false,
+          "description": "String fields updated cleanly."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        EVStation s = new EVStation(\"EV-IN-01\", \"West Lafayette\");\n        System.out.println(s.getStationId() + \" (\" + s.getCity() + \"): \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());\n        s.setTotalPorts(50);\n        s.setPricePerKWh(0.01);\n        System.out.println(\"Updated: \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());\n    }\n}\n",
+      "testerExpectedOutput": "EV-IN-01 (West Lafayette): 4 ports @ $0.35\nUpdated: 32 ports @ $0.05"
+    },
+    {
+      "id": "q2-library-catalog-book",
+      "order": 2,
+      "title": "Library Catalog Book",
+      "points": 8,
+      "theme": "Libraries",
+      "prompt": "Create a class `CatalogBook` in `CatalogBook.java`:\n* **Private fields:** `String isbn`, `String title`, `int publicationYear`.\n* **Constructor:** `CatalogBook(String isbn, String title, int publicationYear)`.\n* **`toString()`:** Return:\n  ```\n  ISBN: <isbn>\n  Title: <title>\n  Year: <publicationYear>\n  ```\n  *(Separated by `\\n` with no trailing newline)*\n* **`equals(Object o)`:** Two catalog books are equal if their `isbn` matches **exactly (case-sensitive)**. Return `false` if `o` is `null` or not an instance of `CatalogBook`.",
+      "sampleRun": "CatalogBook b1 = new CatalogBook(\"978-0134685991\", \"Effective Java\", 2018);\nCatalogBook b2 = new CatalogBook(\"978-0134685991\", \"Effective Java (Copy 2)\", 2020);\nSystem.out.println(b1);\nSystem.out.println(\"Same ISBN: \" + b1.equals(b2));",
+      "expectedOutput": "ISBN: 978-0134685991\nTitle: Effective Java\nYear: 2018\nSame ISBN: true",
+      "starterFiles": [
+        {
+          "filename": "CatalogBook.java",
+          "contents": "public class CatalogBook {\n    // TODO: private fields isbn, title, publicationYear\n\n    // TODO: constructor\n\n    // TODO: toString() 3-line format\n\n    // TODO: equals() -> exact (case-sensitive) isbn match; null/type safe\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Multi-line output format and equality based solely on matching ISBN."
+        },
+        {
+          "name": "Test 2 [Hidden] (Null Safety)",
+          "visible": false,
+          "description": "b1.equals(null) returns false."
+        },
+        {
+          "name": "Test 3 [Hidden] (Type Check)",
+          "visible": false,
+          "description": "b1.equals(\"978-0134685991\") returns false."
+        },
+        {
+          "name": "Test 4 [Hidden] (Different ISBN)",
+          "visible": false,
+          "description": "Same title and year, different ISBN returns false."
+        },
+        {
+          "name": "Test 5 [Hidden] (Case-Sensitive ISBN)",
+          "visible": false,
+          "description": "\"isbn-100\" vs \"ISBN-100\" returns false."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CatalogBook b1 = new CatalogBook(\"978-0134685991\", \"Effective Java\", 2018);\n        CatalogBook b2 = new CatalogBook(\"978-0134685991\", \"Effective Java (Copy 2)\", 2020);\n        System.out.println(b1);\n        System.out.println(\"Same ISBN: \" + b1.equals(b2));\n    }\n}\n",
+      "testerExpectedOutput": "ISBN: 978-0134685991\nTitle: Effective Java\nYear: 2018\nSame ISBN: true"
+    },
+    {
+      "id": "q3-drone-altitude-guard",
+      "order": 3,
+      "title": "Drone Altitude Guard",
+      "points": 8,
+      "theme": "Robotics & Drones",
+      "prompt": "Create an unchecked exception `CeilingExceededException` in `CeilingExceededException.java` that extends `RuntimeException` with a constructor taking `String message`.\n\nIn `DroneController.java`, implement:\n`public static int climb(int currentAltitude, int delta, int maxCeiling) throws CeilingExceededException`\n* If `delta <= 0`, throw `IllegalArgumentException` with message: `\"Climb delta must be positive\"`.\n* If `currentAltitude + delta > maxCeiling`, throw `CeilingExceededException` with message:\n  `\"Ceiling violated: attempted <currentAltitude + delta>m, ceiling is <maxCeiling>m\"`.\n* Otherwise, return `currentAltitude + delta`.",
+      "sampleRun": "try {\n    int alt = DroneController.climb(50, 40, 120);\n    System.out.println(\"Altitude: \" + alt + \"m\");\n    DroneController.climb(alt, 50, 120);\n} catch (CeilingExceededException e) {\n    System.out.println(e.getMessage());\n}",
+      "expectedOutput": "Altitude: 90m\nCeiling violated: attempted 140m, ceiling is 120m",
+      "starterFiles": [
+        {
+          "filename": "CeilingExceededException.java",
+          "contents": "public class CeilingExceededException extends RuntimeException {\n    // TODO: constructor taking String message -> super(message)\n}\n"
+        },
+        {
+          "filename": "DroneController.java",
+          "contents": "public class DroneController {\n    public static int climb(int currentAltitude, int delta, int maxCeiling) {\n        // TODO: validate delta > 0, check ceiling, else return sum\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Valid climb followed by CeilingExceededException."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact Ceiling Match)",
+          "visible": false,
+          "description": "currentAltitude + delta == maxCeiling returns maxCeiling."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero Delta)",
+          "visible": false,
+          "description": "delta = 0 throws IllegalArgumentException."
+        },
+        {
+          "name": "Test 4 [Hidden] (Negative Delta)",
+          "visible": false,
+          "description": "delta = -10 throws IllegalArgumentException."
+        },
+        {
+          "name": "Test 5 [Hidden] (Unchecked Exception Verification)",
+          "visible": false,
+          "description": "Verifies CeilingExceededException extends RuntimeException."
+        },
+        {
+          "name": "Test 6 [Hidden] (Starting at Ceiling)",
+          "visible": false,
+          "description": "Any positive climb from maxCeiling throws CeilingExceededException."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try {\n            int alt = DroneController.climb(50, 40, 120);\n            System.out.println(\"Altitude: \" + alt + \"m\");\n            DroneController.climb(alt, 50, 120);\n        } catch (CeilingExceededException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n",
+      "testerExpectedOutput": "Altitude: 90m\nCeiling violated: attempted 140m, ceiling is 120m"
+    },
+    {
+      "id": "q4-taxable-asset",
+      "order": 4,
+      "title": "Taxable Asset",
+      "points": 8,
+      "theme": "Financial Accounting",
+      "prompt": "Create an interface `Taxable` in `Taxable.java`:\n* Abstract method: `double getMarketValue();`\n* Default method: `default double calculateTax(double propertyTaxRate)`:\n  * If `propertyTaxRate < 0.0 || propertyTaxRate > 0.20`, return `0.0`.\n  * Otherwise, return `getMarketValue() * propertyTaxRate`.\n* Default method: `default boolean isHighValue()`: returns `true` if `getMarketValue() >= 500000.0`, else `false`.\n\nCreate a class `RealEstate` in `RealEstate.java` that implements `Taxable`:\n* **Private field:** `double estimatedValue`.\n* **Constructor:** `RealEstate(double estimatedValue)`.\n* Implement `getMarketValue()` returning `estimatedValue`.",
+      "sampleRun": "RealEstate home = new RealEstate(600000.0);\nSystem.out.printf(\"Value: $%.2f\\n\", home.getMarketValue());\nSystem.out.printf(\"Tax at 2%%: $%.2f\\n\", home.calculateTax(0.02));\nSystem.out.println(\"High Value: \" + home.isHighValue());\nSystem.out.println(\"Invalid Tax Rate: \" + home.calculateTax(0.25));",
+      "expectedOutput": "Value: $600000.00\nTax at 2%: $12000.00\nHigh Value: true\nInvalid Tax Rate: 0.0",
+      "starterFiles": [
+        {
+          "filename": "Taxable.java",
+          "contents": "public interface Taxable {\n    double getMarketValue();\n\n    // TODO: default calculateTax(double rate) with [0.0, 0.20] guard\n\n    // TODO: default isHighValue() -> value >= 500000.0\n}\n"
+        },
+        {
+          "filename": "RealEstate.java",
+          "contents": "public class RealEstate implements Taxable {\n    // TODO: private double estimatedValue + constructor\n\n    public double getMarketValue() {\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "High value asset, valid tax, invalid out-of-range tax rate (>0.20)."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact 500,000 High Value Boundary)",
+          "visible": false,
+          "description": "estimatedValue = 500000.0 returns isHighValue() == true."
+        },
+        {
+          "name": "Test 3 [Hidden] (Under High Value Boundary)",
+          "visible": false,
+          "description": "estimatedValue = 499999.99 returns false."
+        },
+        {
+          "name": "Test 4 [Hidden] (Exact Max Tax Rate 0.20)",
+          "visible": false,
+          "description": "propertyTaxRate = 0.20 computes tax correctly."
+        },
+        {
+          "name": "Test 5 [Hidden] (Negative Tax Rate)",
+          "visible": false,
+          "description": "propertyTaxRate = -0.01 returns 0.0."
+        },
+        {
+          "name": "Test 6 [Hidden] (Polymorphic Reference)",
+          "visible": false,
+          "description": "Taxable t = new RealEstate(200000.0); calls default methods properly."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        RealEstate home = new RealEstate(600000.0);\n        System.out.printf(\"Value: $%.2f\\n\", home.getMarketValue());\n        System.out.printf(\"Tax at 2%%: $%.2f\\n\", home.calculateTax(0.02));\n        System.out.println(\"High Value: \" + home.isHighValue());\n        System.out.println(\"Invalid Tax Rate: \" + home.calculateTax(0.25));\n    }\n}\n",
+      "testerExpectedOutput": "Value: $600000.00\nTax at 2%: $12000.00\nHigh Value: true\nInvalid Tax Rate: 0.0"
+    },
+    {
+      "id": "q5-culinary-recipe-subclasses",
+      "order": 5,
+      "title": "Culinary Recipe Subclasses",
+      "points": 10,
+      "theme": "Gastronomy",
+      "prompt": "Create a class `Recipe` in `Recipe.java`:\n* **Protected fields:** `String name`, `int prepTimeMinutes`.\n* **Constructor:** `Recipe(String name, int prepTimeMinutes)`.\n* Method `getTotalTime()` returning `prepTimeMinutes`.\n\nCreate subclass `BakedRecipe` in `BakedRecipe.java` extending `Recipe`:\n* **Private fields:** `int bakeTimeMinutes`, `int ovenTempFahrenheit`.\n* **Constructor:** `BakedRecipe(String name, int prepTimeMinutes, int bakeTimeMinutes, int ovenTempFahrenheit)` using `super`.\n* Override `getTotalTime()`:\n  * Sum `prepTimeMinutes + bakeTimeMinutes`.\n  * If `ovenTempFahrenheit > 400`, add `10` minutes for preheating.",
+      "sampleRun": "Recipe salad = new Recipe(\"Caesar Salad\", 15);\nBakedRecipe cookies = new BakedRecipe(\"Choc Chip\", 20, 12, 350);\nBakedRecipe pizza = new BakedRecipe(\"Pan Pizza\", 30, 20, 450);\nSystem.out.println(salad.name + \": \" + salad.getTotalTime() + \" mins\");\nSystem.out.println(cookies.name + \": \" + cookies.getTotalTime() + \" mins\");\nSystem.out.println(pizza.name + \": \" + pizza.getTotalTime() + \" mins\");",
+      "expectedOutput": "Caesar Salad: 15 mins\nChoc Chip: 32 mins\nPan Pizza: 60 mins",
+      "starterFiles": [
+        {
+          "filename": "Recipe.java",
+          "contents": "public class Recipe {\n    protected String name;\n    protected int prepTimeMinutes;\n    // TODO: constructor\n\n    public int getTotalTime() {\n        return prepTimeMinutes;\n    }\n}\n"
+        },
+        {
+          "filename": "BakedRecipe.java",
+          "contents": "public class BakedRecipe extends Recipe {\n    // TODO: private fields bakeTimeMinutes, ovenTempFahrenheit + constructor via super\n\n    @Override\n    public int getTotalTime() {\n        // TODO: prep + bake; +10 if ovenTempFahrenheit > 400\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Base recipe, baked recipe <= 400F, baked recipe > 400F with preheat."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact 400F Boundary)",
+          "visible": false,
+          "description": "Oven temp 400F does NOT add 10 preheat minutes (30 + 20 = 50)."
+        },
+        {
+          "name": "Test 3 [Hidden] (401F Boundary)",
+          "visible": false,
+          "description": "Oven temp 401F adds 10 minutes."
+        },
+        {
+          "name": "Test 4 [Hidden] (0 Bake Time)",
+          "visible": false,
+          "description": "Bake time 0 with temp 450 adds 10 preheat minutes."
+        },
+        {
+          "name": "Test 5 [Hidden] (Dynamic Dispatch)",
+          "visible": false,
+          "description": "Recipe r = new BakedRecipe(\"Bread\", 15, 40, 425); returns 65."
+        },
+        {
+          "name": "Test 6 [Hidden] (Superclass Access)",
+          "visible": false,
+          "description": "Correct field access to name and prepTimeMinutes."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Recipe salad = new Recipe(\"Caesar Salad\", 15);\n        BakedRecipe cookies = new BakedRecipe(\"Choc Chip\", 20, 12, 350);\n        BakedRecipe pizza = new BakedRecipe(\"Pan Pizza\", 30, 20, 450);\n        System.out.println(salad.name + \": \" + salad.getTotalTime() + \" mins\");\n        System.out.println(cookies.name + \": \" + cookies.getTotalTime() + \" mins\");\n        System.out.println(pizza.name + \": \" + pizza.getTotalTime() + \" mins\");\n    }\n}\n",
+      "testerExpectedOutput": "Caesar Salad: 15 mins\nChoc Chip: 32 mins\nPan Pizza: 60 mins"
+    },
+    {
+      "id": "q6-fleet-carbon-footprint",
+      "order": 6,
+      "title": "Fleet Carbon Footprint",
+      "points": 10,
+      "theme": "Automotive & Environment",
+      "prompt": "Given base class `Vehicle` with method `double getEmissions()` and subclass `HybridVehicle` (which overrides `getEmissions()` applying a battery fuel offset), implement `FleetAnalyzer.java`:\n* `public static double calculateTotalEmissions(Vehicle[] fleet)`:\n  * Sums `getEmissions()` across all non-null vehicles.\n  * If `fleet` is `null` or empty, return `0.0`.\n* `public static int countZeroEmissionVehicles(Vehicle[] fleet)`:\n  * Returns how many non-null vehicles have `getEmissions() <= 0.0`.\n  * If `fleet` is `null`, return `0`.\n\n*(The autograder provides `Vehicle` and `HybridVehicle`.)*",
+      "sampleRun": "Vehicle[] cars = new Vehicle[] {\n    new Vehicle(\"Sedan\", 180.0),\n    null,\n    new HybridVehicle(\"Prius\", 120.0, 120.0), // net emission = 0.0\n    new Vehicle(\"SUV\", 250.0)\n};\nSystem.out.println(\"Total: \" + FleetAnalyzer.calculateTotalEmissions(cars));\nSystem.out.println(\"Zero Emission: \" + FleetAnalyzer.countZeroEmissionVehicles(cars));",
+      "expectedOutput": "Total: 430.0\nZero Emission: 1",
+      "starterFiles": [
+        {
+          "filename": "FleetAnalyzer.java",
+          "contents": "public class FleetAnalyzer {\n    public static double calculateTotalEmissions(Vehicle[] fleet) {\n        // TODO: sum non-null getEmissions(); 0.0 if null/empty\n        return 0.0;\n    }\n\n    public static int countZeroEmissionVehicles(Vehicle[] fleet) {\n        // TODO: count non-null getEmissions() <= 0.0; 0 if null\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Mixed fleet with null, standard vehicle, and zero-emission hybrid."
+        },
+        {
+          "name": "Test 2 [Hidden] (Null Fleet)",
+          "visible": false,
+          "description": "Passing null to either method returns 0.0 or 0."
+        },
+        {
+          "name": "Test 3 [Hidden] (Empty Array)",
+          "visible": false,
+          "description": "new Vehicle[0] returns 0.0 and 0."
+        },
+        {
+          "name": "Test 4 [Hidden] (All Zero Emission)",
+          "visible": false,
+          "description": "All hybrid vehicles netting 0.0 returns total fleet length."
+        },
+        {
+          "name": "Test 5 [Hidden] (Negative Emission Guard)",
+          "visible": false,
+          "description": "Hybrid where battery offset exceeds emissions returns 0.0."
+        },
+        {
+          "name": "Test 6 [Hidden] (All Null Elements)",
+          "visible": false,
+          "description": "new Vehicle[]{null, null} returns 0.0 and 0."
+        },
+        {
+          "name": "Test 7 [Hidden] (Polymorphic Method Call)",
+          "visible": false,
+          "description": "Dynamic dispatch verified on overridden methods."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Vehicle[] cars = new Vehicle[] {\n            new Vehicle(\"Sedan\", 180.0),\n            null,\n            new HybridVehicle(\"Prius\", 120.0, 120.0), // net emission = 0.0\n            new Vehicle(\"SUV\", 250.0)\n        };\n        System.out.println(\"Total: \" + FleetAnalyzer.calculateTotalEmissions(cars));\n        System.out.println(\"Zero Emission: \" + FleetAnalyzer.countZeroEmissionVehicles(cars));\n    }\n}\n",
+      "testerExpectedOutput": "Total: 430.0\nZero Emission: 1"
+    },
+    {
+      "id": "q7-sensor-stream-min-max",
+      "order": 7,
+      "title": "Sensor Stream Min-Max",
+      "points": 12,
+      "theme": "Scientific Instrumentation",
+      "prompt": "In `SensorDataReader.java`, write:\n`public static double findSensorRange(String filename) throws FileNotFoundException`\n* The file contains comma-separated reading lines: `SensorId,ReadingValue`\n  Example: `TEMP-A,98.6`\n* The first line is a header (`SensorId,ReadingValue`) and must be skipped.\n* Find the maximum reading and the minimum reading among all rows.\n* Return the range: `maxReading - minReading`.\n* If the file has no data rows (only the header), return `0.0`.\n* If the file does not exist, throw `FileNotFoundException`. Ensure resources are closed.",
+      "sampleRun": "// readings.csv:\n// SensorId,ReadingValue\n// S1,45.2\n// S2,12.8\n// S3,78.5\n// S4,33.1\nSystem.out.printf(\"Range: %.2f\\n\", SensorDataReader.findSensorRange(\"readings.csv\"));\n// 78.5 - 12.8 = 65.7",
+      "expectedOutput": "Range: 65.70",
+      "starterFiles": [
+        {
+          "filename": "SensorDataReader.java",
+          "contents": "import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.util.Scanner;\n\npublic class SensorDataReader {\n    public static double findSensorRange(String filename)\n            throws FileNotFoundException {\n        // TODO: skip header, track min/max, return max-min; 0.0 if no data\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Computes range between 78.5 and 12.8."
+        },
+        {
+          "name": "Test 2 [Hidden] (Header Only File)",
+          "visible": false,
+          "description": "File with only header returns 0.0."
+        },
+        {
+          "name": "Test 3 [Hidden] (Single Row Data)",
+          "visible": false,
+          "description": "Single reading row has max == min, returns 0.0."
+        },
+        {
+          "name": "Test 4 [Hidden] (Missing File)",
+          "visible": false,
+          "description": "Throws FileNotFoundException."
+        },
+        {
+          "name": "Test 5 [Hidden] (Negative Sensor Values)",
+          "visible": false,
+          "description": "Readings from -25.0 to 15.0 compute range 40.0."
+        },
+        {
+          "name": "Test 6 [Hidden] (All Identical Readings)",
+          "visible": false,
+          "description": "All rows with 50.0 returns range 0.0."
+        },
+        {
+          "name": "Test 7 [Hidden] (Trailing Blank Lines)",
+          "visible": false,
+          "description": "Handled cleanly."
+        },
+        {
+          "name": "Test 8 [Hidden] (Clean Stream Close)",
+          "visible": false,
+          "description": "File closed with try-with-resources."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"readings.csv\", \"UTF-8\")) { __w.print(\"SensorId,ReadingValue\\nS1,45.2\\nS2,12.8\\nS3,78.5\\nS4,33.1\\n78.5 - 12.8 = 65.7\"); }\n        System.out.printf(\"Range: %.2f\\n\", SensorDataReader.findSensorRange(\"readings.csv\"));\n    }\n}\n",
+      "testerExpectedOutput": "Range: 65.70"
+    },
+    {
+      "id": "q8-high-latency-network-reporter",
+      "order": 8,
+      "title": "High Latency Network Reporter",
+      "points": 12,
+      "theme": "Networking",
+      "prompt": "In `LatencyReporter.java`, write:\n`public static int exportHighLatencyPings(String inputFile, String outputFile, int thresholdMs)`\n* `inputFile` is pipe-delimited: `ServerHostname|IP|PingMs`\n  Example: `east.purdue.edu|128.210.11.1|48`\n* Filter servers where `PingMs >= thresholdMs`.\n* Write to `outputFile`, one per line:\n  `SLOW: <ServerHostname> (<PingMs>ms)`\n* Return total slow servers written.\n* If `inputFile` is missing, catch `IOException`, print `\"Network file error\"`, and return `-1`.\n\n*(Remember to split on the regex `\\\\|`.)*",
+      "sampleRun": "// pings.txt:\n// auth.domain.com|10.0.0.1|25\n// db.domain.com|10.0.0.2|150\n// api.domain.com|10.0.0.3|88\n// cdn.domain.com|10.0.0.4|210\nint count = LatencyReporter.exportHighLatencyPings(\"pings.txt\", \"slow_servers.txt\", 100);\nSystem.out.println(\"Slow servers: \" + count);\n// slow_servers.txt:\n// SLOW: db.domain.com (150ms)\n// SLOW: cdn.domain.com (210ms)",
+      "expectedOutput": "Slow servers: 2",
+      "starterFiles": [
+        {
+          "filename": "LatencyReporter.java",
+          "contents": "import java.io.*;\nimport java.util.Scanner;\n\npublic class LatencyReporter {\n    public static int exportHighLatencyPings(String inputFile, String outputFile,\n                                             int thresholdMs) {\n        // TODO: split on \\\\|, filter PingMs >= threshold, write lines, return count\n        // On IOException: print \"Network file error\" and return -1.\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Pipes parsed, servers >= 100ms exported."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact Threshold)",
+          "visible": false,
+          "description": "Server with PingMs == thresholdMs is exported."
+        },
+        {
+          "name": "Test 3 [Hidden] (Regex Escape)",
+          "visible": false,
+          "description": "Correctly splits on \\\\|."
+        },
+        {
+          "name": "Test 4 [Hidden] (Missing File)",
+          "visible": false,
+          "description": "Prints \"Network file error\", returns -1."
+        },
+        {
+          "name": "Test 5 [Hidden] (Zero Servers Exceed)",
+          "visible": false,
+          "description": "Empty output file created; returns 0."
+        },
+        {
+          "name": "Test 6 [Hidden] (All Exceed)",
+          "visible": false,
+          "description": "All rows written; returns total count."
+        },
+        {
+          "name": "Test 7 [Hidden] (File Overwriting)",
+          "visible": false,
+          "description": "Replaces existing output file."
+        },
+        {
+          "name": "Test 8 [Hidden] (Resource Flush)",
+          "visible": false,
+          "description": "Validates all lines flushed to disk."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"pings.txt\", \"UTF-8\")) { __w.print(\"auth.domain.com|10.0.0.1|25\\ndb.domain.com|10.0.0.2|150\\napi.domain.com|10.0.0.3|88\\ncdn.domain.com|10.0.0.4|210\"); }\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"slow_servers.txt\", \"UTF-8\")) { __w.print(\"SLOW: db.domain.com (150ms)\\nSLOW: cdn.domain.com (210ms)\"); }\n        int count = LatencyReporter.exportHighLatencyPings(\"pings.txt\", \"slow_servers.txt\", 100);\n        System.out.println(\"Slow servers: \" + count);\n    }\n}\n",
+      "testerExpectedOutput": "Slow servers: 2"
+    },
+    {
+      "id": "q9-bank-loan-hierarchy",
+      "order": 9,
+      "title": "Bank Loan Hierarchy",
+      "points": 12,
+      "theme": "Personal Finance",
+      "prompt": "Create abstract class `Loan` in `Loan.java`:\n* **Protected fields:** `double principal`, `double annualInterestRate`.\n* **Constructor:** `Loan(double principal, double annualInterestRate)`.\n* **Abstract method:** `public abstract double calculateTotalRepayment(int years);`\n\nCreate subclass `PersonalLoan` in `PersonalLoan.java`:\n* **Constructor:** `PersonalLoan(double principal, double annualInterestRate)`.\n* Formula: Simple interest: `principal + (principal * annualInterestRate * years)`.\n\nCreate subclass `MortgageLoan` in `MortgageLoan.java`:\n* **Private field:** `double originationFee`.\n* **Constructor:** `MortgageLoan(double principal, double annualInterestRate, double originationFee)` using `super`.\n* Formula: Simple interest + origination fee: `principal + (principal * annualInterestRate * years) + originationFee`.\n  * If `years >= 30`, apply a long-term closing discount: subtract `$1000.0` from repayment.",
+      "sampleRun": "Loan personal = new PersonalLoan(10000.0, 0.05); // 5% for 3 years: 10000 + 1500 = 11500\nLoan mortgage = new MortgageLoan(200000.0, 0.04, 3000.0); // 4% for 30 years: 200k + 240k + 3k - 1k = 442k\nSystem.out.println(\"Personal: \" + personal.calculateTotalRepayment(3));\nSystem.out.println(\"Mortgage: \" + mortgage.calculateTotalRepayment(30));",
+      "expectedOutput": "Personal: 11500.0\nMortgage: 442000.0",
+      "starterFiles": [
+        {
+          "filename": "Loan.java",
+          "contents": "public abstract class Loan {\n    protected double principal;\n    protected double annualInterestRate;\n    // TODO: constructor\n\n    public abstract double calculateTotalRepayment(int years);\n}\n"
+        },
+        {
+          "filename": "PersonalLoan.java",
+          "contents": "public class PersonalLoan extends Loan {\n    // TODO: constructor via super\n\n    @Override\n    public double calculateTotalRepayment(int years) {\n        // TODO: principal + principal*rate*years\n        return 0.0;\n    }\n}\n"
+        },
+        {
+          "filename": "MortgageLoan.java",
+          "contents": "public class MortgageLoan extends Loan {\n    // TODO: private double originationFee + constructor via super\n\n    @Override\n    public double calculateTotalRepayment(int years) {\n        // TODO: simple interest + fee; -1000 if years >= 30\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Personal simple interest and mortgage with 30-year discount."
+        },
+        {
+          "name": "Test 2 [Hidden] (29-Year Mortgage)",
+          "visible": false,
+          "description": "29-year mortgage does NOT get the $1000 discount."
+        },
+        {
+          "name": "Test 3 [Hidden] (30-Year Mortgage Boundary)",
+          "visible": false,
+          "description": "Exactly 30 years applies $1000 discount."
+        },
+        {
+          "name": "Test 4 [Hidden] (Zero Years)",
+          "visible": false,
+          "description": "Repayment at 0 years equals principal (plus fee for mortgage)."
+        },
+        {
+          "name": "Test 5 [Hidden] (Zero Interest)",
+          "visible": false,
+          "description": "0% interest rate calculates principal + fee."
+        },
+        {
+          "name": "Test 6 [Hidden] (Polymorphic Evaluation)",
+          "visible": false,
+          "description": "Evaluated through Loan references."
+        },
+        {
+          "name": "Test 7 [Hidden] (Super Constructor)",
+          "visible": false,
+          "description": "Principal and interest properly initialized in superclass."
+        },
+        {
+          "name": "Test 8 [Hidden] (High Principal Calculation)",
+          "visible": false,
+          "description": "Large mortgage values calculate without precision failure."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Loan personal = new PersonalLoan(10000.0, 0.05); // 5% for 3 years: 10000 + 1500 = 11500\n        Loan mortgage = new MortgageLoan(200000.0, 0.04, 3000.0); // 4% for 30 years: 200k + 240k + 3k - 1k = 442k\n        System.out.println(\"Personal: \" + personal.calculateTotalRepayment(3));\n        System.out.println(\"Mortgage: \" + mortgage.calculateTotalRepayment(30));\n    }\n}\n",
+      "testerExpectedOutput": "Personal: 11500.0\nMortgage: 442000.0"
+    },
+    {
+      "id": "q10-mars-rover-mission-controller",
+      "order": 10,
+      "title": "Mars Rover Mission Controller",
+      "points": 14,
+      "theme": "Space Exploration",
+      "prompt": "Simulate a planetary exploration rover in `RoverController.java`. Rover starts at `Battery: 100`% and `Samples Collected: 0`.\n\nEach round: print `Battery: <battery>% | Samples: <samples>`, display menu:\n`1) Traverse Terrain (-15% Bat)  2) Drill Rock Sample (-25% Bat, +1 Sample)  3) Recharge Solar (+30% Bat)  4) Transmit & Shutdown`\n* `1`: Subtract 15% battery.\n* `2`: If battery < 25%, print `Low power: cannot drill sample!`. Otherwise subtract 25% battery and add 1 sample.\n* `3`: Add 30% battery. Battery cannot exceed `100%` (capped at 100).\n* `4`: Print `Mission complete. Collected <samples> samples.` and terminate.\n* **Any other input:** Print `Unknown command: rover idle. (-5% Bat)` and subtract 5% battery.\n* **Failure Condition:** If `Battery <= 0%` at any time, immediately print `BATTERY DEPLETED: Rover lost on Mars.` and terminate.\n\nRead menu choices from standard input with a `Scanner`.",
+      "sampleRun": "// Input: 1, 2, 3, 4",
+      "expectedOutput": "Battery: 100% | Samples: 0\n1) Traverse Terrain (-15% Bat)  2) Drill Rock Sample (-25% Bat, +1 Sample)  3) Recharge Solar (+30% Bat)  4) Transmit & Shutdown\nBattery: 85% | Samples: 0\n1) Traverse Terrain (-15% Bat)  2) Drill Rock Sample (-25% Bat, +1 Sample)  3) Recharge Solar (+30% Bat)  4) Transmit & Shutdown\nBattery: 60% | Samples: 1\n1) Traverse Terrain (-15% Bat)  2) Drill Rock Sample (-25% Bat, +1 Sample)  3) Recharge Solar (+30% Bat)  4) Transmit & Shutdown\nBattery: 90% | Samples: 1\n1) Traverse Terrain (-15% Bat)  2) Drill Rock Sample (-25% Bat, +1 Sample)  3) Recharge Solar (+30% Bat)  4) Transmit & Shutdown\nMission complete. Collected 1 samples.",
+      "starterFiles": [
+        {
+          "filename": "RoverController.java",
+          "contents": "import java.util.Scanner;\n\npublic class RoverController {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int battery = 100;\n        int samples = 0;\n        // TODO: loop printing state + menu, apply rules, check depletion/shutdown.\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Traverse, drill sample, solar recharge, transmission exit."
+        },
+        {
+          "name": "Test 2 [Hidden] (Battery Cap 100%)",
+          "visible": false,
+          "description": "Recharging at 90% caps battery at 100%."
+        },
+        {
+          "name": "Test 3 [Hidden] (Drill Denied Under 25%)",
+          "visible": false,
+          "description": "Battery at 20% attempting to drill prints message and retains 20% battery and sample count."
+        },
+        {
+          "name": "Test 4 [Hidden] (Depletion in Traverse)",
+          "visible": false,
+          "description": "Traverse causing battery <= 0 prints depletion message and exits."
+        },
+        {
+          "name": "Test 5 [Hidden] (Depletion in Idle)",
+          "visible": false,
+          "description": "Unknown command dropping battery <= 0 prints depletion message and terminates."
+        },
+        {
+          "name": "Test 6 [Hidden] (Exact 0% Depletion)",
+          "visible": false,
+          "description": "Battery reaching exactly 0% triggers depletion."
+        },
+        {
+          "name": "Test 7 [Hidden] (Drill with Exact 25%)",
+          "visible": false,
+          "description": "Battery at 25% drills successfully, leaving 0% battery which immediately triggers depletion."
+        },
+        {
+          "name": "Test 8 [Hidden] (Immediate Shutdown)",
+          "visible": false,
+          "description": "Option 4 on turn 1 exits with 0 samples."
+        },
+        {
+          "name": "Test 9 [Hidden] (Repeated Recharge)",
+          "visible": false,
+          "description": "Recharging multiple times stays locked at 100%."
+        },
+        {
+          "name": "Test 10 [Hidden] (Ed Formatting Match)",
+          "visible": false,
+          "description": "Menu text matches prompt specification."
+        }
+      ]
+    }
+  ]
+}

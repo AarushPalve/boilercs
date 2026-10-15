@@ -1,0 +1,66 @@
+{
+  "classes": [
+    {
+      "slug": "cs180",
+      "courseNumber": "CS 18000",
+      "title": "Problem Solving & Object-Oriented Programming",
+      "description": "The foundational Purdue CS course in Java. Covers problem decomposition, control flow, arrays, and the pillars of object-oriented design: classes, encapsulation, inheritance, polymorphism, interfaces, exceptions, and file I/O.",
+      "language": "java",
+      "units": [
+        {
+          "slug": "midterm-1",
+          "title": "Midterm 1",
+          "description": "Weeks 1–4: variables and primitive types, operators, conditionals, loops, methods, and introductory 1D arrays. Practice exams coming soon.",
+          "examSlugs": []
+        },
+        {
+          "slug": "midterm-2",
+          "title": "Midterm 2",
+          "description": "Weeks 5–7: classes & objects, encapsulation, inheritance, polymorphism & dynamic dispatch, interfaces & default methods, custom checked/unchecked exceptions, and file I/O. Four full-length autograded practice exams.",
+          "examSlugs": [
+            "practice-exam-1",
+            "practice-exam-2",
+            "practice-exam-3",
+            "practice-exam-4"
+          ]
+        },
+        {
+          "slug": "midterm-3",
+          "title": "Midterm 3",
+          "description": "Weeks 8–11: recursion, 2D arrays, searching & sorting, ArrayLists and generics, and an introduction to algorithmic complexity. Practice exams coming soon.",
+          "examSlugs": []
+        },
+        {
+          "slug": "midterm-4",
+          "title": "Midterm 4",
+          "description": "Weeks 12–15: multithreading, synchronization, GUIs with event handling, and networking fundamentals. Practice exams coming soon.",
+          "examSlugs": []
+        }
+      ]
+    },
+    {
+      "slug": "cs240",
+      "courseNumber": "CS 24000",
+      "title": "Programming in C",
+      "description": "Systems programming in C: pointers and memory management, structs, dynamic allocation, the preprocessor, modular compilation, and the standard library. Scaffolding placeholder — practice content coming soon.",
+      "language": "java",
+      "units": []
+    },
+    {
+      "slug": "cs182",
+      "courseNumber": "CS 18200",
+      "title": "Foundations of Computer Science",
+      "description": "Discrete mathematics for computing: logic and proofs, set theory, functions and relations, induction, combinatorics, and introductory graph theory. Scaffolding placeholder — practice content coming soon.",
+      "language": "java",
+      "units": []
+    },
+    {
+      "slug": "cs251",
+      "courseNumber": "CS 25100",
+      "title": "Data Structures & Algorithms",
+      "description": "Core data structures and their algorithms: lists, stacks, queues, trees, heaps, hash tables, and graphs, with analysis of time and space complexity. Scaffolding placeholder — practice content coming soon.",
+      "language": "java",
+      "units": []
+    }
+  ]
+}
