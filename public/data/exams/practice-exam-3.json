@@ -320,7 +320,44 @@
         }
       ],
       "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Course[] list = new Course[] {\n            new Course(\"CS180\", 450),\n            null,\n            new LabCourse(\"CHM115\", 300, 100), // total = 400\n            new Course(\"MA261\", 250)\n        };\n        System.out.println(\"Total: \" + EnrollmentManager.totalEnrolled(list));\n        System.out.println(\"Full (>= 400): \" + EnrollmentManager.countFullCourses(list, 400));\n    }\n}\n",
-      "testerExpectedOutput": "Total: 1100\nFull (>= 400): 2"
+      "testerExpectedOutput": "Total: 1100\nFull (>= 400): 2",
+      "graderCases": [
+        {
+          "name": "Sample run (null + lab course capacity)",
+          "hidden": false,
+          "body": "Course[] list = { new Course(\"CS180\",450), null, new LabCourse(\"CHM115\",300,100), new Course(\"MA261\",250) };\neq(EnrollmentManager.totalEnrolled(list),1100);\neq(EnrollmentManager.countFullCourses(list,400),2);"
+        },
+        {
+          "name": "Null catalog returns 0",
+          "hidden": true,
+          "body": "eq(EnrollmentManager.totalEnrolled(null),0);\neq(EnrollmentManager.countFullCourses(null,100),0);"
+        },
+        {
+          "name": "Empty array returns 0",
+          "hidden": true,
+          "body": "Course[] c = new Course[0];\neq(EnrollmentManager.totalEnrolled(c),0);\neq(EnrollmentManager.countFullCourses(c,100),0);"
+        },
+        {
+          "name": "Exact capacity threshold is counted (>=)",
+          "hidden": true,
+          "body": "Course[] c = { new Course(\"X\",100) };\neq(EnrollmentManager.countFullCourses(c,100),1);\neq(EnrollmentManager.countFullCourses(c,101),0);"
+        },
+        {
+          "name": "No full courses with high limit",
+          "hidden": true,
+          "body": "Course[] c = { new Course(\"X\",50), new Course(\"Y\",60) };\neq(EnrollmentManager.countFullCourses(c,1000),0);"
+        },
+        {
+          "name": "All null elements return 0",
+          "hidden": true,
+          "body": "Course[] c = { null, null };\neq(EnrollmentManager.totalEnrolled(c),0);\neq(EnrollmentManager.countFullCourses(c,0),0);"
+        },
+        {
+          "name": "Dynamic dispatch on LabCourse override",
+          "hidden": true,
+          "body": "Course[] c = { new LabCourse(\"L\",200,100) };\neq(EnrollmentManager.totalEnrolled(c),300);\neq(EnrollmentManager.countFullCourses(c,300),1);"
+        }
+      ]
     },
     {
       "id": "q7-bank-account-statement-parser",
@@ -380,67 +417,144 @@
         }
       ],
       "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"statement.csv\", \"UTF-8\")) { __w.print(\"ID,Type,Amount\\nTX101,DEPOSIT,500.00\\nTX102,WITHDRAWAL,120.50\\nTX103,FEE,5.00\\nTX104,DEPOSIT,50.25\\n500.00 - 120.50 + 50.25 = 429.75; FEE ignored\"); }\n        System.out.printf(\"Net: $%.2f\\n\", StatementReader.computeNetCashFlow(\"statement.csv\"));\n    }\n}\n",
-      "testerExpectedOutput": "Net: $429.75"
+      "testerExpectedOutput": "Net: $429.75",
+      "graderCases": [
+        {
+          "name": "Sample run (deposit - withdrawal, ignore FEE)",
+          "hidden": false,
+          "body": "String f = \"g_stmt.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nTX101,DEPOSIT,500.00\\nTX102,WITHDRAWAL,120.50\\nTX103,FEE,5.00\\nTX104,DEPOSIT,50.25\"); }\neqD(StatementReader.computeNetCashFlow(f),429.75);"
+        },
+        {
+          "name": "Header only returns 0.0",
+          "hidden": true,
+          "body": "String f = \"g_h.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\"); }\neqD(StatementReader.computeNetCashFlow(f),0.0);"
+        },
+        {
+          "name": "Missing file throws FileNotFoundException",
+          "hidden": true,
+          "body": "try { StatementReader.computeNetCashFlow(\"g_missing_stmt_999.csv\"); check(false,\"should throw\"); }\ncatch (java.io.FileNotFoundException e) { }"
+        },
+        {
+          "name": "Net negative flow",
+          "hidden": true,
+          "body": "String f = \"g_neg.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,DEPOSIT,100.0\\nB,WITHDRAWAL,250.0\"); }\neqD(StatementReader.computeNetCashFlow(f),-150.0);"
+        },
+        {
+          "name": "All deposits sum",
+          "hidden": true,
+          "body": "String f = \"g_dep.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,DEPOSIT,10.0\\nB,DEPOSIT,20.0\\nC,DEPOSIT,30.0\"); }\neqD(StatementReader.computeNetCashFlow(f),60.0);"
+        },
+        {
+          "name": "Unknown types ignored entirely",
+          "hidden": true,
+          "body": "String f = \"g_unk.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,FEE,5.0\\nB,INTEREST,3.0\\nC,DEPOSIT,100.0\"); }\neqD(StatementReader.computeNetCashFlow(f),100.0);"
+        },
+        {
+          "name": "Trailing blank lines handled",
+          "hidden": true,
+          "body": "String f = \"g_tr.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,DEPOSIT,40.0\\n\\n\\n\"); }\neqD(StatementReader.computeNetCashFlow(f),40.0);"
+        }
+      ]
     },
     {
       "id": "q8-inventory-expiration-exporter",
       "order": 8,
-      "title": "Inventory Expiration Exporter",
+      "title": "Inventory Expiration Tracker",
       "points": 12,
       "theme": "Supply Chain",
-      "prompt": "In `ExpiryReporter.java`, write:\n`public static int exportExpiringBatches(String inputFile, String outputFile, int maxDaysLeft)`\n* `inputFile` is tab-delimited (`\\t`): `BatchID\\tItemName\\tDaysUntilExpiry`\n  Example: `B101\\tGreek Yogurt\\t5`\n* Filter batches where `DaysUntilExpiry <= maxDaysLeft`.\n* Write to `outputFile`, one per line:\n  `EXPIRING: <BatchID> - <ItemName> (<DaysUntilExpiry> days)`\n* Return total expiring batches exported.\n* If `inputFile` is missing, catch `IOException`, print `\"Cannot read batches\"`, and return `-1`.",
-      "sampleRun": "// batches.tsv (tab-separated):\n// B01\\tWhole Milk\\t3\n// B02\\tCanned Tuna\\t180\n// B03\\tCheddar\\t7\n// B04\\tDry Pasta\\t365\nint count = ExpiryReporter.exportExpiringBatches(\"batches.tsv\", \"urgent.txt\", 7);\nSystem.out.println(\"Urgent: \" + count);\n// urgent.txt:\n// EXPIRING: B01 - Whole Milk (3 days)\n// EXPIRING: B03 - Cheddar (7 days)",
-      "expectedOutput": "Urgent: 2",
+      "prompt": "This question gives you a question-specific abstract class **and** a question-specific interface. Your class must extend one and implement the other.\n\nCreate an abstract class `PerishableItem` in `PerishableItem.java`:\n* **Protected fields:** `String batchId`, `String itemName`.\n* **Constructor:** `PerishableItem(String batchId, String itemName)`.\n* **Getters:** `getBatchId()`, `getItemName()`.\n* **Abstract method:** `public abstract int daysUntilExpiry();` *(may be `0` or negative when already expired)*.\n\nCreate an interface `Expirable` in `Expirable.java`:\n* Abstract method: `int shelfDaysLeft();`\n* Default method: `default boolean isExpiring(int windowDays)`: returns `true` when `shelfDaysLeft() <= windowDays` (inclusive — already-expired items always count).\n* Default method: `default boolean isExpired()`: returns `true` when `shelfDaysLeft() <= 0`.\n\nCreate a class `DairyBatch` in `DairyBatch.java` that **extends `PerishableItem` and implements `Expirable`**:\n* **Private fields:** `int shelfLifeDays`, `int ageDays`.\n* **Constructor:** `DairyBatch(String batchId, String itemName, int shelfLifeDays, int ageDays)` calling `super`.\n* `daysUntilExpiry()` returns `shelfLifeDays - ageDays` (this can be negative).\n* `shelfDaysLeft()` must return the same value as `daysUntilExpiry()`.\n\n*Edge cases to think about (not in the sample): the expiring window is inclusive; `0` days left means expired; a negative value (already spoiled) is both expired and expiring; a fresh item is neither.*",
+      "sampleRun": "DairyBatch b = new DairyBatch(\"B01\", \"Whole Milk\", 10, 7);\nSystem.out.println(\"Days until expiry: \" + b.daysUntilExpiry());\nSystem.out.println(\"Expiring within 7: \" + b.isExpiring(7));\nSystem.out.println(\"Expired: \" + b.isExpired());",
+      "expectedOutput": "Days until expiry: 3\nExpiring within 7: true\nExpired: false",
       "starterFiles": [
         {
-          "filename": "ExpiryReporter.java",
-          "contents": "import java.io.*;\nimport java.util.Scanner;\n\npublic class ExpiryReporter {\n    public static int exportExpiringBatches(String inputFile, String outputFile,\n                                            int maxDaysLeft) {\n        // TODO: split on \\t, filter days <= maxDaysLeft, write lines, return count\n        // On IOException: print \"Cannot read batches\" and return -1.\n        return 0;\n    }\n}\n"
+          "filename": "PerishableItem.java",
+          "contents": "public abstract class PerishableItem {\n    protected String batchId;\n    protected String itemName;\n\n    // TODO: constructor + getBatchId()/getItemName()\n\n    public abstract int daysUntilExpiry();\n}\n"
+        },
+        {
+          "filename": "Expirable.java",
+          "contents": "public interface Expirable {\n    int shelfDaysLeft();\n\n    // TODO: default isExpiring(int windowDays) -> shelfDaysLeft() <= windowDays\n\n    // TODO: default isExpired() -> shelfDaysLeft() <= 0\n}\n"
+        },
+        {
+          "filename": "DairyBatch.java",
+          "contents": "public class DairyBatch extends PerishableItem implements Expirable {\n    // TODO: private fields shelfLifeDays, ageDays + constructor via super\n\n    @Override\n    public int daysUntilExpiry() {\n        // TODO: shelfLifeDays - ageDays (can be negative)\n        return 0;\n    }\n\n    @Override\n    public int shelfDaysLeft() {\n        return daysUntilExpiry();\n    }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Tab delimiter handled; items <= 7 days exported."
+          "description": "Days-until-expiry, inclusive expiring window, and not-yet-expired."
         },
         {
-          "name": "Test 2 [Hidden] (Exact Day Match)",
+          "name": "Test 2 [Hidden] (Expiring Window Inclusive)",
           "visible": false,
-          "description": "Batch with DaysUntilExpiry == maxDaysLeft is included."
+          "description": "isExpiring is true at exactly the window and false just below it."
         },
         {
-          "name": "Test 3 [Hidden] (Missing Input File)",
+          "name": "Test 3 [Hidden] (Zero Days Left)",
           "visible": false,
-          "description": "Prints \"Cannot read batches\", returns -1."
+          "description": "0 days left counts as both expired and expiring."
         },
         {
-          "name": "Test 4 [Hidden] (Zero Batches Expiring)",
+          "name": "Test 4 [Hidden] (Already Expired Negative)",
           "visible": false,
-          "description": "Creates empty file; returns 0."
+          "description": "A negative days-until-expiry is expired and always expiring."
         },
         {
-          "name": "Test 5 [Hidden] (All Expiring)",
+          "name": "Test 5 [Hidden] (Fresh Item)",
           "visible": false,
-          "description": "Exports all lines; returns total count."
+          "description": "A fresh item is neither expired nor expiring in a short window."
         },
         {
-          "name": "Test 6 [Hidden] (0 Days Left)",
+          "name": "Test 6 [Hidden] (Polymorphic Dispatch)",
           "visible": false,
-          "description": "Expired item with 0 days left is exported."
+          "description": "daysUntilExpiry invoked through a PerishableItem reference."
         },
         {
-          "name": "Test 7 [Hidden] (Tab Splitting)",
+          "name": "Test 7 [Hidden] (Type Contracts)",
           "visible": false,
-          "description": "Splits strictly on \\t preserving item names with spaces."
-        },
-        {
-          "name": "Test 8 [Hidden] (Stream Flush)",
-          "visible": false,
-          "description": "Validates resources closed cleanly."
+          "description": "DairyBatch is both a PerishableItem and an Expirable."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"urgent.txt\", \"UTF-8\")) { __w.print(\"EXPIRING: B01 - Whole Milk (3 days)\\nEXPIRING: B03 - Cheddar (7 days)\"); }\n        int count = ExpiryReporter.exportExpiringBatches(\"batches.tsv\", \"urgent.txt\", 7);\n        System.out.println(\"Urgent: \" + count);\n    }\n}\n",
-      "testerExpectedOutput": "Urgent: 2"
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        DairyBatch b = new DairyBatch(\"B01\", \"Whole Milk\", 10, 7);\n        System.out.println(\"Days until expiry: \" + b.daysUntilExpiry());\n        System.out.println(\"Expiring within 7: \" + b.isExpiring(7));\n        System.out.println(\"Expired: \" + b.isExpired());\n    }\n}\n",
+      "testerExpectedOutput": "Days until expiry: 3\nExpiring within 7: true\nExpired: false",
+      "graderCases": [
+        {
+          "name": "Sample run (days left + types)",
+          "hidden": false,
+          "body": "DairyBatch b = new DairyBatch(\"B01\",\"Whole Milk\",10,7);\neq(b.daysUntilExpiry(),3);\neq(b.shelfDaysLeft(),3);\neq(b.getItemName(),\"Whole Milk\");\ncheck(b instanceof PerishableItem, \"must extend PerishableItem\");\ncheck(b instanceof Expirable, \"must implement Expirable\");"
+        },
+        {
+          "name": "Expiring window is inclusive",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",10,3);\ncheck(b.isExpiring(7), \"7 days left <= 7 window\");\ncheck(!b.isExpiring(6), \"7 days left not <= 6 window\");"
+        },
+        {
+          "name": "Exactly at window boundary",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",10,3);\ncheck(b.isExpiring(7), \"exactly 7 <= 7\");"
+        },
+        {
+          "name": "Zero days left counts as expired and expiring",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",5,5);\neq(b.shelfDaysLeft(),0);\ncheck(b.isExpired(), \"0 days means expired\");\ncheck(b.isExpiring(0), \"0 <= 0 window\");"
+        },
+        {
+          "name": "Already-expired (negative) days",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",5,8);\neq(b.daysUntilExpiry(),-3);\ncheck(b.isExpired(), \"negative days means expired\");\ncheck(b.isExpiring(0), \"expired item always expiring\");"
+        },
+        {
+          "name": "Fresh item not expired, not expiring in short window",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",30,2);\ncheck(!b.isExpired(), \"28 days left is fresh\");\ncheck(!b.isExpiring(7), \"28 not <= 7\");\ncheck(b.isExpiring(28), \"28 <= 28\");"
+        },
+        {
+          "name": "Polymorphic daysUntilExpiry through PerishableItem",
+          "hidden": true,
+          "body": "PerishableItem p = new DairyBatch(\"X\",\"Y\",14,4);\neq(p.daysUntilExpiry(),10);"
+        }
+      ]
     },
     {
       "id": "q9-cloud-compute-hierarchy",
@@ -448,7 +562,7 @@
       "title": "Cloud Compute Hierarchy",
       "points": 12,
       "theme": "Cloud Computing",
-      "prompt": "Create abstract class `CloudInstance` in `CloudInstance.java`:\n* **Protected fields:** `String instanceId`, `double baseHourlyRate`.\n* **Constructor:** `CloudInstance(String instanceId, double baseHourlyRate)`.\n* **Abstract method:** `public abstract double computeCost(double hoursRunning);`\n\nCreate subclass `OnDemandInstance` in `OnDemandInstance.java`:\n* **Constructor:** `OnDemandInstance(String instanceId, double baseHourlyRate)`.\n* Formula: `baseHourlyRate * hoursRunning`.\n\nCreate subclass `SpotInstance` in `SpotInstance.java`:\n* **Private field:** `double bidDiscountPercent`. (e.g. 60.0 for 60% off).\n* **Constructor:** `SpotInstance(String instanceId, double baseHourlyRate, double bidDiscountPercent)` using `super`.\n* Formula:\n  * Discounted rate: `effectiveRate = baseHourlyRate * (1.0 - (bidDiscountPercent / 100.0))`.\n  * If `hoursRunning > 24.0`, add an interruption risk rebate: subtract `$2.00` from total cost (cost cannot drop below `0.0`).\n  * Otherwise total cost is `effectiveRate * hoursRunning`.",
+      "prompt": "This question requires a question-specific abstract class **and** a question-specific interface. Every concrete instance type must extend the class and implement the interface.\n\nCreate an abstract class `CloudInstance` in `CloudInstance.java`:\n* **Protected fields:** `String instanceId`, `double baseHourlyRate`.\n* **Constructor:** `CloudInstance(String instanceId, double baseHourlyRate)`.\n* **Abstract method:** `public abstract double computeCost(double hoursRunning);`\n\nCreate an interface `Billable` in `Billable.java`:\n* Abstract method: `double costFor(double hours);`\n* Default method: `default double dailyEstimate()`: returns `costFor(24.0)`.\n* Default method: `default boolean exceedsBudget(double hours, double budget)`: returns `true` when `costFor(hours)` is **strictly greater** than `budget`.\n\nCreate `OnDemandInstance` in `OnDemandInstance.java` **extending `CloudInstance` and implementing `Billable`**:\n* **Constructor:** `OnDemandInstance(String instanceId, double baseHourlyRate)`.\n* `computeCost(double hoursRunning)`: `baseHourlyRate * hoursRunning`.\n* `costFor(double hours)` must return the same value as `computeCost(hours)`.\n\nCreate `SpotInstance` in `SpotInstance.java` **extending `CloudInstance` and implementing `Billable`**:\n* **Private field:** `double bidDiscountPercent` (e.g. `60.0` for 60% off).\n* **Constructor:** `SpotInstance(String instanceId, double baseHourlyRate, double bidDiscountPercent)` using `super`.\n* `computeCost(double hoursRunning)`:\n  * `effectiveRate = baseHourlyRate * (1.0 - (bidDiscountPercent / 100.0))`.\n  * Base cost is `effectiveRate * hoursRunning`.\n  * If `hoursRunning > 24.0`, subtract a `$2.00` interruption-risk rebate; the final cost **cannot drop below `0.0`**.\n* `costFor(double hours)` must return the same value as `computeCost(hours)`.\n\n*Edge cases to think about (not in the sample): `24.0` hours exactly gets no rebate but `24.1` does; the rebate cannot push cost negative; a 100% discount is free; `exceedsBudget` is strict at the budget.*",
       "sampleRun": "CloudInstance onDemand = new OnDemandInstance(\"i-ondemand\", 2.00);\nCloudInstance spot = new SpotInstance(\"i-spot\", 2.00, 50.0); // $1.00/hr\nSystem.out.println(\"On-Demand (10h): \" + onDemand.computeCost(10.0));\nSystem.out.println(\"Spot (10h): \" + spot.computeCost(10.0));\nSystem.out.println(\"Spot (30h): \" + spot.computeCost(30.0)); // 30*1.0 - 2.0 = 28.0",
       "expectedOutput": "On-Demand (10h): 20.0\nSpot (10h): 10.0\nSpot (30h): 28.0",
       "starterFiles": [
@@ -457,12 +571,16 @@
           "contents": "public abstract class CloudInstance {\n    protected String instanceId;\n    protected double baseHourlyRate;\n    // TODO: constructor\n\n    public abstract double computeCost(double hoursRunning);\n}\n"
         },
         {
+          "filename": "Billable.java",
+          "contents": "public interface Billable {\n    double costFor(double hours);\n\n    // TODO: default dailyEstimate() -> costFor(24.0)\n\n    // TODO: default exceedsBudget(double hours, double budget) -> costFor(hours) > budget\n}\n"
+        },
+        {
           "filename": "OnDemandInstance.java",
-          "contents": "public class OnDemandInstance extends CloudInstance {\n    // TODO: constructor via super\n\n    @Override\n    public double computeCost(double hoursRunning) {\n        return 0.0;\n    }\n}\n"
+          "contents": "public class OnDemandInstance extends CloudInstance implements Billable {\n    // TODO: constructor via super\n\n    @Override\n    public double computeCost(double hoursRunning) {\n        return 0.0;\n    }\n\n    @Override\n    public double costFor(double hours) {\n        return computeCost(hours);\n    }\n}\n"
         },
         {
           "filename": "SpotInstance.java",
-          "contents": "public class SpotInstance extends CloudInstance {\n    // TODO: private double bidDiscountPercent + constructor via super\n\n    @Override\n    public double computeCost(double hoursRunning) {\n        // TODO: effectiveRate * hours; if hours > 24 subtract 2 (floor 0.0)\n        return 0.0;\n    }\n}\n"
+          "contents": "public class SpotInstance extends CloudInstance implements Billable {\n    // TODO: private double bidDiscountPercent + constructor via super\n\n    @Override\n    public double computeCost(double hoursRunning) {\n        // TODO: effectiveRate * hours; if hours > 24 subtract 2 (floor 0.0)\n        return 0.0;\n    }\n\n    @Override\n    public double costFor(double hours) {\n        return computeCost(hours);\n    }\n}\n"
         }
       ],
       "tests": [
@@ -479,7 +597,7 @@
         {
           "name": "Test 3 [Hidden] (Spot 24.1 Hours)",
           "visible": false,
-          "description": "24.1 hours receives the $2.00 rebate."
+          "description": "Just over 24 hours receives the $2.00 rebate."
         },
         {
           "name": "Test 4 [Hidden] (Spot Zero Floor)",
@@ -492,89 +610,153 @@
           "description": "0 hours running returns 0.0 for both types."
         },
         {
-          "name": "Test 6 [Hidden] (Polymorphic Reference)",
-          "visible": false,
-          "description": "Array of CloudInstance references summed dynamically."
-        },
-        {
-          "name": "Test 7 [Hidden] (Super Constructor)",
-          "visible": false,
-          "description": "Fields initialized via superclass."
-        },
-        {
-          "name": "Test 8 [Hidden] (100% Discount Spot)",
+          "name": "Test 6 [Hidden] (100% Discount Spot)",
           "visible": false,
           "description": "100% discount spot costs 0.0."
+        },
+        {
+          "name": "Test 7 [Hidden] (Billable Defaults)",
+          "visible": false,
+          "description": "dailyEstimate uses costFor(24) and exceedsBudget is strict at the budget."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CloudInstance onDemand = new OnDemandInstance(\"i-ondemand\", 2.00);\n        CloudInstance spot = new SpotInstance(\"i-spot\", 2.00, 50.0); // $1.00/hr\n        System.out.println(\"On-Demand (10h): \" + onDemand.computeCost(10.0));\n        System.out.println(\"Spot (10h): \" + spot.computeCost(10.0));\n        System.out.println(\"Spot (30h): \" + spot.computeCost(30.0)); // 30*1.0 - 2.0 = 28.0\n    }\n}\n",
-      "testerExpectedOutput": "On-Demand (10h): 20.0\nSpot (10h): 10.0\nSpot (30h): 28.0"
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CloudInstance onDemand = new OnDemandInstance(\"i-ondemand\", 2.00);\n        CloudInstance spot = new SpotInstance(\"i-spot\", 2.00, 50.0);\n        System.out.println(\"On-Demand (10h): \" + onDemand.computeCost(10.0));\n        System.out.println(\"Spot (10h): \" + spot.computeCost(10.0));\n        System.out.println(\"Spot (30h): \" + spot.computeCost(30.0));\n    }\n}\n",
+      "testerExpectedOutput": "On-Demand (10h): 20.0\nSpot (10h): 10.0\nSpot (30h): 28.0",
+      "graderCases": [
+        {
+          "name": "Sample run (on-demand, spot discount, >24h rebate + types)",
+          "hidden": false,
+          "body": "CloudInstance onDemand = new OnDemandInstance(\"i-od\",2.00);\nCloudInstance spot = new SpotInstance(\"i-sp\",2.00,50.0);\neqD(onDemand.computeCost(10.0),20.0);\neqD(spot.computeCost(10.0),10.0);\neqD(spot.computeCost(30.0),28.0);\ncheck(onDemand instanceof CloudInstance, \"must extend CloudInstance\");\ncheck(onDemand instanceof Billable, \"must implement Billable\");"
+        },
+        {
+          "name": "Spot exactly 24 hours: no rebate",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",2.00,50.0);\neqD(s.computeCost(24.0),24.0);"
+        },
+        {
+          "name": "Spot just over 24 hours: rebate applies",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",2.00,50.0);\neqD(s.computeCost(25.0),23.0);"
+        },
+        {
+          "name": "Spot cost floored at 0.0",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",0.10,50.0);\neqD(s.computeCost(25.0),0.0);"
+        },
+        {
+          "name": "Zero hours returns 0.0 for both",
+          "hidden": true,
+          "body": "eqD(new OnDemandInstance(\"a\",3.0).computeCost(0.0),0.0);\neqD(new SpotInstance(\"b\",3.0,10.0).computeCost(0.0),0.0);"
+        },
+        {
+          "name": "100% discount spot costs 0.0",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",5.00,100.0);\neqD(s.computeCost(10.0),0.0);"
+        },
+        {
+          "name": "dailyEstimate and exceedsBudget defaults",
+          "hidden": true,
+          "body": "OnDemandInstance o = new OnDemandInstance(\"x\",2.00);\neqD(o.dailyEstimate(),48.0);\ncheck(o.exceedsBudget(10.0,19.0), \"20 > 19\");\ncheck(!o.exceedsBudget(10.0,20.0), \"20 not > 20\");"
+        }
+      ]
     },
     {
       "id": "q10-smart-greenhouse-climate-loop",
       "order": 10,
-      "title": "Smart Greenhouse Climate Loop",
+      "title": "Smart Greenhouse Controller",
       "points": 14,
       "theme": "AgTech",
-      "prompt": "Simulate automated greenhouse temperature control in `GreenhouseControl.java`. Greenhouse starts at `Temp: 70` F with `Water Reserve: 50` gal.\n\nEach round: print `Temp: <temp>F | Water: <water> gal`, display menu:\n`1) Vent Air (-3F)  2) Mist Plants (-5F, -10 gal)  3) Heat Lamps (+6F)  4) Seal Greenhouse & Exit`\n* `1`: Vent Air: Temp decreases by 3F.\n* `2`: Mist Plants: If Water Reserve < 10 gal, print `Cannot mist: water reserve empty!`. Otherwise, deduct 10 gal from reserve and decrease temp by 5F.\n* `3`: Heat Lamps: Temp increases by 6F.\n* `4`: Print `Greenhouse stabilized at <temp>F with <water> gal water.` and terminate.\n* **Any other input:** Print `Invalid operation. System idling.`\n* **Safety Thresholds:**\n  * If Temp drops to `45F` or below at any point, immediately print `EMERGENCY: Freeze alert! Crop failure.` and terminate.\n  * If Temp reaches `95F` or higher at any point, immediately print `EMERGENCY: Heatwave alert! Crop scorched.` and terminate.\n\nRead menu choices from standard input with a `Scanner`.",
-      "sampleRun": "// Input: 3, 2, 1, 4",
-      "expectedOutput": "Temp: 70F | Water: 50 gal\n1) Vent Air (-3F)  2) Mist Plants (-5F, -10 gal)  3) Heat Lamps (+6F)  4) Seal Greenhouse & Exit\nTemp: 76F | Water: 50 gal\n1) Vent Air (-3F)  2) Mist Plants (-5F, -10 gal)  3) Heat Lamps (+6F)  4) Seal Greenhouse & Exit\nTemp: 71F | Water: 40 gal\n1) Vent Air (-3F)  2) Mist Plants (-5F, -10 gal)  3) Heat Lamps (+6F)  4) Seal Greenhouse & Exit\nTemp: 68F | Water: 40 gal\n1) Vent Air (-3F)  2) Mist Plants (-5F, -10 gal)  3) Heat Lamps (+6F)  4) Seal Greenhouse & Exit\nGreenhouse stabilized at 68F with 40 gal water.",
+      "prompt": "This capstone requires a question-specific abstract class **and** a question-specific interface, extended/implemented together by your concrete class.\n\nCreate an abstract class `Greenhouse` in `Greenhouse.java`:\n* **Protected fields:** `String zoneId`, `int temp`, `int water`.\n* **Constructor:** `Greenhouse(String zoneId, int startTemp, int startWater)`.\n* **Getters:** `getTemp()`, `getWater()`.\n* Method `heat(int degrees)`: raise `temp` by `degrees`.\n* **Abstract method:** `public abstract boolean mist();`\n\nCreate an interface `ClimateControlled` in `ClimateControlled.java`:\n* Abstract methods: `int currentTemp();`, `int safeLow();`, `int safeHigh();`\n* Default method: `default boolean inSafeRange()`: `true` only when `currentTemp()` is **strictly between** `safeLow()` and `safeHigh()` (the thresholds themselves are emergencies).\n* Default method: `default boolean freezeAlert()`: `true` when `currentTemp() <= safeLow()`.\n* Default method: `default boolean heatAlert()`: `true` when `currentTemp() >= safeHigh()`.\n\nCreate a class `TomatoGreenhouse` in `TomatoGreenhouse.java` that **extends `Greenhouse` and implements `ClimateControlled`**:\n* **Constructor:** `TomatoGreenhouse(String zoneId, int startTemp, int startWater)` calling `super`.\n* `mist()`: if `water < 10`, **refuse** — return `false` and change nothing. Otherwise deduct `10` gal, drop `temp` by `5`, and return `true`.\n* `currentTemp()` returns the current temperature.\n* `safeLow()` returns `45`; `safeHigh()` returns `95`.\n\n*Edge cases to think about (not in the sample): misting is refused (no state change) when the reserve is under 10; misting with exactly 10 gal depletes to 0; `45` and `95` are emergency boundaries, NOT safe; `inSafeRange` is strict.*",
+      "sampleRun": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z1\", 70, 50);\ng.heat(6);\nSystem.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\ng.mist();\nSystem.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\nSystem.out.println(\"In safe range: \" + g.inSafeRange());",
+      "expectedOutput": "Temp: 76F | Water: 50 gal\nTemp: 71F | Water: 40 gal\nIn safe range: true",
       "starterFiles": [
         {
-          "filename": "GreenhouseControl.java",
-          "contents": "import java.util.Scanner;\n\npublic class GreenhouseControl {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int temp = 70;\n        int water = 50;\n        // TODO: loop printing state + menu, apply rules, check freeze/heat thresholds.\n    }\n}\n"
+          "filename": "Greenhouse.java",
+          "contents": "public abstract class Greenhouse {\n    protected String zoneId;\n    protected int temp;\n    protected int water;\n\n    // TODO: constructor + getTemp()/getWater()\n\n    public void heat(int degrees) {\n        // TODO: raise temp\n    }\n\n    public abstract boolean mist();\n}\n"
+        },
+        {
+          "filename": "ClimateControlled.java",
+          "contents": "public interface ClimateControlled {\n    int currentTemp();\n    int safeLow();\n    int safeHigh();\n\n    // TODO: default inSafeRange() -> strictly between safeLow and safeHigh\n\n    // TODO: default freezeAlert() -> currentTemp() <= safeLow()\n\n    // TODO: default heatAlert() -> currentTemp() >= safeHigh()\n}\n"
+        },
+        {
+          "filename": "TomatoGreenhouse.java",
+          "contents": "public class TomatoGreenhouse extends Greenhouse implements ClimateControlled {\n    // TODO: constructor via super\n\n    @Override\n    public boolean mist() {\n        // TODO: refuse (false) if water < 10; else -10 water, -5 temp, true\n        return false;\n    }\n\n    @Override\n    public int currentTemp() {\n        return 0;\n    }\n\n    @Override\n    public int safeLow() {\n        return 45;\n    }\n\n    @Override\n    public int safeHigh() {\n        return 95;\n    }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Heat lamp, plant misting with water deduction, venting, clean exit."
+          "description": "Heat lamps raise temp, misting cools and uses water, temperature stays in the safe band."
         },
         {
-          "name": "Test 2 [Hidden] (Freeze Emergency at 45F)",
+          "name": "Test 2 [Hidden] (Mist Refused Under 10 gal)",
           "visible": false,
-          "description": "Temp dropping to exactly 45F prints freeze failure and halts."
+          "description": "A refused mist returns false and leaves temp and water unchanged."
         },
         {
-          "name": "Test 3 [Hidden] (Heat Emergency at 95F)",
+          "name": "Test 3 [Hidden] (Mist Exactly 10 gal)",
           "visible": false,
-          "description": "Temp reaching exactly 95F prints heatwave failure and halts."
+          "description": "Misting with exactly 10 gal succeeds and depletes water to 0."
         },
         {
-          "name": "Test 4 [Hidden] (Freeze Below 45F)",
+          "name": "Test 4 [Hidden] (Freeze Boundary at 45)",
           "visible": false,
-          "description": "Temp dropping below 45F halts immediately."
+          "description": "At exactly 45F the freeze alert fires and the zone is NOT in safe range."
         },
         {
-          "name": "Test 5 [Hidden] (Heat Above 95F)",
+          "name": "Test 5 [Hidden] (Heat Boundary at 95)",
           "visible": false,
-          "description": "Temp exceeding 95F halts immediately."
+          "description": "At exactly 95F the heat alert fires and the zone is NOT in safe range."
         },
         {
-          "name": "Test 6 [Hidden] (Insufficient Water for Mist)",
+          "name": "Test 6 [Hidden] (Strict Safe Range)",
           "visible": false,
-          "description": "Water reserve < 10 prints refusal message, leaves temp and water unchanged."
+          "description": "A temperature strictly inside the band is safe with no alerts."
         },
         {
-          "name": "Test 7 [Hidden] (Exact Water Depletion to 0)",
+          "name": "Test 7 [Hidden] (Heat Into Alert)",
           "visible": false,
-          "description": "Misting with exactly 10 gal reduces water to 0 gal."
+          "description": "Heating up to the safe high triggers the heat alert."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        TomatoGreenhouse g = new TomatoGreenhouse(\"Z1\", 70, 50);\n        g.heat(6);\n        System.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\n        g.mist();\n        System.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\n        System.out.println(\"In safe range: \" + g.inSafeRange());\n    }\n}\n",
+      "testerExpectedOutput": "Temp: 76F | Water: 50 gal\nTemp: 71F | Water: 40 gal\nIn safe range: true",
+      "graderCases": [
+        {
+          "name": "Sample run (heat, mist, state + types)",
+          "hidden": false,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z1\",70,50);\ng.heat(6);\neq(g.getTemp(),76);\ncheck(g.mist(), \"should mist with full reserve\");\neq(g.getTemp(),71); eq(g.getWater(),40);\ncheck(g instanceof Greenhouse, \"must extend Greenhouse\");\ncheck(g instanceof ClimateControlled, \"must implement ClimateControlled\");"
         },
         {
-          "name": "Test 8 [Hidden] (Invalid Operation)",
-          "visible": false,
-          "description": "Invalid input prints idle message without changing state."
+          "name": "Mist refused when water < 10 (unchanged)",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",70,5);\ncheck(!g.mist(), \"reserve too low\");\neq(g.getTemp(),70); eq(g.getWater(),5);"
         },
         {
-          "name": "Test 9 [Hidden] (Immediate Exit)",
-          "visible": false,
-          "description": "Option 4 on turn 1 prints initial state and exits."
+          "name": "Mist with exactly 10 gal depletes to 0",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",70,10);\ncheck(g.mist(), \"10 is enough to mist\");\neq(g.getWater(),0); eq(g.getTemp(),65);"
         },
         {
-          "name": "Test 10 [Hidden] (Ed Formatting Match)",
-          "visible": false,
-          "description": "Strict verification of prompts and casing."
+          "name": "Freeze alert at exactly the safe low (45)",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",45,50);\ncheck(g.freezeAlert(), \"45 <= safeLow 45\");\ncheck(!g.inSafeRange(), \"45 is a freeze boundary, not safe\");"
+        },
+        {
+          "name": "Heat alert at exactly the safe high (95)",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",95,50);\ncheck(g.heatAlert(), \"95 >= safeHigh 95\");\ncheck(!g.inSafeRange(), \"95 is a heat boundary, not safe\");"
+        },
+        {
+          "name": "In safe range strictly inside the band",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",70,50);\ncheck(g.inSafeRange(), \"70 strictly inside\");\ncheck(!g.freezeAlert(), \"70 not freezing\");\ncheck(!g.heatAlert(), \"70 not overheating\");"
+        },
+        {
+          "name": "Heat raises temperature into heat alert",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",90,50);\ng.heat(5);\neq(g.getTemp(),95);\ncheck(g.heatAlert(), \"reached 95\");"
         }
       ]
     }

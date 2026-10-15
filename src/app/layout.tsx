@@ -44,19 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
 
         <main>{children}</main>
-
-        <footer className="site-footer">
-          <div className="container">
-            <p>
-              Boiler CS — Purdue CS Practice &amp; Exam Archive. No accounts, no tracking.
-            </p>
-            <p className="footer-colophon">
-              <a href="https://github.com" target="_blank" rel="noreferrer">
-                <Icon name="github" size={14} /> Source on GitHub
-              </a>
-            </p>
-          </div>
-        </footer>
       </body>
     </html>
   );
