@@ -1,6 +1,6 @@
 # Boiler CS — Stateless Purdue CS Practice Platform
 
-An elegant, **Dark Academia**-styled, in-browser coding practice platform for Purdue
+A in-browser coding practice platform for Purdue
 Computer Science. Built as a **Jamstack static site** for the **Vercel free tier**:
 no database, and **$0.00** hosting cost on Vercel's free tier. (One tiny serverless Route
 Handler proxies Java execution so the execution-service key stays secret; everything else is
@@ -26,49 +26,6 @@ Hierarchy is **Class → Unit (midterm) → Exam → Question**.
 - **Curriculum:** flat JSON files under `public/data/` (4 full exams × 10 questions = 40
   challenges), with scaffolding for additional CS 180 midterms.
 
----
-
-## Quick start (on a machine with internet access)
-
-> ⚠️ The build sandbox these files were authored in has **no network access**, so
-> `npm install` / `next build` could not be run here. Run them on your own machine or let
-> Vercel run them in CI (it will, automatically, on import).
-
-```bash
-npm install
-cp .env.example .env.local   # then paste your OnlineCompiler.io REST API key
-npm run dev                  # local dev server at http://localhost:3000
-npm run build                # produces the static site in ./out
-```
-
-`npm run build` builds the app (static pages + the `/api/run` serverless function).
-
-## Java execution setup (one server env var)
-
-Java runs on OpenJDK 25 via OnlineCompiler.io's REST API, called from our serverless endpoint
-`/api/run`. You need one **REST API key**, kept secret on the server:
-
-1. Sign up at [api.onlinecompiler.io](https://api.onlinecompiler.io).
-2. Go to the **API Keys** page and create a **REST API key** (not a Widget/WebSocket key).
-3. Set it as `COMPILE_API_KEY` (no `NEXT_PUBLIC_` prefix — it must stay secret):
-   - **Local:** put it in `.env.local` (copy from `.env.example`).
-   - **Vercel:** Project → Settings → Environment Variables → add `COMPILE_API_KEY` as a
-     **Secret** (now the "Secret" type is correct — this value is never exposed to the browser).
-
-If the key is missing, Java questions show a clear "server is missing COMPILE_API_KEY"
-message; the rest of the app (navigation, editor, JavaScript questions) works regardless.
-
-## Deploying to Vercel (free tier)
-
-1. Push this folder to a Git repository (GitHub/GitLab/Bitbucket).
-2. In the Vercel dashboard, **Import** the repository.
-3. Add the `COMPILE_API_KEY` **Secret** environment variable (see above).
-4. Deploy. Vercel auto-detects Next.js; the headers in `vercel.json` are applied automatically.
-
-The app is mostly static with a single lightweight serverless function (`/api/run`) that only
-runs when a learner presses Run/Test — well within Vercel's free-tier function allowances.
-
----
 
 ## Architecture mapping (how this satisfies the specs)
 

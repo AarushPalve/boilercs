@@ -1,0 +1,764 @@
+{
+  "slug": "practice-exam-3",
+  "title": "Practice Exam 3",
+  "timeLimitMinutes": 60,
+  "totalPoints": 100,
+  "description": "10 free-response challenges across Beverage, Meteorology, Cloud Storage, Wearable Tech, Entertainment, Education, Banking, Supply Chain, Cloud Computing, and AgTech themes.",
+  "questions": [
+    {
+      "id": "q1-coffee-bean-roast",
+      "order": 1,
+      "title": "Coffee Bean Roast",
+      "points": 6,
+      "theme": "Culinary & Beverage",
+      "prompt": "Create a class `CoffeeBean` in `CoffeeBean.java`:\n* **Private fields:** `String origin`, `String roastLevel`, `int acidityScore`, `double bagPrice`.\n* **Constructor 1:** `CoffeeBean(String origin, String roastLevel, int acidityScore, double bagPrice)`.\n* **Constructor 2:** `CoffeeBean(String origin, String roastLevel)` which sets `acidityScore = 5` and `bagPrice = 14.99`.\n* **Getters and Setters:** For all four fields.\n  * In `setAcidityScore(int score)`: Must be between 1 and 10 inclusive. If `< 1`, set to `1`. If `> 10`, set to `10`.\n  * In `setBagPrice(double price)`: If `price < 0.0`, set to `0.0`.",
+      "sampleRun": "CoffeeBean bean = new CoffeeBean(\"Ethiopia\", \"Light\");\nSystem.out.println(bean.getOrigin() + \" (\" + bean.getRoastLevel() + \") - Acidity: \" + bean.getAcidityScore() + \" | $\" + bean.getBagPrice());\nbean.setAcidityScore(15);\nbean.setBagPrice(-3.0);\nSystem.out.println(\"Clamped: Acidity: \" + bean.getAcidityScore() + \" | $\" + bean.getBagPrice());",
+      "expectedOutput": "Ethiopia (Light) - Acidity: 5 | $14.99\nClamped: Acidity: 10 | $0.0",
+      "starterFiles": [
+        {
+          "filename": "CoffeeBean.java",
+          "contents": "public class CoffeeBean {\n    // TODO: private fields origin, roastLevel, acidityScore, bagPrice\n\n    // TODO: 4-arg + 2-arg constructors (defaults acidity 5, price 14.99)\n\n    // TODO: getters/setters (acidity clamped [1,10]; price floor 0.0)\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "2-arg constructor defaults; acidity upper clamp (15 -> 10); negative price clamp (-3.0 -> 0.0)."
+        },
+        {
+          "name": "Test 2 [Hidden] (Acidity Lower Clamp)",
+          "visible": false,
+          "description": "setAcidityScore(0) and setAcidityScore(-4) clamp to 1."
+        },
+        {
+          "name": "Test 3 [Hidden] (Acidity Exact Limits)",
+          "visible": false,
+          "description": "Setting 1 and 10 preserved."
+        },
+        {
+          "name": "Test 4 [Hidden] (Full Constructor)",
+          "visible": false,
+          "description": "All 4 parameters set directly."
+        },
+        {
+          "name": "Test 5 [Hidden] (Zero Price)",
+          "visible": false,
+          "description": "setBagPrice(0.0) accepts 0.0."
+        },
+        {
+          "name": "Test 6 [Hidden] (Origin and Roast Strings)",
+          "visible": false,
+          "description": "Setters update strings properly."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CoffeeBean bean = new CoffeeBean(\"Ethiopia\", \"Light\");\n        System.out.println(bean.getOrigin() + \" (\" + bean.getRoastLevel() + \") - Acidity: \" + bean.getAcidityScore() + \" | $\" + bean.getBagPrice());\n        bean.setAcidityScore(15);\n        bean.setBagPrice(-3.0);\n        System.out.println(\"Clamped: Acidity: \" + bean.getAcidityScore() + \" | $\" + bean.getBagPrice());\n    }\n}\n",
+      "testerExpectedOutput": "Ethiopia (Light) - Acidity: 5 | $14.99\nClamped: Acidity: 10 | $0.0"
+    },
+    {
+      "id": "q2-weather-station-snapshot",
+      "order": 2,
+      "title": "Weather Station Snapshot",
+      "points": 8,
+      "theme": "Meteorology",
+      "prompt": "Create a class `WeatherReport` in `WeatherReport.java`:\n* **Private fields:** `String stationCode`, `double temperatureC`, `int humidityPercent`.\n* **Constructor:** `WeatherReport(String stationCode, double temperatureC, int humidityPercent)`.\n* **`toString()`:** Return:\n  ```\n  Station: <stationCode>\n  Temp: <temperatureC formatted to 2 decimal places> C\n  Humidity: <humidityPercent>%\n  ```\n  *(Separated by `\\n` with no trailing newline)*\n* **`equals(Object o)`:** Two weather reports are equal if their `stationCode` matches **ignoring case** AND their `humidityPercent` matches. Return `false` if `o` is `null` or not a `WeatherReport`.",
+      "sampleRun": "WeatherReport r1 = new WeatherReport(\"kord\", 21.543, 65);\nWeatherReport r2 = new WeatherReport(\"KORD\", 18.200, 65);\nSystem.out.println(r1);\nSystem.out.println(\"Equal: \" + r1.equals(r2));",
+      "expectedOutput": "Station: kord\nTemp: 21.54 C\nHumidity: 65%\nEqual: true",
+      "starterFiles": [
+        {
+          "filename": "WeatherReport.java",
+          "contents": "public class WeatherReport {\n    // TODO: private fields stationCode, temperatureC, humidityPercent\n\n    // TODO: constructor\n\n    // TODO: toString() with 2-decimal temp\n\n    // TODO: equals() -> stationCode (ignore case) AND humidityPercent match\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Two decimal formatting for Celsius and case-insensitive station match with equal humidity."
+        },
+        {
+          "name": "Test 2 [Hidden] (Null Safety)",
+          "visible": false,
+          "description": "r1.equals(null) returns false."
+        },
+        {
+          "name": "Test 3 [Hidden] (Different Class)",
+          "visible": false,
+          "description": "r1.equals(\"kord\") returns false."
+        },
+        {
+          "name": "Test 4 [Hidden] (Different Humidity)",
+          "visible": false,
+          "description": "Same station, different humidity returns false."
+        },
+        {
+          "name": "Test 5 [Hidden] (Different Station)",
+          "visible": false,
+          "description": "Same humidity, different station returns false."
+        },
+        {
+          "name": "Test 6 [Hidden] (Zero Humidity Rounding)",
+          "visible": false,
+          "description": "temperatureC = 0.0 formats as 0.00 C."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        WeatherReport r1 = new WeatherReport(\"kord\", 21.543, 65);\n        WeatherReport r2 = new WeatherReport(\"KORD\", 18.200, 65);\n        System.out.println(r1);\n        System.out.println(\"Equal: \" + r1.equals(r2));\n    }\n}\n",
+      "testerExpectedOutput": "Station: kord\nTemp: 21.54 C\nHumidity: 65%\nEqual: true"
+    },
+    {
+      "id": "q3-storage-vault-allocation",
+      "order": 3,
+      "title": "Storage Vault Allocation",
+      "points": 8,
+      "theme": "Cloud Storage",
+      "prompt": "Create a checked exception `StorageQuotaExceededException` in `StorageQuotaExceededException.java` that extends `Exception` with a constructor taking `String message`.\n\nIn `CloudStorage.java`, implement:\n`public static int allocateSpace(int currentUsedGB, int fileGB, int totalCapacityGB) throws StorageQuotaExceededException`\n* If `fileGB <= 0`, throw `IllegalArgumentException` with message: `\"File size must be positive\"`.\n* If `currentUsedGB + fileGB > totalCapacityGB`, throw `StorageQuotaExceededException` with message:\n  `\"Quota exceeded: required <currentUsedGB + fileGB>GB, capacity is <totalCapacityGB>GB\"`.\n* Otherwise, return `currentUsedGB + fileGB`.",
+      "sampleRun": "try {\n    int used = CloudStorage.allocateSpace(80, 15, 100);\n    System.out.println(\"Used: \" + used + \"GB\");\n    CloudStorage.allocateSpace(used, 10, 100);\n} catch (StorageQuotaExceededException e) {\n    System.out.println(e.getMessage());\n}",
+      "expectedOutput": "Used: 95GB\nQuota exceeded: required 105GB, capacity is 100GB",
+      "starterFiles": [
+        {
+          "filename": "StorageQuotaExceededException.java",
+          "contents": "public class StorageQuotaExceededException extends Exception {\n    // TODO: constructor taking String message -> super(message)\n}\n"
+        },
+        {
+          "filename": "CloudStorage.java",
+          "contents": "public class CloudStorage {\n    public static int allocateSpace(int currentUsedGB, int fileGB, int totalCapacityGB)\n            throws StorageQuotaExceededException {\n        // TODO: validate fileGB > 0, check quota, else return sum\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Valid allocation followed by StorageQuotaExceededException."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact Capacity Allocation)",
+          "visible": false,
+          "description": "currentUsedGB + fileGB == totalCapacityGB returns totalCapacityGB."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero File Size)",
+          "visible": false,
+          "description": "fileGB = 0 throws IllegalArgumentException."
+        },
+        {
+          "name": "Test 4 [Hidden] (Negative File Size)",
+          "visible": false,
+          "description": "fileGB = -5 throws IllegalArgumentException."
+        },
+        {
+          "name": "Test 5 [Hidden] (Checked Exception Verification)",
+          "visible": false,
+          "description": "Verifies StorageQuotaExceededException extends Exception."
+        },
+        {
+          "name": "Test 6 [Hidden] (Starting Completely Full)",
+          "visible": false,
+          "description": "Allocating 1GB when currentUsedGB == totalCapacityGB throws exception."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try {\n            int used = CloudStorage.allocateSpace(80, 15, 100);\n            System.out.println(\"Used: \" + used + \"GB\");\n            CloudStorage.allocateSpace(used, 10, 100);\n        } catch (StorageQuotaExceededException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n",
+      "testerExpectedOutput": "Used: 95GB\nQuota exceeded: required 105GB, capacity is 100GB"
+    },
+    {
+      "id": "q4-fitness-trackable",
+      "order": 4,
+      "title": "Fitness Trackable",
+      "points": 8,
+      "theme": "Wearable Tech",
+      "prompt": "Create an interface `TrackableActivity` in `TrackableActivity.java`:\n* Abstract method: `int getDurationMinutes();`\n* Abstract method: `double getCaloriesPerMinute();`\n* Default method: `default double calculateTotalCalories()`: returns `getDurationMinutes() * getCaloriesPerMinute()`.\n* Default method: `default boolean reachedGoal(double goalCalories)`: returns `true` if `calculateTotalCalories() >= goalCalories`, else `false`.\n\nCreate a class `Running` in `Running.java` implementing `TrackableActivity`:\n* **Private fields:** `int duration`, `double paceSpeedMPH`.\n* **Constructor:** `Running(int duration, double paceSpeedMPH)`.\n* Implement `getDurationMinutes()` returning `duration`.\n* Implement `getCaloriesPerMinute()`:\n  * If `paceSpeedMPH >= 8.0`, burns `15.0` cal/min.\n  * If `paceSpeedMPH >= 5.0`, burns `10.0` cal/min.\n  * Otherwise burns `6.0` cal/min.",
+      "sampleRun": "Running jog = new Running(30, 6.0); // 10.0 cal/min * 30 min = 300 cal\nSystem.out.println(\"Calories: \" + jog.calculateTotalCalories());\nSystem.out.println(\"Goal 250 cal: \" + jog.reachedGoal(250.0));\nSystem.out.println(\"Goal 350 cal: \" + jog.reachedGoal(350.0));",
+      "expectedOutput": "Calories: 300.0\nGoal 250 cal: true\nGoal 350 cal: false",
+      "starterFiles": [
+        {
+          "filename": "TrackableActivity.java",
+          "contents": "public interface TrackableActivity {\n    int getDurationMinutes();\n    double getCaloriesPerMinute();\n\n    // TODO: default calculateTotalCalories()\n\n    // TODO: default reachedGoal(double goalCalories)\n}\n"
+        },
+        {
+          "filename": "Running.java",
+          "contents": "public class Running implements TrackableActivity {\n    // TODO: private fields duration, paceSpeedMPH + constructor\n\n    public int getDurationMinutes() {\n        return 0;\n    }\n\n    public double getCaloriesPerMinute() {\n        // TODO: >=8.0 -> 15.0; >=5.0 -> 10.0; else 6.0\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "6.0 MPH pace (10.0 cal/min) evaluated against two goals."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact 8.0 MPH Boundary)",
+          "visible": false,
+          "description": "Pace 8.0 MPH burns 15.0 cal/min."
+        },
+        {
+          "name": "Test 3 [Hidden] (Exact 5.0 MPH Boundary)",
+          "visible": false,
+          "description": "Pace 5.0 MPH burns 10.0 cal/min."
+        },
+        {
+          "name": "Test 4 [Hidden] (Low Pace Under 5.0 MPH)",
+          "visible": false,
+          "description": "Pace 4.5 MPH burns 6.0 cal/min."
+        },
+        {
+          "name": "Test 5 [Hidden] (Exact Goal Boundary)",
+          "visible": false,
+          "description": "Calories burned exactly equals goal returns true."
+        },
+        {
+          "name": "Test 6 [Hidden] (Zero Duration)",
+          "visible": false,
+          "description": "0 minutes yields 0.0 calories."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Running jog = new Running(30, 6.0); // 10.0 cal/min * 30 min = 300 cal\n        System.out.println(\"Calories: \" + jog.calculateTotalCalories());\n        System.out.println(\"Goal 250 cal: \" + jog.reachedGoal(250.0));\n        System.out.println(\"Goal 350 cal: \" + jog.reachedGoal(350.0));\n    }\n}\n",
+      "testerExpectedOutput": "Calories: 300.0\nGoal 250 cal: true\nGoal 350 cal: false"
+    },
+    {
+      "id": "q5-amusement-park-ticket-hierarchy",
+      "order": 5,
+      "title": "Amusement Park Ticket Hierarchy",
+      "points": 10,
+      "theme": "Entertainment",
+      "prompt": "Create a class `ParkPass` in `ParkPass.java`:\n* **Protected fields:** `String visitorName`, `double baseAdmission`.\n* **Constructor:** `ParkPass(String visitorName, double baseAdmission)`.\n* Method `calculateTotalCost()` returning `baseAdmission`.\n\nCreate subclass `VIPPass` in `VIPPass.java` extending `ParkPass`:\n* **Private fields:** `boolean fastPassIncluded`, `int mealVouchers`.\n* **Constructor:** `VIPPass(String visitorName, double baseAdmission, boolean fastPassIncluded, int mealVouchers)` calling `super`.\n* Override `calculateTotalCost()`:\n  * Start with `baseAdmission`.\n  * If `fastPassIncluded` is `true`, add `$50.00`.\n  * Add `$15.00` per meal voucher (`mealVouchers * 15.0`).\n  * If `mealVouchers >= 3`, apply a combo discount: deduct `$10.00` from final total.",
+      "sampleRun": "ParkPass regular = new ParkPass(\"Leo\", 75.0);\nVIPPass vip1 = new VIPPass(\"Maya\", 75.0, true, 2);  // 75 + 50 + 30 = 155.0\nVIPPass vip2 = new VIPPass(\"Sam\", 75.0, true, 4);   // 75 + 50 + 60 - 10 = 175.0\nSystem.out.println(\"Regular: $\" + regular.calculateTotalCost());\nSystem.out.println(\"VIP 1: $\" + vip1.calculateTotalCost());\nSystem.out.println(\"VIP 2: $\" + vip2.calculateTotalCost());",
+      "expectedOutput": "Regular: $75.0\nVIP 1: $155.0\nVIP 2: $175.0",
+      "starterFiles": [
+        {
+          "filename": "ParkPass.java",
+          "contents": "public class ParkPass {\n    protected String visitorName;\n    protected double baseAdmission;\n    // TODO: constructor\n\n    public double calculateTotalCost() {\n        return baseAdmission;\n    }\n}\n"
+        },
+        {
+          "filename": "VIPPass.java",
+          "contents": "public class VIPPass extends ParkPass {\n    // TODO: private fields fastPassIncluded, mealVouchers + constructor via super\n\n    @Override\n    public double calculateTotalCost() {\n        // TODO: base + 50 (fast pass) + 15*vouchers; -10 if vouchers >= 3\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Regular pass, VIP without combo discount, VIP with 4 vouchers ($10 discount)."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact 3 Meal Vouchers)",
+          "visible": false,
+          "description": "3 vouchers triggers the $10 combo discount."
+        },
+        {
+          "name": "Test 3 [Hidden] (No Fast Pass)",
+          "visible": false,
+          "description": "fastPassIncluded = false adds 0 for fast pass."
+        },
+        {
+          "name": "Test 4 [Hidden] (0 Meal Vouchers)",
+          "visible": false,
+          "description": "0 vouchers adds 0 and has no discount."
+        },
+        {
+          "name": "Test 5 [Hidden] (Dynamic Dispatch)",
+          "visible": false,
+          "description": "ParkPass p = new VIPPass(\"Zoe\", 60.0, false, 3); returns 60 + 45 - 10 = 95.0."
+        },
+        {
+          "name": "Test 6 [Hidden] (Super Constructor Call)",
+          "visible": false,
+          "description": "Visitor name and base admission properly forwarded to super."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        ParkPass regular = new ParkPass(\"Leo\", 75.0);\n        VIPPass vip1 = new VIPPass(\"Maya\", 75.0, true, 2);  // 75 + 50 + 30 = 155.0\n        VIPPass vip2 = new VIPPass(\"Sam\", 75.0, true, 4);   // 75 + 50 + 60 - 10 = 175.0\n        System.out.println(\"Regular: $\" + regular.calculateTotalCost());\n        System.out.println(\"VIP 1: $\" + vip1.calculateTotalCost());\n        System.out.println(\"VIP 2: $\" + vip2.calculateTotalCost());\n    }\n}\n",
+      "testerExpectedOutput": "Regular: $75.0\nVIP 1: $155.0\nVIP 2: $175.0"
+    },
+    {
+      "id": "q6-academic-course-enrollments",
+      "order": 6,
+      "title": "Academic Course Enrollments",
+      "points": 10,
+      "theme": "Education",
+      "prompt": "Given base class `Course` with method `int getEnrollment()` and subclass `LabCourse` (which has additional lab section students added to `getEnrollment()`), implement `EnrollmentManager.java`:\n* `public static int totalEnrolled(Course[] catalog)`:\n  * Sums `getEnrollment()` for all courses in array.\n  * If `catalog` is `null` or empty, return `0`.\n  * Skip any `null` elements safely.\n* `public static int countFullCourses(Course[] catalog, int capacityLimit)`:\n  * Returns count of non-null courses where `getEnrollment() >= capacityLimit`.\n  * If `catalog` is `null`, return `0`.\n\n*(The autograder provides `Course` and `LabCourse`.)*",
+      "sampleRun": "Course[] list = new Course[] {\n    new Course(\"CS180\", 450),\n    null,\n    new LabCourse(\"CHM115\", 300, 100), // total = 400\n    new Course(\"MA261\", 250)\n};\nSystem.out.println(\"Total: \" + EnrollmentManager.totalEnrolled(list));\nSystem.out.println(\"Full (>= 400): \" + EnrollmentManager.countFullCourses(list, 400));",
+      "expectedOutput": "Total: 1100\nFull (>= 400): 2",
+      "starterFiles": [
+        {
+          "filename": "EnrollmentManager.java",
+          "contents": "public class EnrollmentManager {\n    public static int totalEnrolled(Course[] catalog) {\n        // TODO: sum non-null getEnrollment(); 0 if null/empty\n        return 0;\n    }\n\n    public static int countFullCourses(Course[] catalog, int capacityLimit) {\n        // TODO: count non-null getEnrollment() >= capacityLimit; 0 if null\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Array with null element, standard courses, and lab course with capacity check."
+        },
+        {
+          "name": "Test 2 [Hidden] (Null Catalog)",
+          "visible": false,
+          "description": "totalEnrolled(null) returns 0, countFullCourses(null, 100) returns 0."
+        },
+        {
+          "name": "Test 3 [Hidden] (Empty Array)",
+          "visible": false,
+          "description": "new Course[0] returns 0 for both methods."
+        },
+        {
+          "name": "Test 4 [Hidden] (Exact Capacity Threshold)",
+          "visible": false,
+          "description": "getEnrollment() == capacityLimit is counted as full."
+        },
+        {
+          "name": "Test 5 [Hidden] (No Full Courses)",
+          "visible": false,
+          "description": "High limit returns 0."
+        },
+        {
+          "name": "Test 6 [Hidden] (All Null Elements)",
+          "visible": false,
+          "description": "new Course[]{null, null} returns 0."
+        },
+        {
+          "name": "Test 7 [Hidden] (Dynamic Dispatch)",
+          "visible": false,
+          "description": "Overridden getEnrollment() invoked polymorphically on LabCourse."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Course[] list = new Course[] {\n            new Course(\"CS180\", 450),\n            null,\n            new LabCourse(\"CHM115\", 300, 100), // total = 400\n            new Course(\"MA261\", 250)\n        };\n        System.out.println(\"Total: \" + EnrollmentManager.totalEnrolled(list));\n        System.out.println(\"Full (>= 400): \" + EnrollmentManager.countFullCourses(list, 400));\n    }\n}\n",
+      "testerExpectedOutput": "Total: 1100\nFull (>= 400): 2",
+      "graderCases": [
+        {
+          "name": "Sample run (null + lab course capacity)",
+          "hidden": false,
+          "body": "Course[] list = { new Course(\"CS180\",450), null, new LabCourse(\"CHM115\",300,100), new Course(\"MA261\",250) };\neq(EnrollmentManager.totalEnrolled(list),1100);\neq(EnrollmentManager.countFullCourses(list,400),2);"
+        },
+        {
+          "name": "Null catalog returns 0",
+          "hidden": true,
+          "body": "eq(EnrollmentManager.totalEnrolled(null),0);\neq(EnrollmentManager.countFullCourses(null,100),0);"
+        },
+        {
+          "name": "Empty array returns 0",
+          "hidden": true,
+          "body": "Course[] c = new Course[0];\neq(EnrollmentManager.totalEnrolled(c),0);\neq(EnrollmentManager.countFullCourses(c,100),0);"
+        },
+        {
+          "name": "Exact capacity threshold is counted (>=)",
+          "hidden": true,
+          "body": "Course[] c = { new Course(\"X\",100) };\neq(EnrollmentManager.countFullCourses(c,100),1);\neq(EnrollmentManager.countFullCourses(c,101),0);"
+        },
+        {
+          "name": "No full courses with high limit",
+          "hidden": true,
+          "body": "Course[] c = { new Course(\"X\",50), new Course(\"Y\",60) };\neq(EnrollmentManager.countFullCourses(c,1000),0);"
+        },
+        {
+          "name": "All null elements return 0",
+          "hidden": true,
+          "body": "Course[] c = { null, null };\neq(EnrollmentManager.totalEnrolled(c),0);\neq(EnrollmentManager.countFullCourses(c,0),0);"
+        },
+        {
+          "name": "Dynamic dispatch on LabCourse override",
+          "hidden": true,
+          "body": "Course[] c = { new LabCourse(\"L\",200,100) };\neq(EnrollmentManager.totalEnrolled(c),300);\neq(EnrollmentManager.countFullCourses(c,300),1);"
+        }
+      ]
+    },
+    {
+      "id": "q7-bank-account-statement-parser",
+      "order": 7,
+      "title": "Bank Account Statement Parser",
+      "points": 12,
+      "theme": "Banking",
+      "prompt": "In `StatementReader.java`, write:\n`public static double computeNetCashFlow(String filename) throws FileNotFoundException`\n* The file contains transactions per line: `TransactionID,Type,Amount`\n  Example: `TX1001,DEPOSIT,250.50` or `TX1002,WITHDRAWAL,75.25`\n* First line is a header (`ID,Type,Amount`) and must be skipped.\n* For type `\"DEPOSIT\"`, add the amount to net cash flow.\n* For type `\"WITHDRAWAL\"`, subtract the amount from net cash flow.\n* Any other type should be ignored.\n* If the file has no data rows, return `0.0`.\n* If the file is missing, throw `FileNotFoundException`. Ensure file stream is closed.",
+      "sampleRun": "// statement.csv:\n// ID,Type,Amount\n// TX101,DEPOSIT,500.00\n// TX102,WITHDRAWAL,120.50\n// TX103,FEE,5.00\n// TX104,DEPOSIT,50.25\nSystem.out.printf(\"Net: $%.2f\\n\", StatementReader.computeNetCashFlow(\"statement.csv\"));\n// 500.00 - 120.50 + 50.25 = 429.75; FEE ignored",
+      "expectedOutput": "Net: $429.75",
+      "starterFiles": [
+        {
+          "filename": "StatementReader.java",
+          "contents": "import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.util.Scanner;\n\npublic class StatementReader {\n    public static double computeNetCashFlow(String filename)\n            throws FileNotFoundException {\n        // TODO: skip header, +DEPOSIT -WITHDRAWAL, ignore others; 0.0 if no data\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Adds deposit, subtracts withdrawal, ignores invalid/other types (FEE)."
+        },
+        {
+          "name": "Test 2 [Hidden] (Header Only File)",
+          "visible": false,
+          "description": "Returns 0.0."
+        },
+        {
+          "name": "Test 3 [Hidden] (Missing File)",
+          "visible": false,
+          "description": "Throws FileNotFoundException."
+        },
+        {
+          "name": "Test 4 [Hidden] (Net Negative Flow)",
+          "visible": false,
+          "description": "Withdrawals exceeding deposits yields negative cash flow."
+        },
+        {
+          "name": "Test 5 [Hidden] (All Deposits)",
+          "visible": false,
+          "description": "Only deposits returns sum."
+        },
+        {
+          "name": "Test 6 [Hidden] (All Withdrawals)",
+          "visible": false,
+          "description": "Only withdrawals returns negative sum."
+        },
+        {
+          "name": "Test 7 [Hidden] (Trailing Blank Lines)",
+          "visible": false,
+          "description": "Handled without NumberFormatException."
+        },
+        {
+          "name": "Test 8 [Hidden] (Stream Closure)",
+          "visible": false,
+          "description": "File closed cleanly with try-with-resources."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"statement.csv\", \"UTF-8\")) { __w.print(\"ID,Type,Amount\\nTX101,DEPOSIT,500.00\\nTX102,WITHDRAWAL,120.50\\nTX103,FEE,5.00\\nTX104,DEPOSIT,50.25\\n500.00 - 120.50 + 50.25 = 429.75; FEE ignored\"); }\n        System.out.printf(\"Net: $%.2f\\n\", StatementReader.computeNetCashFlow(\"statement.csv\"));\n    }\n}\n",
+      "testerExpectedOutput": "Net: $429.75",
+      "graderCases": [
+        {
+          "name": "Sample run (deposit - withdrawal, ignore FEE)",
+          "hidden": false,
+          "body": "String f = \"g_stmt.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nTX101,DEPOSIT,500.00\\nTX102,WITHDRAWAL,120.50\\nTX103,FEE,5.00\\nTX104,DEPOSIT,50.25\"); }\neqD(StatementReader.computeNetCashFlow(f),429.75);"
+        },
+        {
+          "name": "Header only returns 0.0",
+          "hidden": true,
+          "body": "String f = \"g_h.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\"); }\neqD(StatementReader.computeNetCashFlow(f),0.0);"
+        },
+        {
+          "name": "Missing file throws FileNotFoundException",
+          "hidden": true,
+          "body": "try { StatementReader.computeNetCashFlow(\"g_missing_stmt_999.csv\"); check(false,\"should throw\"); }\ncatch (java.io.FileNotFoundException e) { }"
+        },
+        {
+          "name": "Net negative flow",
+          "hidden": true,
+          "body": "String f = \"g_neg.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,DEPOSIT,100.0\\nB,WITHDRAWAL,250.0\"); }\neqD(StatementReader.computeNetCashFlow(f),-150.0);"
+        },
+        {
+          "name": "All deposits sum",
+          "hidden": true,
+          "body": "String f = \"g_dep.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,DEPOSIT,10.0\\nB,DEPOSIT,20.0\\nC,DEPOSIT,30.0\"); }\neqD(StatementReader.computeNetCashFlow(f),60.0);"
+        },
+        {
+          "name": "Unknown types ignored entirely",
+          "hidden": true,
+          "body": "String f = \"g_unk.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,FEE,5.0\\nB,INTEREST,3.0\\nC,DEPOSIT,100.0\"); }\neqD(StatementReader.computeNetCashFlow(f),100.0);"
+        },
+        {
+          "name": "Trailing blank lines handled",
+          "hidden": true,
+          "body": "String f = \"g_tr.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ID,Type,Amount\\nA,DEPOSIT,40.0\\n\\n\\n\"); }\neqD(StatementReader.computeNetCashFlow(f),40.0);"
+        }
+      ]
+    },
+    {
+      "id": "q8-inventory-expiration-exporter",
+      "order": 8,
+      "title": "Inventory Expiration Tracker",
+      "points": 12,
+      "theme": "Supply Chain",
+      "prompt": "This question gives you a question-specific abstract class **and** a question-specific interface. Your class must extend one and implement the other.\n\nCreate an abstract class `PerishableItem` in `PerishableItem.java`:\n* **Protected fields:** `String batchId`, `String itemName`.\n* **Constructor:** `PerishableItem(String batchId, String itemName)`.\n* **Getters:** `getBatchId()`, `getItemName()`.\n* **Abstract method:** `public abstract int daysUntilExpiry();` *(may be `0` or negative when already expired)*.\n\nCreate an interface `Expirable` in `Expirable.java`:\n* Abstract method: `int shelfDaysLeft();`\n* Default method: `default boolean isExpiring(int windowDays)`: returns `true` when `shelfDaysLeft() <= windowDays` (inclusive — already-expired items always count).\n* Default method: `default boolean isExpired()`: returns `true` when `shelfDaysLeft() <= 0`.\n\nCreate a class `DairyBatch` in `DairyBatch.java` that **extends `PerishableItem` and implements `Expirable`**:\n* **Private fields:** `int shelfLifeDays`, `int ageDays`.\n* **Constructor:** `DairyBatch(String batchId, String itemName, int shelfLifeDays, int ageDays)` calling `super`.\n* `daysUntilExpiry()` returns `shelfLifeDays - ageDays` (this can be negative).\n* `shelfDaysLeft()` must return the same value as `daysUntilExpiry()`.\n\n*Edge cases to think about (not in the sample): the expiring window is inclusive; `0` days left means expired; a negative value (already spoiled) is both expired and expiring; a fresh item is neither.*",
+      "sampleRun": "DairyBatch b = new DairyBatch(\"B01\", \"Whole Milk\", 10, 7);\nSystem.out.println(\"Days until expiry: \" + b.daysUntilExpiry());\nSystem.out.println(\"Expiring within 7: \" + b.isExpiring(7));\nSystem.out.println(\"Expired: \" + b.isExpired());",
+      "expectedOutput": "Days until expiry: 3\nExpiring within 7: true\nExpired: false",
+      "starterFiles": [
+        {
+          "filename": "PerishableItem.java",
+          "contents": "public abstract class PerishableItem {\n    protected String batchId;\n    protected String itemName;\n\n    // TODO: constructor + getBatchId()/getItemName()\n\n    public abstract int daysUntilExpiry();\n}\n"
+        },
+        {
+          "filename": "Expirable.java",
+          "contents": "public interface Expirable {\n    int shelfDaysLeft();\n\n    // TODO: default isExpiring(int windowDays) -> shelfDaysLeft() <= windowDays\n\n    // TODO: default isExpired() -> shelfDaysLeft() <= 0\n}\n"
+        },
+        {
+          "filename": "DairyBatch.java",
+          "contents": "public class DairyBatch extends PerishableItem implements Expirable {\n    // TODO: private fields shelfLifeDays, ageDays + constructor via super\n\n    @Override\n    public int daysUntilExpiry() {\n        // TODO: shelfLifeDays - ageDays (can be negative)\n        return 0;\n    }\n\n    @Override\n    public int shelfDaysLeft() {\n        return daysUntilExpiry();\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Days-until-expiry, inclusive expiring window, and not-yet-expired."
+        },
+        {
+          "name": "Test 2 [Hidden] (Expiring Window Inclusive)",
+          "visible": false,
+          "description": "isExpiring is true at exactly the window and false just below it."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero Days Left)",
+          "visible": false,
+          "description": "0 days left counts as both expired and expiring."
+        },
+        {
+          "name": "Test 4 [Hidden] (Already Expired Negative)",
+          "visible": false,
+          "description": "A negative days-until-expiry is expired and always expiring."
+        },
+        {
+          "name": "Test 5 [Hidden] (Fresh Item)",
+          "visible": false,
+          "description": "A fresh item is neither expired nor expiring in a short window."
+        },
+        {
+          "name": "Test 6 [Hidden] (Polymorphic Dispatch)",
+          "visible": false,
+          "description": "daysUntilExpiry invoked through a PerishableItem reference."
+        },
+        {
+          "name": "Test 7 [Hidden] (Type Contracts)",
+          "visible": false,
+          "description": "DairyBatch is both a PerishableItem and an Expirable."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        DairyBatch b = new DairyBatch(\"B01\", \"Whole Milk\", 10, 7);\n        System.out.println(\"Days until expiry: \" + b.daysUntilExpiry());\n        System.out.println(\"Expiring within 7: \" + b.isExpiring(7));\n        System.out.println(\"Expired: \" + b.isExpired());\n    }\n}\n",
+      "testerExpectedOutput": "Days until expiry: 3\nExpiring within 7: true\nExpired: false",
+      "graderCases": [
+        {
+          "name": "Sample run (days left + types)",
+          "hidden": false,
+          "body": "DairyBatch b = new DairyBatch(\"B01\",\"Whole Milk\",10,7);\neq(b.daysUntilExpiry(),3);\neq(b.shelfDaysLeft(),3);\neq(b.getItemName(),\"Whole Milk\");\ncheck(b instanceof PerishableItem, \"must extend PerishableItem\");\ncheck(b instanceof Expirable, \"must implement Expirable\");"
+        },
+        {
+          "name": "Expiring window is inclusive",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",10,3);\ncheck(b.isExpiring(7), \"7 days left <= 7 window\");\ncheck(!b.isExpiring(6), \"7 days left not <= 6 window\");"
+        },
+        {
+          "name": "Exactly at window boundary",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",10,3);\ncheck(b.isExpiring(7), \"exactly 7 <= 7\");"
+        },
+        {
+          "name": "Zero days left counts as expired and expiring",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",5,5);\neq(b.shelfDaysLeft(),0);\ncheck(b.isExpired(), \"0 days means expired\");\ncheck(b.isExpiring(0), \"0 <= 0 window\");"
+        },
+        {
+          "name": "Already-expired (negative) days",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",5,8);\neq(b.daysUntilExpiry(),-3);\ncheck(b.isExpired(), \"negative days means expired\");\ncheck(b.isExpiring(0), \"expired item always expiring\");"
+        },
+        {
+          "name": "Fresh item not expired, not expiring in short window",
+          "hidden": true,
+          "body": "DairyBatch b = new DairyBatch(\"X\",\"Y\",30,2);\ncheck(!b.isExpired(), \"28 days left is fresh\");\ncheck(!b.isExpiring(7), \"28 not <= 7\");\ncheck(b.isExpiring(28), \"28 <= 28\");"
+        },
+        {
+          "name": "Polymorphic daysUntilExpiry through PerishableItem",
+          "hidden": true,
+          "body": "PerishableItem p = new DairyBatch(\"X\",\"Y\",14,4);\neq(p.daysUntilExpiry(),10);"
+        }
+      ]
+    },
+    {
+      "id": "q9-cloud-compute-hierarchy",
+      "order": 9,
+      "title": "Cloud Compute Hierarchy",
+      "points": 12,
+      "theme": "Cloud Computing",
+      "prompt": "This question requires a question-specific abstract class **and** a question-specific interface. Every concrete instance type must extend the class and implement the interface.\n\nCreate an abstract class `CloudInstance` in `CloudInstance.java`:\n* **Protected fields:** `String instanceId`, `double baseHourlyRate`.\n* **Constructor:** `CloudInstance(String instanceId, double baseHourlyRate)`.\n* **Abstract method:** `public abstract double computeCost(double hoursRunning);`\n\nCreate an interface `Billable` in `Billable.java`:\n* Abstract method: `double costFor(double hours);`\n* Default method: `default double dailyEstimate()`: returns `costFor(24.0)`.\n* Default method: `default boolean exceedsBudget(double hours, double budget)`: returns `true` when `costFor(hours)` is **strictly greater** than `budget`.\n\nCreate `OnDemandInstance` in `OnDemandInstance.java` **extending `CloudInstance` and implementing `Billable`**:\n* **Constructor:** `OnDemandInstance(String instanceId, double baseHourlyRate)`.\n* `computeCost(double hoursRunning)`: `baseHourlyRate * hoursRunning`.\n* `costFor(double hours)` must return the same value as `computeCost(hours)`.\n\nCreate `SpotInstance` in `SpotInstance.java` **extending `CloudInstance` and implementing `Billable`**:\n* **Private field:** `double bidDiscountPercent` (e.g. `60.0` for 60% off).\n* **Constructor:** `SpotInstance(String instanceId, double baseHourlyRate, double bidDiscountPercent)` using `super`.\n* `computeCost(double hoursRunning)`:\n  * `effectiveRate = baseHourlyRate * (1.0 - (bidDiscountPercent / 100.0))`.\n  * Base cost is `effectiveRate * hoursRunning`.\n  * If `hoursRunning > 24.0`, subtract a `$2.00` interruption-risk rebate; the final cost **cannot drop below `0.0`**.\n* `costFor(double hours)` must return the same value as `computeCost(hours)`.\n\n*Edge cases to think about (not in the sample): `24.0` hours exactly gets no rebate but `24.1` does; the rebate cannot push cost negative; a 100% discount is free; `exceedsBudget` is strict at the budget.*",
+      "sampleRun": "CloudInstance onDemand = new OnDemandInstance(\"i-ondemand\", 2.00);\nCloudInstance spot = new SpotInstance(\"i-spot\", 2.00, 50.0); // $1.00/hr\nSystem.out.println(\"On-Demand (10h): \" + onDemand.computeCost(10.0));\nSystem.out.println(\"Spot (10h): \" + spot.computeCost(10.0));\nSystem.out.println(\"Spot (30h): \" + spot.computeCost(30.0)); // 30*1.0 - 2.0 = 28.0",
+      "expectedOutput": "On-Demand (10h): 20.0\nSpot (10h): 10.0\nSpot (30h): 28.0",
+      "starterFiles": [
+        {
+          "filename": "CloudInstance.java",
+          "contents": "public abstract class CloudInstance {\n    protected String instanceId;\n    protected double baseHourlyRate;\n    // TODO: constructor\n\n    public abstract double computeCost(double hoursRunning);\n}\n"
+        },
+        {
+          "filename": "Billable.java",
+          "contents": "public interface Billable {\n    double costFor(double hours);\n\n    // TODO: default dailyEstimate() -> costFor(24.0)\n\n    // TODO: default exceedsBudget(double hours, double budget) -> costFor(hours) > budget\n}\n"
+        },
+        {
+          "filename": "OnDemandInstance.java",
+          "contents": "public class OnDemandInstance extends CloudInstance implements Billable {\n    // TODO: constructor via super\n\n    @Override\n    public double computeCost(double hoursRunning) {\n        return 0.0;\n    }\n\n    @Override\n    public double costFor(double hours) {\n        return computeCost(hours);\n    }\n}\n"
+        },
+        {
+          "filename": "SpotInstance.java",
+          "contents": "public class SpotInstance extends CloudInstance implements Billable {\n    // TODO: private double bidDiscountPercent + constructor via super\n\n    @Override\n    public double computeCost(double hoursRunning) {\n        // TODO: effectiveRate * hours; if hours > 24 subtract 2 (floor 0.0)\n        return 0.0;\n    }\n\n    @Override\n    public double costFor(double hours) {\n        return computeCost(hours);\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "On-demand linear rate, spot 50% discount, spot > 24h rebate."
+        },
+        {
+          "name": "Test 2 [Hidden] (Spot Exact 24 Hours)",
+          "visible": false,
+          "description": "24.0 hours does NOT receive the $2.00 rebate."
+        },
+        {
+          "name": "Test 3 [Hidden] (Spot 24.1 Hours)",
+          "visible": false,
+          "description": "Just over 24 hours receives the $2.00 rebate."
+        },
+        {
+          "name": "Test 4 [Hidden] (Spot Zero Floor)",
+          "visible": false,
+          "description": "Spot cost cannot drop below 0.0 even after rebate."
+        },
+        {
+          "name": "Test 5 [Hidden] (0 Hours Running)",
+          "visible": false,
+          "description": "0 hours running returns 0.0 for both types."
+        },
+        {
+          "name": "Test 6 [Hidden] (100% Discount Spot)",
+          "visible": false,
+          "description": "100% discount spot costs 0.0."
+        },
+        {
+          "name": "Test 7 [Hidden] (Billable Defaults)",
+          "visible": false,
+          "description": "dailyEstimate uses costFor(24) and exceedsBudget is strict at the budget."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CloudInstance onDemand = new OnDemandInstance(\"i-ondemand\", 2.00);\n        CloudInstance spot = new SpotInstance(\"i-spot\", 2.00, 50.0);\n        System.out.println(\"On-Demand (10h): \" + onDemand.computeCost(10.0));\n        System.out.println(\"Spot (10h): \" + spot.computeCost(10.0));\n        System.out.println(\"Spot (30h): \" + spot.computeCost(30.0));\n    }\n}\n",
+      "testerExpectedOutput": "On-Demand (10h): 20.0\nSpot (10h): 10.0\nSpot (30h): 28.0",
+      "graderCases": [
+        {
+          "name": "Sample run (on-demand, spot discount, >24h rebate + types)",
+          "hidden": false,
+          "body": "CloudInstance onDemand = new OnDemandInstance(\"i-od\",2.00);\nCloudInstance spot = new SpotInstance(\"i-sp\",2.00,50.0);\neqD(onDemand.computeCost(10.0),20.0);\neqD(spot.computeCost(10.0),10.0);\neqD(spot.computeCost(30.0),28.0);\ncheck(onDemand instanceof CloudInstance, \"must extend CloudInstance\");\ncheck(onDemand instanceof Billable, \"must implement Billable\");"
+        },
+        {
+          "name": "Spot exactly 24 hours: no rebate",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",2.00,50.0);\neqD(s.computeCost(24.0),24.0);"
+        },
+        {
+          "name": "Spot just over 24 hours: rebate applies",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",2.00,50.0);\neqD(s.computeCost(25.0),23.0);"
+        },
+        {
+          "name": "Spot cost floored at 0.0",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",0.10,50.0);\neqD(s.computeCost(25.0),0.0);"
+        },
+        {
+          "name": "Zero hours returns 0.0 for both",
+          "hidden": true,
+          "body": "eqD(new OnDemandInstance(\"a\",3.0).computeCost(0.0),0.0);\neqD(new SpotInstance(\"b\",3.0,10.0).computeCost(0.0),0.0);"
+        },
+        {
+          "name": "100% discount spot costs 0.0",
+          "hidden": true,
+          "body": "SpotInstance s = new SpotInstance(\"x\",5.00,100.0);\neqD(s.computeCost(10.0),0.0);"
+        },
+        {
+          "name": "dailyEstimate and exceedsBudget defaults",
+          "hidden": true,
+          "body": "OnDemandInstance o = new OnDemandInstance(\"x\",2.00);\neqD(o.dailyEstimate(),48.0);\ncheck(o.exceedsBudget(10.0,19.0), \"20 > 19\");\ncheck(!o.exceedsBudget(10.0,20.0), \"20 not > 20\");"
+        }
+      ]
+    },
+    {
+      "id": "q10-smart-greenhouse-climate-loop",
+      "order": 10,
+      "title": "Smart Greenhouse Controller",
+      "points": 14,
+      "theme": "AgTech",
+      "prompt": "This capstone requires a question-specific abstract class **and** a question-specific interface, extended/implemented together by your concrete class.\n\nCreate an abstract class `Greenhouse` in `Greenhouse.java`:\n* **Protected fields:** `String zoneId`, `int temp`, `int water`.\n* **Constructor:** `Greenhouse(String zoneId, int startTemp, int startWater)`.\n* **Getters:** `getTemp()`, `getWater()`.\n* Method `heat(int degrees)`: raise `temp` by `degrees`.\n* **Abstract method:** `public abstract boolean mist();`\n\nCreate an interface `ClimateControlled` in `ClimateControlled.java`:\n* Abstract methods: `int currentTemp();`, `int safeLow();`, `int safeHigh();`\n* Default method: `default boolean inSafeRange()`: `true` only when `currentTemp()` is **strictly between** `safeLow()` and `safeHigh()` (the thresholds themselves are emergencies).\n* Default method: `default boolean freezeAlert()`: `true` when `currentTemp() <= safeLow()`.\n* Default method: `default boolean heatAlert()`: `true` when `currentTemp() >= safeHigh()`.\n\nCreate a class `TomatoGreenhouse` in `TomatoGreenhouse.java` that **extends `Greenhouse` and implements `ClimateControlled`**:\n* **Constructor:** `TomatoGreenhouse(String zoneId, int startTemp, int startWater)` calling `super`.\n* `mist()`: if `water < 10`, **refuse** — return `false` and change nothing. Otherwise deduct `10` gal, drop `temp` by `5`, and return `true`.\n* `currentTemp()` returns the current temperature.\n* `safeLow()` returns `45`; `safeHigh()` returns `95`.\n\n*Edge cases to think about (not in the sample): misting is refused (no state change) when the reserve is under 10; misting with exactly 10 gal depletes to 0; `45` and `95` are emergency boundaries, NOT safe; `inSafeRange` is strict.*",
+      "sampleRun": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z1\", 70, 50);\ng.heat(6);\nSystem.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\ng.mist();\nSystem.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\nSystem.out.println(\"In safe range: \" + g.inSafeRange());",
+      "expectedOutput": "Temp: 76F | Water: 50 gal\nTemp: 71F | Water: 40 gal\nIn safe range: true",
+      "starterFiles": [
+        {
+          "filename": "Greenhouse.java",
+          "contents": "public abstract class Greenhouse {\n    protected String zoneId;\n    protected int temp;\n    protected int water;\n\n    // TODO: constructor + getTemp()/getWater()\n\n    public void heat(int degrees) {\n        // TODO: raise temp\n    }\n\n    public abstract boolean mist();\n}\n"
+        },
+        {
+          "filename": "ClimateControlled.java",
+          "contents": "public interface ClimateControlled {\n    int currentTemp();\n    int safeLow();\n    int safeHigh();\n\n    // TODO: default inSafeRange() -> strictly between safeLow and safeHigh\n\n    // TODO: default freezeAlert() -> currentTemp() <= safeLow()\n\n    // TODO: default heatAlert() -> currentTemp() >= safeHigh()\n}\n"
+        },
+        {
+          "filename": "TomatoGreenhouse.java",
+          "contents": "public class TomatoGreenhouse extends Greenhouse implements ClimateControlled {\n    // TODO: constructor via super\n\n    @Override\n    public boolean mist() {\n        // TODO: refuse (false) if water < 10; else -10 water, -5 temp, true\n        return false;\n    }\n\n    @Override\n    public int currentTemp() {\n        return 0;\n    }\n\n    @Override\n    public int safeLow() {\n        return 45;\n    }\n\n    @Override\n    public int safeHigh() {\n        return 95;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Heat lamps raise temp, misting cools and uses water, temperature stays in the safe band."
+        },
+        {
+          "name": "Test 2 [Hidden] (Mist Refused Under 10 gal)",
+          "visible": false,
+          "description": "A refused mist returns false and leaves temp and water unchanged."
+        },
+        {
+          "name": "Test 3 [Hidden] (Mist Exactly 10 gal)",
+          "visible": false,
+          "description": "Misting with exactly 10 gal succeeds and depletes water to 0."
+        },
+        {
+          "name": "Test 4 [Hidden] (Freeze Boundary at 45)",
+          "visible": false,
+          "description": "At exactly 45F the freeze alert fires and the zone is NOT in safe range."
+        },
+        {
+          "name": "Test 5 [Hidden] (Heat Boundary at 95)",
+          "visible": false,
+          "description": "At exactly 95F the heat alert fires and the zone is NOT in safe range."
+        },
+        {
+          "name": "Test 6 [Hidden] (Strict Safe Range)",
+          "visible": false,
+          "description": "A temperature strictly inside the band is safe with no alerts."
+        },
+        {
+          "name": "Test 7 [Hidden] (Heat Into Alert)",
+          "visible": false,
+          "description": "Heating up to the safe high triggers the heat alert."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        TomatoGreenhouse g = new TomatoGreenhouse(\"Z1\", 70, 50);\n        g.heat(6);\n        System.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\n        g.mist();\n        System.out.println(\"Temp: \" + g.getTemp() + \"F | Water: \" + g.getWater() + \" gal\");\n        System.out.println(\"In safe range: \" + g.inSafeRange());\n    }\n}\n",
+      "testerExpectedOutput": "Temp: 76F | Water: 50 gal\nTemp: 71F | Water: 40 gal\nIn safe range: true",
+      "graderCases": [
+        {
+          "name": "Sample run (heat, mist, state + types)",
+          "hidden": false,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z1\",70,50);\ng.heat(6);\neq(g.getTemp(),76);\ncheck(g.mist(), \"should mist with full reserve\");\neq(g.getTemp(),71); eq(g.getWater(),40);\ncheck(g instanceof Greenhouse, \"must extend Greenhouse\");\ncheck(g instanceof ClimateControlled, \"must implement ClimateControlled\");"
+        },
+        {
+          "name": "Mist refused when water < 10 (unchanged)",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",70,5);\ncheck(!g.mist(), \"reserve too low\");\neq(g.getTemp(),70); eq(g.getWater(),5);"
+        },
+        {
+          "name": "Mist with exactly 10 gal depletes to 0",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",70,10);\ncheck(g.mist(), \"10 is enough to mist\");\neq(g.getWater(),0); eq(g.getTemp(),65);"
+        },
+        {
+          "name": "Freeze alert at exactly the safe low (45)",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",45,50);\ncheck(g.freezeAlert(), \"45 <= safeLow 45\");\ncheck(!g.inSafeRange(), \"45 is a freeze boundary, not safe\");"
+        },
+        {
+          "name": "Heat alert at exactly the safe high (95)",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",95,50);\ncheck(g.heatAlert(), \"95 >= safeHigh 95\");\ncheck(!g.inSafeRange(), \"95 is a heat boundary, not safe\");"
+        },
+        {
+          "name": "In safe range strictly inside the band",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",70,50);\ncheck(g.inSafeRange(), \"70 strictly inside\");\ncheck(!g.freezeAlert(), \"70 not freezing\");\ncheck(!g.heatAlert(), \"70 not overheating\");"
+        },
+        {
+          "name": "Heat raises temperature into heat alert",
+          "hidden": true,
+          "body": "TomatoGreenhouse g = new TomatoGreenhouse(\"Z\",90,50);\ng.heat(5);\neq(g.getTemp(),95);\ncheck(g.heatAlert(), \"reached 95\");"
+        }
+      ]
+    }
+  ]
+}

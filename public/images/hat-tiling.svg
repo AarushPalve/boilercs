@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  "Einstein hat" aperiodic monotile motif.
+
+  NOTE: A mathematically-exact aperiodic hat tiling can't be expressed as a
+  repeating SVG <pattern> (that's periodic by definition). This file lays out
+  the actual hat-monotile *shape* in a rotationally-varied cluster and repeats
+  it as a seamless-ish texture — so it reads as the hat tiling even though the
+  repeat is periodic. The hat polygon below uses the standard kite coordinates
+  (unit kite grid) scaled to a small motif, outlined in antique gold.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="112" height="97" viewBox="0 0 112 97">
+  <defs>
+    <!-- One "hat" monotile, origin-centered, ~ small. Path from the canonical
+         8-kite hat outline. -->
+    <g id="hat">
+      <path
+        d="M0 0 L0 -14 L12.12 -21 L12.12 -35 L24.25 -28 L24.25 -14 L36.37 -7 L24.25 0 L24.25 14 L12.12 7 L0 14 Z"
+        fill="none"
+        stroke="rgba(201,160,84,0.55)"
+        stroke-width="1.1"
+        stroke-linejoin="round"
+      />
+    </g>
+  </defs>
+
+  <!-- A small cluster of hats in several orientations/reflections, arranged to
+       interlock. Positioned to tile reasonably across the 112x97 cell. -->
+  <g>
+    <use href="#hat" transform="translate(20 24) rotate(0)" />
+    <use href="#hat" transform="translate(20 24) rotate(60)" />
+    <use href="#hat" transform="translate(20 24) rotate(180)" />
+    <use href="#hat" transform="translate(76 24) rotate(120) scale(-1,1)" />
+    <use href="#hat" transform="translate(56 62) rotate(240)" />
+    <use href="#hat" transform="translate(56 62) rotate(300) scale(-1,1)" />
+    <use href="#hat" transform="translate(96 70) rotate(60)" />
+  </g>
+</svg>

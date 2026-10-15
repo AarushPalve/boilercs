@@ -1,0 +1,934 @@
+{
+  "slug": "practice-exam-1",
+  "title": "Practice Exam 1",
+  "timeLimitMinutes": 60,
+  "totalPoints": 100,
+  "description": "10 free-response coding challenges across Aviation, IoT, Fintech, Clean Energy, Healthcare, Logistics, Cybersecurity, Sports, Music, and Marine Engineering themes.",
+  "questions": [
+    {
+      "id": "q1-flight-ticket",
+      "order": 1,
+      "title": "Flight Ticket",
+      "points": 6,
+      "theme": "Aviation",
+      "prompt": "Create a class named `FlightTicket` in `FlightTicket.java`:\n\n* **Private fields:** `String passengerName`, `String flightNumber`, `int seatRow`, `double baseFare`.\n* **Constructor 1:** `FlightTicket(String passengerName, String flightNumber, int seatRow, double baseFare)`\n* **Constructor 2:** `FlightTicket(String passengerName, String flightNumber)` which sets `seatRow` to `30` and `baseFare` to `199.99`.\n* **Getters and Setters:** For all four fields.\n  * In `setSeatRow(int seatRow)`: A commercial aircraft only has rows 1 to 40 inclusive. If `seatRow < 1`, set `seatRow = 1`. If `seatRow > 40`, set `seatRow = 40`.\n  * In `setBaseFare(double baseFare)`: Fare cannot be negative. If `baseFare < 0.0`, set `baseFare = 0.0`.",
+      "sampleRun": "FlightTicket t1 = new FlightTicket(\"Amelia Earhart\", \"AA180\");\nSystem.out.println(t1.getPassengerName() + \" | Row \" + t1.getSeatRow() + \" | $\" + t1.getBaseFare());\nt1.setSeatRow(55);\nt1.setBaseFare(-50.0);\nSystem.out.println(\"Updated: Row \" + t1.getSeatRow() + \" | $\" + t1.getBaseFare());",
+      "expectedOutput": "Amelia Earhart | Row 30 | $199.99\nUpdated: Row 40 | $0.0",
+      "starterFiles": [
+        {
+          "filename": "FlightTicket.java",
+          "contents": "public class FlightTicket {\n    // TODO: private fields: passengerName, flightNumber, seatRow, baseFare\n\n    // TODO: 4-arg constructor\n\n    // TODO: 2-arg constructor (seatRow = 30, baseFare = 199.99)\n\n    // TODO: getters and setters (clamp seatRow to [1,40], baseFare to >= 0.0)\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "2-arg constructor default fields; upper row clamp (55 -> 40); negative fare clamp (-50.0 -> 0.0)."
+        },
+        {
+          "name": "Test 2 [Hidden] (Lower Row Clamp)",
+          "visible": false,
+          "description": "setSeatRow(0) and setSeatRow(-5) clamp to 1."
+        },
+        {
+          "name": "Test 3 [Hidden] (Row Boundaries)",
+          "visible": false,
+          "description": "Setting row to exactly 1 and 40 keeps 1 and 40."
+        },
+        {
+          "name": "Test 4 [Hidden] (4-Arg Constructor)",
+          "visible": false,
+          "description": "new FlightTicket(\"Neil Armstrong\", \"UA202\", 12, 349.50) preserves all fields."
+        },
+        {
+          "name": "Test 5 [Hidden] (Zero Fare)",
+          "visible": false,
+          "description": "setBaseFare(0.0) sets baseFare to 0.0."
+        },
+        {
+          "name": "Test 6 [Hidden] (String Setters)",
+          "visible": false,
+          "description": "setPassengerName and setFlightNumber update fields correctly."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        FlightTicket t1 = new FlightTicket(\"Amelia Earhart\", \"AA180\");\n        System.out.println(t1.getPassengerName() + \" | Row \" + t1.getSeatRow() + \" | $\" + t1.getBaseFare());\n        t1.setSeatRow(55);\n        t1.setBaseFare(-50.0);\n        System.out.println(\"Updated: Row \" + t1.getSeatRow() + \" | $\" + t1.getBaseFare());\n    }\n}\n",
+      "testerExpectedOutput": "Amelia Earhart | Row 30 | $199.99\nUpdated: Row 40 | $0.0",
+      "graderCases": [
+        {
+          "name": "Sample run (2-arg defaults + clamps)",
+          "hidden": false,
+          "body": "FlightTicket t = new FlightTicket(\"Amelia Earhart\",\"AA180\");\neq(t.getSeatRow(), 30);\neqD(t.getBaseFare(), 199.99);\nt.setSeatRow(55); eq(t.getSeatRow(), 40);\nt.setBaseFare(-50.0); eqD(t.getBaseFare(), 0.0);"
+        },
+        {
+          "name": "Lower row clamp",
+          "hidden": true,
+          "body": "FlightTicket t = new FlightTicket(\"A\",\"B\");\nt.setSeatRow(0); eq(t.getSeatRow(),1);\nt.setSeatRow(-5); eq(t.getSeatRow(),1);"
+        },
+        {
+          "name": "Row boundaries 1 and 40",
+          "hidden": true,
+          "body": "FlightTicket t = new FlightTicket(\"A\",\"B\");\nt.setSeatRow(1); eq(t.getSeatRow(),1);\nt.setSeatRow(40); eq(t.getSeatRow(),40);"
+        },
+        {
+          "name": "4-arg constructor preserves fields",
+          "hidden": true,
+          "body": "FlightTicket t = new FlightTicket(\"Neil Armstrong\",\"UA202\",12,349.50);\neq(t.getPassengerName(),\"Neil Armstrong\");\neq(t.getFlightNumber(),\"UA202\");\neq(t.getSeatRow(),12);\neqD(t.getBaseFare(),349.50);"
+        },
+        {
+          "name": "Zero fare allowed",
+          "hidden": true,
+          "body": "FlightTicket t = new FlightTicket(\"A\",\"B\");\nt.setBaseFare(0.0); eqD(t.getBaseFare(),0.0);"
+        },
+        {
+          "name": "String setters",
+          "hidden": true,
+          "body": "FlightTicket t = new FlightTicket(\"A\",\"B\");\nt.setPassengerName(\"Zoe\"); eq(t.getPassengerName(),\"Zoe\");\nt.setFlightNumber(\"DL9\"); eq(t.getFlightNumber(),\"DL9\");"
+        }
+      ]
+    },
+    {
+      "id": "q2-smart-thermostat",
+      "order": 2,
+      "title": "Smart Thermostat",
+      "points": 8,
+      "theme": "IoT & Home Automation",
+      "prompt": "Create a class named `Thermostat` in `Thermostat.java`:\n\n* **Private fields:** `String deviceId`, `String roomName`, `double currentTemp`.\n* **Constructor:** `Thermostat(String deviceId, String roomName, double currentTemp)`.\n* **`toString()`:** Return:\n  ```\n  Device: <deviceId>\n  Room: <roomName>\n  Temp: <currentTemp formatted to 1 decimal place> F\n  ```\n  *(Separated by `\\n` with no trailing newline)*\n* **`equals(Object o)`:** Two thermostats are equal if their `deviceId` matches **ignoring case**, regardless of room name or temperature. Return `false` if `o` is `null` or not an instance of `Thermostat`.",
+      "sampleRun": "Thermostat t1 = new Thermostat(\"NEST-001\", \"Living Room\", 72.45);\nThermostat t2 = new Thermostat(\"nest-001\", \"Basement\", 68.0);\nSystem.out.println(t1);\nSystem.out.println(\"Matches: \" + t1.equals(t2));",
+      "expectedOutput": "Device: NEST-001\nRoom: Living Room\nTemp: 72.5 F\nMatches: true",
+      "starterFiles": [
+        {
+          "filename": "Thermostat.java",
+          "contents": "public class Thermostat {\n    // TODO: private fields: deviceId, roomName, currentTemp\n\n    // TODO: constructor\n\n    // TODO: toString() -> \"Device: ...\\nRoom: ...\\nTemp: X.X F\"\n\n    // TODO: equals() -> deviceId match ignoring case; null/type safe\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Multi-line format with 1-decimal rounding; case-insensitive device ID match."
+        },
+        {
+          "name": "Test 2 [Hidden] (Null Check)",
+          "visible": false,
+          "description": "t1.equals(null) returns false without throwing NullPointerException."
+        },
+        {
+          "name": "Test 3 [Hidden] (Different Object Type)",
+          "visible": false,
+          "description": "t1.equals(\"NEST-001\") returns false without ClassCastException."
+        },
+        {
+          "name": "Test 4 [Hidden] (Different ID)",
+          "visible": false,
+          "description": "Same room and temp, different device ID returns false."
+        },
+        {
+          "name": "Test 5 [Hidden] (Exact Rounding)",
+          "visible": false,
+          "description": "currentTemp = 69.99 formats as 70.0 F."
+        },
+        {
+          "name": "Test 6 [Hidden] (Trailing Zero Format)",
+          "visible": false,
+          "description": "currentTemp = 68.0 formats as 68.0 F."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Thermostat t1 = new Thermostat(\"NEST-001\", \"Living Room\", 72.45);\n        Thermostat t2 = new Thermostat(\"nest-001\", \"Basement\", 68.0);\n        System.out.println(t1);\n        System.out.println(\"Matches: \" + t1.equals(t2));\n    }\n}\n",
+      "testerExpectedOutput": "Device: NEST-001\nRoom: Living Room\nTemp: 72.5 F\nMatches: true",
+      "graderCases": [
+        {
+          "name": "Sample run (format + case-insensitive equals)",
+          "hidden": false,
+          "body": "Thermostat t1 = new Thermostat(\"NEST-001\",\"Living Room\",72.45);\nThermostat t2 = new Thermostat(\"nest-001\",\"Basement\",68.0);\neq(t1.toString(),\"Device: NEST-001\\nRoom: Living Room\\nTemp: 72.5 F\");\ncheck(t1.equals(t2), \"case-insensitive id should match\");"
+        },
+        {
+          "name": "equals(null) is false",
+          "hidden": true,
+          "body": "Thermostat t = new Thermostat(\"X\",\"R\",1.0);\ncheck(!t.equals(null), \"equals(null) must be false\");"
+        },
+        {
+          "name": "equals(other type) is false",
+          "hidden": true,
+          "body": "Thermostat t = new Thermostat(\"X\",\"R\",1.0);\ncheck(!t.equals(\"X\"), \"equals(String) must be false\");"
+        },
+        {
+          "name": "Different id not equal",
+          "hidden": true,
+          "body": "Thermostat a = new Thermostat(\"A1\",\"R\",1.0);\nThermostat b = new Thermostat(\"B2\",\"R\",1.0);\ncheck(!a.equals(b), \"different ids must not be equal\");"
+        },
+        {
+          "name": "Rounding 69.99 -> 70.0",
+          "hidden": true,
+          "body": "Thermostat t = new Thermostat(\"X\",\"R\",69.99);\ncheck(t.toString().contains(\"70.0 F\"), \"should round to 70.0 F\");"
+        },
+        {
+          "name": "Trailing zero 68.0 F",
+          "hidden": true,
+          "body": "Thermostat t = new Thermostat(\"X\",\"R\",68.0);\ncheck(t.toString().contains(\"68.0 F\"), \"should show 68.0 F\");"
+        }
+      ]
+    },
+    {
+      "id": "q3-bank-transaction-validator",
+      "order": 3,
+      "title": "Bank Transaction Validator",
+      "points": 8,
+      "theme": "Fintech",
+      "prompt": "Create a checked exception named `InsufficientFundsException` in `InsufficientFundsException.java` that extends `Exception` with a constructor taking `String message`.\n\nIn `AccountValidator.java`, implement:\n`public static double processWithdrawal(double balance, double amount) throws InsufficientFundsException`\n* If `amount <= 0.0`, throw `IllegalArgumentException` with message: `\"Withdrawal amount must be positive\"`.\n* If `amount > balance`, throw `InsufficientFundsException` with message: `\"Overdraft prevented: balance is <balance>, withdrawal requested is <amount>\"`. (Use raw double in message).\n* Otherwise, return `balance - amount`.",
+      "sampleRun": "try {\n    double rem = AccountValidator.processWithdrawal(100.0, 40.0);\n    System.out.println(\"Remaining: \" + rem);\n    AccountValidator.processWithdrawal(rem, 75.0);\n} catch (InsufficientFundsException e) {\n    System.out.println(e.getMessage());\n}",
+      "expectedOutput": "Remaining: 60.0\nOverdraft prevented: balance is 60.0, withdrawal requested is 75.0",
+      "starterFiles": [
+        {
+          "filename": "InsufficientFundsException.java",
+          "contents": "public class InsufficientFundsException extends Exception {\n    // TODO: constructor taking String message -> super(message)\n}\n"
+        },
+        {
+          "filename": "AccountValidator.java",
+          "contents": "public class AccountValidator {\n    public static double processWithdrawal(double balance, double amount)\n            throws InsufficientFundsException {\n        // TODO: validate amount > 0, check overdraft, else return balance - amount\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Valid withdrawal followed by InsufficientFundsException."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact Balance Withdrawal)",
+          "visible": false,
+          "description": "processWithdrawal(50.0, 50.0) returns 0.0."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero Withdrawal Amount)",
+          "visible": false,
+          "description": "processWithdrawal(100.0, 0.0) throws IllegalArgumentException."
+        },
+        {
+          "name": "Test 4 [Hidden] (Negative Withdrawal Amount)",
+          "visible": false,
+          "description": "processWithdrawal(100.0, -15.0) throws IllegalArgumentException."
+        },
+        {
+          "name": "Test 5 [Hidden] (Checked Exception Verification)",
+          "visible": false,
+          "description": "Verifies InsufficientFundsException extends Exception (not RuntimeException)."
+        },
+        {
+          "name": "Test 6 [Hidden] (Penny Overdraft)",
+          "visible": false,
+          "description": "processWithdrawal(50.00, 50.01) throws InsufficientFundsException."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try {\n            double rem = AccountValidator.processWithdrawal(100.0, 40.0);\n            System.out.println(\"Remaining: \" + rem);\n            AccountValidator.processWithdrawal(rem, 75.0);\n        } catch (InsufficientFundsException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n",
+      "testerExpectedOutput": "Remaining: 60.0\nOverdraft prevented: balance is 60.0, withdrawal requested is 75.0",
+      "graderCases": [
+        {
+          "name": "Sample run (valid then overdraft)",
+          "hidden": false,
+          "body": "double rem = AccountValidator.processWithdrawal(100.0,40.0);\neqD(rem,60.0);\ntry { AccountValidator.processWithdrawal(rem,75.0); check(false,\"should throw\"); }\ncatch (InsufficientFundsException e) { eq(e.getMessage(),\"Overdraft prevented: balance is 60.0, withdrawal requested is 75.0\"); }"
+        },
+        {
+          "name": "Exact balance withdrawal",
+          "hidden": true,
+          "body": "eqD(AccountValidator.processWithdrawal(50.0,50.0), 0.0);"
+        },
+        {
+          "name": "Zero amount throws IllegalArgumentException",
+          "hidden": true,
+          "body": "try { AccountValidator.processWithdrawal(100.0,0.0); check(false,\"should throw\"); }\ncatch (IllegalArgumentException e) { eq(e.getMessage(),\"Withdrawal amount must be positive\"); }"
+        },
+        {
+          "name": "Negative amount throws IllegalArgumentException",
+          "hidden": true,
+          "body": "try { AccountValidator.processWithdrawal(100.0,-15.0); check(false,\"should throw\"); }\ncatch (IllegalArgumentException e) {}"
+        },
+        {
+          "name": "InsufficientFundsException is checked",
+          "hidden": true,
+          "body": "check(Exception.class.isAssignableFrom(InsufficientFundsException.class) && !RuntimeException.class.isAssignableFrom(InsufficientFundsException.class), \"must extend Exception, not RuntimeException\");"
+        },
+        {
+          "name": "Penny overdraft throws",
+          "hidden": true,
+          "body": "try { AccountValidator.processWithdrawal(50.00,50.01); check(false,\"should throw\"); }\ncatch (InsufficientFundsException e) {}"
+        }
+      ]
+    },
+    {
+      "id": "q4-renewable-power-source",
+      "order": 4,
+      "title": "Renewable Power Source",
+      "points": 8,
+      "theme": "Clean Energy",
+      "prompt": "Create an interface named `RenewableSource` in `RenewableSource.java`:\n* Abstract method: `double getDailyKWh();`\n* Default method: `default double getAnnualKWh()`: returns `getDailyKWh() * 365.0`.\n* Default method: `default boolean meetsTarget(double yearlyTarget)`: returns `true` if `getAnnualKWh() >= yearlyTarget`, else `false`.\n\nCreate a class named `SolarPanel` in `SolarPanel.java` that implements `RenewableSource`:\n* **Private fields:** `double peakWattage`, `double dailySunHours`.\n* **Constructor:** `SolarPanel(double peakWattage, double dailySunHours)`.\n* Implement `getDailyKWh()`: formula is `(peakWattage * dailySunHours) / 1000.0`. If either field is negative, return `0.0`.",
+      "sampleRun": "SolarPanel panel = new SolarPanel(400.0, 5.0); // 400W * 5h / 1000 = 2.0 kWh/day\nSystem.out.printf(\"Daily: %.2f kWh\\n\", panel.getDailyKWh());\nSystem.out.printf(\"Annual: %.2f kWh\\n\", panel.getAnnualKWh());\nSystem.out.println(\"Meets 700 kWh: \" + panel.meetsTarget(700.0));",
+      "expectedOutput": "Daily: 2.00 kWh\nAnnual: 730.00 kWh\nMeets 700 kWh: true",
+      "starterFiles": [
+        {
+          "filename": "RenewableSource.java",
+          "contents": "public interface RenewableSource {\n    double getDailyKWh();\n\n    // TODO: default getAnnualKWh() -> getDailyKWh() * 365.0\n\n    // TODO: default meetsTarget(double yearlyTarget)\n}\n"
+        },
+        {
+          "filename": "SolarPanel.java",
+          "contents": "public class SolarPanel implements RenewableSource {\n    // TODO: private fields peakWattage, dailySunHours\n\n    // TODO: constructor\n\n    // TODO: getDailyKWh() -> (peakWattage * dailySunHours) / 1000.0, 0.0 if any negative\n    public double getDailyKWh() {\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "400W panel with 5 sun hours meets 700 kWh target."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact Annual Boundary)",
+          "visible": false,
+          "description": "getAnnualKWh() == yearlyTarget returns true."
+        },
+        {
+          "name": "Test 3 [Hidden] (Fails Target)",
+          "visible": false,
+          "description": "Annual output 730 kWh against target 800 kWh returns false."
+        },
+        {
+          "name": "Test 4 [Hidden] (Negative Sun Hours)",
+          "visible": false,
+          "description": "dailySunHours = -2.0 yields 0.0 daily and annual kWh."
+        },
+        {
+          "name": "Test 5 [Hidden] (Negative Wattage)",
+          "visible": false,
+          "description": "peakWattage = -100.0 yields 0.0 kWh."
+        },
+        {
+          "name": "Test 6 [Hidden] (Polymorphic Reference)",
+          "visible": false,
+          "description": "RenewableSource r = new SolarPanel(300, 4); invokes default methods correctly."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        SolarPanel panel = new SolarPanel(400.0, 5.0); // 400W * 5h / 1000 = 2.0 kWh/day\n        System.out.printf(\"Daily: %.2f kWh\\n\", panel.getDailyKWh());\n        System.out.printf(\"Annual: %.2f kWh\\n\", panel.getAnnualKWh());\n        System.out.println(\"Meets 700 kWh: \" + panel.meetsTarget(700.0));\n    }\n}\n",
+      "testerExpectedOutput": "Daily: 2.00 kWh\nAnnual: 730.00 kWh\nMeets 700 kWh: true",
+      "graderCases": [
+        {
+          "name": "Sample run (daily/annual/target)",
+          "hidden": false,
+          "body": "SolarPanel p = new SolarPanel(400.0,5.0);\neqD(p.getDailyKWh(),2.0);\neqD(p.getAnnualKWh(),730.0);\ncheck(p.meetsTarget(700.0), \"730 should meet 700\");"
+        },
+        {
+          "name": "Exact annual boundary",
+          "hidden": true,
+          "body": "SolarPanel p = new SolarPanel(400.0,5.0);\ncheck(p.meetsTarget(730.0), \"equal should meet target\");"
+        },
+        {
+          "name": "Fails higher target",
+          "hidden": true,
+          "body": "SolarPanel p = new SolarPanel(400.0,5.0);\ncheck(!p.meetsTarget(800.0), \"730 must not meet 800\");"
+        },
+        {
+          "name": "Negative sun hours -> 0",
+          "hidden": true,
+          "body": "SolarPanel p = new SolarPanel(400.0,-2.0);\neqD(p.getDailyKWh(),0.0);\neqD(p.getAnnualKWh(),0.0);"
+        },
+        {
+          "name": "Negative wattage -> 0",
+          "hidden": true,
+          "body": "SolarPanel p = new SolarPanel(-100.0,5.0);\neqD(p.getDailyKWh(),0.0);"
+        },
+        {
+          "name": "Polymorphic reference",
+          "hidden": true,
+          "body": "RenewableSource r = new SolarPanel(300,4);\neqD(r.getDailyKWh(),1.2);\neqD(r.getAnnualKWh(),438.0);"
+        }
+      ]
+    },
+    {
+      "id": "q5-hospital-personnel",
+      "order": 5,
+      "title": "Hospital Personnel",
+      "points": 10,
+      "theme": "Healthcare",
+      "prompt": "Create a class `Employee` in `Employee.java`:\n* **Protected fields:** `String name`, `double hourlyRate`.\n* **Constructor:** `Employee(String name, double hourlyRate)`.\n* **Getters:** For both fields.\n* Method `calculateWeeklyPay(double hoursWorked)`: returns `hourlyRate * hoursWorked`.\n\nCreate subclass `Nurse` in `Nurse.java` extending `Employee`:\n* **Private field:** `boolean nightShift`.\n* **Constructor:** `Nurse(String name, double hourlyRate, boolean nightShift)` calling `super`.\n* Override `calculateWeeklyPay(double hoursWorked)`:\n  * Overtime rule: Any hours over 40 are paid at `1.5 * hourlyRate`.\n  * If `nightShift` is `true`, add a flat night differential bonus of `$150.00` to total pay.",
+      "sampleRun": "Employee e = new Employee(\"Greg\", 30.0);\nNurse n1 = new Nurse(\"Clara\", 30.0, false);\nNurse n2 = new Nurse(\"Dan\", 30.0, true);\nSystem.out.println(\"Employee (45h): \" + e.calculateWeeklyPay(45));\nSystem.out.println(\"Nurse (45h, Day): \" + n1.calculateWeeklyPay(45));\nSystem.out.println(\"Nurse (45h, Night): \" + n2.calculateWeeklyPay(45));",
+      "expectedOutput": "Employee (45h): 1350.0\nNurse (45h, Day): 1425.0\nNurse (45h, Night): 1575.0",
+      "starterFiles": [
+        {
+          "filename": "Employee.java",
+          "contents": "public class Employee {\n    // TODO: protected fields name, hourlyRate\n\n    // TODO: constructor + getters\n\n    public double calculateWeeklyPay(double hoursWorked) {\n        // TODO: hourlyRate * hoursWorked\n        return 0.0;\n    }\n}\n"
+        },
+        {
+          "filename": "Nurse.java",
+          "contents": "public class Nurse extends Employee {\n    // TODO: private boolean nightShift\n\n    // TODO: constructor calling super\n\n    @Override\n    public double calculateWeeklyPay(double hoursWorked) {\n        // TODO: overtime beyond 40h at 1.5x; +150 flat if nightShift\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Regular pay, overtime without night shift, overtime with night shift."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact 40 Hours)",
+          "visible": false,
+          "description": "40 hours worked has zero overtime calculation."
+        },
+        {
+          "name": "Test 3 [Hidden] (Under 40 Hours Night Shift)",
+          "visible": false,
+          "description": "30 hours worked with night shift computes (30 * 30) + 150 = 1050.0."
+        },
+        {
+          "name": "Test 4 [Hidden] (Zero Hours Night Shift)",
+          "visible": false,
+          "description": "0 hours worked with night shift receives only the differential $150.00."
+        },
+        {
+          "name": "Test 5 [Hidden] (Zero Hours Day Shift)",
+          "visible": false,
+          "description": "0 hours worked returns 0.0."
+        },
+        {
+          "name": "Test 6 [Hidden] (Polymorphic Reference)",
+          "visible": false,
+          "description": "Employee emp = new Nurse(\"Alex\", 20.0, true); calls overridden method."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Employee e = new Employee(\"Greg\", 30.0);\n        Nurse n1 = new Nurse(\"Clara\", 30.0, false);\n        Nurse n2 = new Nurse(\"Dan\", 30.0, true);\n        System.out.println(\"Employee (45h): \" + e.calculateWeeklyPay(45));\n        System.out.println(\"Nurse (45h, Day): \" + n1.calculateWeeklyPay(45));\n        System.out.println(\"Nurse (45h, Night): \" + n2.calculateWeeklyPay(45));\n    }\n}\n",
+      "testerExpectedOutput": "Employee (45h): 1350.0\nNurse (45h, Day): 1425.0\nNurse (45h, Night): 1575.0",
+      "graderCases": [
+        {
+          "name": "Sample run (regular/overtime/night)",
+          "hidden": false,
+          "body": "Employee e = new Employee(\"Greg\",30.0);\nNurse n1 = new Nurse(\"Clara\",30.0,false);\nNurse n2 = new Nurse(\"Dan\",30.0,true);\neqD(e.calculateWeeklyPay(45),1350.0);\neqD(n1.calculateWeeklyPay(45),1425.0);\neqD(n2.calculateWeeklyPay(45),1575.0);"
+        },
+        {
+          "name": "Exact 40 hours, no overtime",
+          "hidden": true,
+          "body": "Nurse n = new Nurse(\"A\",30.0,false);\neqD(n.calculateWeeklyPay(40),1200.0);"
+        },
+        {
+          "name": "Under 40 with night shift",
+          "hidden": true,
+          "body": "Nurse n = new Nurse(\"A\",30.0,true);\neqD(n.calculateWeeklyPay(30),1050.0);"
+        },
+        {
+          "name": "Zero hours night shift = differential only",
+          "hidden": true,
+          "body": "Nurse n = new Nurse(\"A\",30.0,true);\neqD(n.calculateWeeklyPay(0),150.0);"
+        },
+        {
+          "name": "Zero hours day shift = 0",
+          "hidden": true,
+          "body": "Nurse n = new Nurse(\"A\",30.0,false);\neqD(n.calculateWeeklyPay(0),0.0);"
+        },
+        {
+          "name": "Polymorphic dispatch",
+          "hidden": true,
+          "body": "Employee emp = new Nurse(\"Alex\",20.0,true);\neqD(emp.calculateWeeklyPay(0),150.0);"
+        }
+      ]
+    },
+    {
+      "id": "q6-warehouse-payload-manager",
+      "order": 6,
+      "title": "Warehouse Payload Manager",
+      "points": 10,
+      "theme": "Logistics",
+      "prompt": "Given a base class `Container` with method `double getWeight()` and subclass `HeavyContainer` (which has additional tare reinforcement weight included in `getWeight()`), implement `PayloadManager.java`:\n* `public static double totalWeight(Container[] containers)`:\n  * Sums `getWeight()` across all containers polymorphically.\n  * If `containers` is `null` or empty, return `0.0`.\n  * If an array element is `null`, skip it safely.\n* `public static int countOverweight(Container[] containers, double maxWeight)`:\n  * Returns how many non-null containers have `getWeight() > maxWeight` (strictly greater).\n  * If `containers` is `null`, return `0`.\n\n*(The autograder provides `Container` and `HeavyContainer`. `Container` has a constructor `Container(double weight)` and `HeavyContainer(double base, double tare)` whose `getWeight()` returns `base + tare`.)*",
+      "sampleRun": "Container[] manifest = new Container[] {\n    new Container(500.0),\n    null,\n    new HeavyContainer(1200.0, 300.0), // weight = 1500.0\n    new Container(800.0)\n};\nSystem.out.println(\"Total: \" + PayloadManager.totalWeight(manifest));\nSystem.out.println(\"Over 1000kg: \" + PayloadManager.countOverweight(manifest, 1000.0));",
+      "expectedOutput": "Total: 2800.0\nOver 1000kg: 1",
+      "starterFiles": [
+        {
+          "filename": "PayloadManager.java",
+          "contents": "public class PayloadManager {\n    public static double totalWeight(Container[] containers) {\n        // TODO: sum non-null getWeight(); 0.0 if null/empty\n        return 0.0;\n    }\n\n    public static int countOverweight(Container[] containers, double maxWeight) {\n        // TODO: count non-null getWeight() > maxWeight; 0 if null\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Array with null, regular, and heavy containers."
+        },
+        {
+          "name": "Test 2 [Hidden] (Null Array Input)",
+          "visible": false,
+          "description": "totalWeight(null) returns 0.0, countOverweight(null, 500) returns 0."
+        },
+        {
+          "name": "Test 3 [Hidden] (Empty Array)",
+          "visible": false,
+          "description": "new Container[0] returns 0.0 and 0."
+        },
+        {
+          "name": "Test 4 [Hidden] (Exact Max Weight Boundary)",
+          "visible": false,
+          "description": "container.getWeight() == maxWeight is NOT counted (must be strictly greater)."
+        },
+        {
+          "name": "Test 5 [Hidden] (Array of All Nulls)",
+          "visible": false,
+          "description": "new Container[]{null, null, null} returns 0.0 and 0."
+        },
+        {
+          "name": "Test 6 [Hidden] (Dynamic Dispatch)",
+          "visible": false,
+          "description": "Overridden getWeight() on HeavyContainer invoked properly."
+        },
+        {
+          "name": "Test 7 [Hidden] (All Overweight)",
+          "visible": false,
+          "description": "All items exceeding threshold counts entire valid length."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Container[] manifest = new Container[] {\n            new Container(500.0),\n            null,\n            new HeavyContainer(1200.0, 300.0), // weight = 1500.0\n            new Container(800.0)\n        };\n        System.out.println(\"Total: \" + PayloadManager.totalWeight(manifest));\n        System.out.println(\"Over 1000kg: \" + PayloadManager.countOverweight(manifest, 1000.0));\n    }\n}\n",
+      "testerExpectedOutput": "Total: 2800.0\nOver 1000kg: 1",
+      "graderCases": [
+        {
+          "name": "Sample run (mixed manifest with null + heavy)",
+          "hidden": false,
+          "body": "Container[] m = { new Container(500.0), null, new HeavyContainer(1200.0,300.0), new Container(800.0) };\neqD(PayloadManager.totalWeight(m),2800.0);\neq(PayloadManager.countOverweight(m,1000.0),1);"
+        },
+        {
+          "name": "Null array returns 0.0 and 0",
+          "hidden": true,
+          "body": "eqD(PayloadManager.totalWeight(null),0.0);\neq(PayloadManager.countOverweight(null,500.0),0);"
+        },
+        {
+          "name": "Empty array returns 0.0 and 0",
+          "hidden": true,
+          "body": "Container[] m = new Container[0];\neqD(PayloadManager.totalWeight(m),0.0);\neq(PayloadManager.countOverweight(m,500.0),0);"
+        },
+        {
+          "name": "Exact max weight is NOT counted (strictly greater)",
+          "hidden": true,
+          "body": "Container[] m = { new Container(1000.0) };\neq(PayloadManager.countOverweight(m,1000.0),0);\neq(PayloadManager.countOverweight(m,999.99),1);"
+        },
+        {
+          "name": "Array of all nulls returns 0.0 and 0",
+          "hidden": true,
+          "body": "Container[] m = { null, null, null };\neqD(PayloadManager.totalWeight(m),0.0);\neq(PayloadManager.countOverweight(m,0.0),0);"
+        },
+        {
+          "name": "Dynamic dispatch uses HeavyContainer override",
+          "hidden": true,
+          "body": "Container[] m = { new HeavyContainer(100.0,50.0) };\neqD(PayloadManager.totalWeight(m),150.0);\neq(PayloadManager.countOverweight(m,149.0),1);"
+        },
+        {
+          "name": "All overweight counts full valid length",
+          "hidden": true,
+          "body": "Container[] m = { new Container(10.0), new Container(20.0), new HeavyContainer(15.0,10.0) };\neq(PayloadManager.countOverweight(m,5.0),3);"
+        }
+      ]
+    },
+    {
+      "id": "q7-server-access-log-parser",
+      "order": 7,
+      "title": "Server Access Log Parser",
+      "points": 12,
+      "theme": "Cybersecurity",
+      "prompt": "In `LogAnalyzer.java`, write:\n`public static int countErrors(String filename, int targetHttpCode) throws FileNotFoundException`\n* The file contains lines formatted as: `Timestamp IP HTTPStatus DurationMS` (space-separated).\n  Example: `2026-03-31T10:14:00 192.168.1.5 404 120`\n* Skip any line starting with `#` (comments) or lines that are empty.\n* Parse the 3rd token as an `int` HTTP status code.\n* Return the count of lines where `HTTPStatus == targetHttpCode`.\n* If the file does not exist, let `FileNotFoundException` propagate. Ensure the file is closed cleanly using try-with-resources.",
+      "sampleRun": "// server.log contains:\n// # Gateway Web Access Log\n// 2026-03-31T10:00:01 10.0.0.1 200 45\n// 2026-03-31T10:00:03 10.0.0.2 404 12\n// (blank line)\n// 2026-03-31T10:00:08 10.0.0.5 500 230\n// 2026-03-31T10:00:15 10.0.0.1 404 15\nSystem.out.println(\"404 Errors: \" + LogAnalyzer.countErrors(\"server.log\", 404));",
+      "expectedOutput": "404 Errors: 2",
+      "starterFiles": [
+        {
+          "filename": "LogAnalyzer.java",
+          "contents": "import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.util.Scanner;\n\npublic class LogAnalyzer {\n    public static int countErrors(String filename, int targetHttpCode)\n            throws FileNotFoundException {\n        // TODO: skip comments/blanks, parse 3rd token, count matches\n        // Use try-with-resources on the Scanner/stream.\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Ignores header comments and blank lines; counts two 404 status codes."
+        },
+        {
+          "name": "Test 2 [Hidden] (Missing File)",
+          "visible": false,
+          "description": "Calling with \"nonexistent.log\" throws FileNotFoundException."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero Matches)",
+          "visible": false,
+          "description": "Querying for status 503 when none exist returns 0."
+        },
+        {
+          "name": "Test 4 [Hidden] (Comments Only File)",
+          "visible": false,
+          "description": "File with only comments and whitespace returns 0."
+        },
+        {
+          "name": "Test 5 [Hidden] (Trailing Blank Lines)",
+          "visible": false,
+          "description": "Handled gracefully without crash."
+        },
+        {
+          "name": "Test 6 [Hidden] (All Matching)",
+          "visible": false,
+          "description": "File where all rows match returns row count."
+        },
+        {
+          "name": "Test 7 [Hidden] (Single Line Log)",
+          "visible": false,
+          "description": "Single valid log entry parsed accurately."
+        },
+        {
+          "name": "Test 8 [Hidden] (Stream Closed)",
+          "visible": false,
+          "description": "Stream closed via try-with-resources."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"server.log\", \"UTF-8\")) { __w.print(\"# Gateway Web Access Log\\n2026-03-31T10:00:01 10.0.0.1 200 45\\n2026-03-31T10:00:03 10.0.0.2 404 12\\n\\n2026-03-31T10:00:08 10.0.0.5 500 230\\n2026-03-31T10:00:15 10.0.0.1 404 15\"); }\n        System.out.println(\"404 Errors: \" + LogAnalyzer.countErrors(\"server.log\", 404));\n    }\n}\n",
+      "testerExpectedOutput": "404 Errors: 2",
+      "graderCases": [
+        {
+          "name": "Sample run (two 404s, skip comments/blanks)",
+          "hidden": false,
+          "body": "String f = \"g_sample.log\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"# header\\n2026-03-31T10:00:01 10.0.0.1 200 45\\n2026-03-31T10:00:03 10.0.0.2 404 12\\n\\n2026-03-31T10:00:08 10.0.0.5 500 230\\n2026-03-31T10:00:15 10.0.0.1 404 15\"); }\neq(LogAnalyzer.countErrors(f,404),2);"
+        },
+        {
+          "name": "Missing file throws FileNotFoundException",
+          "hidden": true,
+          "body": "try { LogAnalyzer.countErrors(\"g_does_not_exist_12345.log\", 404); check(false, \"should throw\"); }\ncatch (java.io.FileNotFoundException e) { }"
+        },
+        {
+          "name": "Zero matches returns 0",
+          "hidden": true,
+          "body": "String f = \"g_zero.log\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"2026 10.0.0.1 200 45\\n2026 10.0.0.2 404 12\"); }\neq(LogAnalyzer.countErrors(f,503),0);"
+        },
+        {
+          "name": "Comments-and-whitespace-only file returns 0",
+          "hidden": true,
+          "body": "String f = \"g_comments.log\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"# a\\n   \\n#b\\n\\n\"); }\neq(LogAnalyzer.countErrors(f,404),0);"
+        },
+        {
+          "name": "Trailing blank lines handled without crash",
+          "hidden": true,
+          "body": "String f = \"g_trailing.log\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"2026 10.0.0.1 404 45\\n\\n\\n\"); }\neq(LogAnalyzer.countErrors(f,404),1);"
+        },
+        {
+          "name": "All rows match returns row count",
+          "hidden": true,
+          "body": "String f = \"g_all.log\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"a b 500 1\\nc d 500 2\\ne f 500 3\"); }\neq(LogAnalyzer.countErrors(f,500),3);"
+        },
+        {
+          "name": "Single valid line parsed accurately",
+          "hidden": true,
+          "body": "String f = \"g_single.log\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"2026 1.1.1.1 404 10\"); }\neq(LogAnalyzer.countErrors(f,404),1);"
+        }
+      ]
+    },
+    {
+      "id": "q8-athletic-qualifiers-exporter",
+      "order": 8,
+      "title": "Athletic Qualifier Ranking",
+      "points": 12,
+      "theme": "Sports Analytics",
+      "prompt": "This question gives you a question-specific abstract class **and** a question-specific interface. Your class must extend one and implement the other.\n\nCreate an abstract class `Athlete` in `Athlete.java`:\n* **Protected fields:** `String name`, `String team`.\n* **Constructor:** `Athlete(String name, String team)`.\n* **Getters:** `getName()`, `getTeam()`.\n* **Abstract method:** `public abstract double rawMetric();` (the athlete's raw timed result).\n\nCreate an interface `Rankable` in `Rankable.java`:\n* Abstract method: `double rankingScore();` *(higher is always better)*.\n* Default method: `default boolean outranks(Rankable other)`: returns `true` only if `this.rankingScore()` is **strictly greater** than `other.rankingScore()`.\n* Default method: `default boolean isPodium(double threshold)`: returns `true` if `rankingScore() >= threshold`.\n\nCreate a class `SprintAthlete` in `SprintAthlete.java` that **extends `Athlete` and implements `Rankable`**:\n* **Private fields:** `double seconds`, `double windMps`.\n* **Constructor:** `SprintAthlete(String name, String team, double seconds, double windMps)` calling `super`.\n* `rawMetric()` returns `seconds`.\n* `rankingScore()`:\n  * Base score is `10.0 - seconds`.\n  * A tailwind is **legal up to and including 2.0 m/s**. If `windMps > 2.0`, the result is not record-eligible: subtract a `0.5` penalty from the score.\n  * Scores may be negative.\n\n*Edge cases to think about (not in the sample): wind of exactly 2.0 is legal; two equal scores must not outrank each other; the podium threshold is inclusive; an illegal tailwind can let a slower-but-legal athlete outrank a faster one.*",
+      "sampleRun": "SprintAthlete a = new SprintAthlete(\"Andre\", \"Canada\", 9.91, 1.5);\nSystem.out.printf(\"Raw: %.2f%n\", a.rawMetric());\nSystem.out.printf(\"Score: %.2f%n\", a.rankingScore());\nSprintAthlete b = new SprintAthlete(\"Yohan\", \"Jamaica\", 10.20, 0.0);\nSystem.out.println(\"A outranks B: \" + a.outranks(b));",
+      "expectedOutput": "Raw: 9.91\nScore: 0.09\nA outranks B: true",
+      "starterFiles": [
+        {
+          "filename": "Athlete.java",
+          "contents": "public abstract class Athlete {\n    protected String name;\n    protected String team;\n\n    // TODO: constructor + getName()/getTeam()\n\n    public abstract double rawMetric();\n}\n"
+        },
+        {
+          "filename": "Rankable.java",
+          "contents": "public interface Rankable {\n    double rankingScore();\n\n    // TODO: default outranks(Rankable other) -> strictly greater score\n\n    // TODO: default isPodium(double threshold) -> score >= threshold\n}\n"
+        },
+        {
+          "filename": "SprintAthlete.java",
+          "contents": "public class SprintAthlete extends Athlete implements Rankable {\n    // TODO: private fields seconds, windMps + constructor via super\n\n    @Override\n    public double rawMetric() {\n        return 0.0;\n    }\n\n    @Override\n    public double rankingScore() {\n        // TODO: 10.0 - seconds; subtract 0.5 if windMps > 2.0\n        return 0.0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Legal-wind ranking score and a strict outranks comparison."
+        },
+        {
+          "name": "Test 2 [Hidden] (Legal Wind Boundary)",
+          "visible": false,
+          "description": "Wind of exactly 2.0 m/s is legal and incurs no penalty."
+        },
+        {
+          "name": "Test 3 [Hidden] (Illegal Tailwind Penalty)",
+          "visible": false,
+          "description": "Wind above 2.0 m/s subtracts the 0.5 record penalty."
+        },
+        {
+          "name": "Test 4 [Hidden] (Strict Outranks)",
+          "visible": false,
+          "description": "Faster strictly outranks slower; slower does not outrank faster."
+        },
+        {
+          "name": "Test 5 [Hidden] (Equal Scores)",
+          "visible": false,
+          "description": "Two equal ranking scores do not outrank each other in either direction."
+        },
+        {
+          "name": "Test 6 [Hidden] (Inclusive Podium Threshold)",
+          "visible": false,
+          "description": "isPodium is inclusive at the threshold and false just above it."
+        },
+        {
+          "name": "Test 7 [Hidden] (Illegal Wind Flips Ranking)",
+          "visible": false,
+          "description": "A slower legal athlete can outrank a faster wind-penalized athlete."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        SprintAthlete a = new SprintAthlete(\"Andre\", \"Canada\", 9.91, 1.5);\n        System.out.printf(\"Raw: %.2f%n\", a.rawMetric());\n        System.out.printf(\"Score: %.2f%n\", a.rankingScore());\n        SprintAthlete b = new SprintAthlete(\"Yohan\", \"Jamaica\", 10.20, 0.0);\n        System.out.println(\"A outranks B: \" + a.outranks(b));\n    }\n}\n",
+      "testerExpectedOutput": "Raw: 9.91\nScore: 0.09\nA outranks B: true",
+      "graderCases": [
+        {
+          "name": "Sample run (legal wind ranking + raw metric)",
+          "hidden": false,
+          "body": "SprintAthlete a = new SprintAthlete(\"Andre\",\"Canada\",9.91,1.5);\neqD(a.rawMetric(),9.91);\neqD(a.rankingScore(),0.09);\ncheck(a instanceof Athlete, \"must extend Athlete\");\ncheck(a instanceof Rankable, \"must implement Rankable\");"
+        },
+        {
+          "name": "Legal wind at exactly 2.0 — no penalty",
+          "hidden": true,
+          "body": "SprintAthlete a = new SprintAthlete(\"X\",\"T\",9.80,2.0);\neqD(a.rankingScore(),0.20);"
+        },
+        {
+          "name": "Illegal tailwind above 2.0 costs 0.5",
+          "hidden": true,
+          "body": "SprintAthlete a = new SprintAthlete(\"X\",\"T\",9.80,2.1);\neqD(a.rankingScore(),-0.30);"
+        },
+        {
+          "name": "outranks is strict (faster beats slower)",
+          "hidden": true,
+          "body": "SprintAthlete fast = new SprintAthlete(\"F\",\"T\",9.80,0.0);\nSprintAthlete slow = new SprintAthlete(\"S\",\"T\",10.20,0.0);\ncheck(fast.outranks(slow), \"faster must outrank slower\");\ncheck(!slow.outranks(fast), \"slower must not outrank faster\");"
+        },
+        {
+          "name": "Equal scores do not outrank each other",
+          "hidden": true,
+          "body": "SprintAthlete a = new SprintAthlete(\"A\",\"T\",9.95,0.0);\nSprintAthlete b = new SprintAthlete(\"B\",\"T\",9.95,0.0);\ncheck(!a.outranks(b), \"a tie must not outrank\");\ncheck(!b.outranks(a), \"a tie must not outrank\");"
+        },
+        {
+          "name": "isPodium boundary is inclusive",
+          "hidden": true,
+          "body": "SprintAthlete a = new SprintAthlete(\"A\",\"T\",9.5,0.0);\ncheck(a.isPodium(0.5), \"score 0.5 meets threshold 0.5\");\ncheck(!a.isPodium(0.75), \"score 0.5 below 0.75\");"
+        },
+        {
+          "name": "Illegal wind can flip a ranking",
+          "hidden": true,
+          "body": "SprintAthlete legal = new SprintAthlete(\"L\",\"T\",9.95,1.0);\nSprintAthlete windy = new SprintAthlete(\"W\",\"T\",9.90,3.0);\ncheck(legal.outranks(windy), \"legal 9.95 (0.05) beats wind-penalized 9.90 (0.10-0.5=-0.40)\");"
+        }
+      ]
+    },
+    {
+      "id": "q9-musical-instrument-hierarchy",
+      "order": 9,
+      "title": "Musical Instrument Hierarchy",
+      "points": 12,
+      "theme": "Music",
+      "prompt": "This question requires both a question-specific abstract class and a question-specific interface. Your subclasses must extend the class **and** implement the interface.\n\nCreate an abstract class `Instrument` in `Instrument.java`:\n* **Protected fields:** `String name`, `int baseDecibels`.\n* **Constructor:** `Instrument(String name, int baseDecibels)`.\n* **Abstract method:** `public abstract int playNote(int intensity);`\n\nCreate an interface `Tunable` in `Tunable.java`:\n* Abstract method: `int getTranspose();` *(a semitone offset; may be negative)*.\n* Default method: `default boolean isConcertPitch()`: returns `true` only when `getTranspose() == 0`.\n* Default method: `default int pitchClass()`: folds the transpose into one octave, **always returning a value in `[0, 11]` even for negative transposes** (e.g. `-1` → `11`).\n\nCreate `Brass` in `Brass.java` **extending `Instrument` and implementing `Tunable`**:\n* **Private field:** `int transpose`.\n* **Constructor:** `Brass(String name, int baseDecibels, int transpose)` calling `super`.\n* `playNote(int intensity)`: `baseDecibels + (intensity * 4)`; if `intensity > 10`, add a `15` dB brass distortion penalty.\n* `getTranspose()` returns `transpose`.\n\nCreate `Woodwind` in `Woodwind.java` **extending `Instrument` and implementing `Tunable`**:\n* **Private field:** `int transpose`.\n* **Constructor:** `Woodwind(String name, int baseDecibels, int transpose)` calling `super`.\n* `playNote(int intensity)`: `baseDecibels + (intensity * 2)`, capped at `95` dB.\n* `getTranspose()` returns `transpose`.\n\n*Edge cases to think about (not in the sample): intensity exactly 10 (no brass penalty); a woodwind landing exactly on 95; `pitchClass()` for negative transposes must wrap into `[0,11]`.*",
+      "sampleRun": "Instrument trumpet = new Brass(\"Trumpet\", 60, 2);\nInstrument flute = new Woodwind(\"Flute\", 50, 0);\nSystem.out.println(\"Trumpet (intensity 8): \" + trumpet.playNote(8));\nSystem.out.println(\"Trumpet (intensity 12): \" + trumpet.playNote(12));\nSystem.out.println(\"Flute (intensity 30): \" + flute.playNote(30));\nSystem.out.println(\"Trumpet concert pitch: \" + ((Tunable) trumpet).isConcertPitch());",
+      "expectedOutput": "Trumpet (intensity 8): 92\nTrumpet (intensity 12): 123\nFlute (intensity 30): 95\nTrumpet concert pitch: false",
+      "starterFiles": [
+        {
+          "filename": "Instrument.java",
+          "contents": "public abstract class Instrument {\n    // TODO: protected fields name, baseDecibels\n\n    // TODO: constructor\n\n    public abstract int playNote(int intensity);\n}\n"
+        },
+        {
+          "filename": "Tunable.java",
+          "contents": "public interface Tunable {\n    int getTranspose();\n\n    // TODO: default isConcertPitch() -> transpose == 0\n\n    // TODO: default pitchClass() -> fold into [0,11], wrapping negatives\n}\n"
+        },
+        {
+          "filename": "Brass.java",
+          "contents": "public class Brass extends Instrument implements Tunable {\n    // TODO: private int transpose + constructor via super\n\n    @Override\n    public int playNote(int intensity) {\n        // TODO: baseDecibels + intensity*4; +15 if intensity > 10\n        return 0;\n    }\n\n    @Override\n    public int getTranspose() {\n        return 0;\n    }\n}\n"
+        },
+        {
+          "filename": "Woodwind.java",
+          "contents": "public class Woodwind extends Instrument implements Tunable {\n    // TODO: private int transpose + constructor via super\n\n    @Override\n    public int playNote(int intensity) {\n        // TODO: baseDecibels + intensity*2; cap at 95\n        return 0;\n    }\n\n    @Override\n    public int getTranspose() {\n        return 0;\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Brass, brass distortion penalty (>10), woodwind cap at 95, and the Tunable default method."
+        },
+        {
+          "name": "Test 2 [Hidden] (Exact Intensity 10 Brass)",
+          "visible": false,
+          "description": "Intensity 10 does NOT incur the 15 dB penalty (60 + 40 = 100)."
+        },
+        {
+          "name": "Test 3 [Hidden] (Intensity 11 Brass)",
+          "visible": false,
+          "description": "Intensity 11 incurs the 15 dB penalty."
+        },
+        {
+          "name": "Test 4 [Hidden] (Woodwind Cap Boundary)",
+          "visible": false,
+          "description": "Output landing exactly on 95 stays 95; just under stays exact."
+        },
+        {
+          "name": "Test 5 [Hidden] (Concert Pitch)",
+          "visible": false,
+          "description": "isConcertPitch is true only when transpose is 0."
+        },
+        {
+          "name": "Test 6 [Hidden] (Pitch Class Wrap)",
+          "visible": false,
+          "description": "pitchClass folds into [0,11] including negative transposes (-1 -> 11)."
+        },
+        {
+          "name": "Test 7 [Hidden] (Polymorphic Dispatch)",
+          "visible": false,
+          "description": "playNote invoked dynamically through an Instrument reference."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Instrument trumpet = new Brass(\"Trumpet\", 60, 2);\n        Instrument flute = new Woodwind(\"Flute\", 50, 0);\n        System.out.println(\"Trumpet (intensity 8): \" + trumpet.playNote(8));\n        System.out.println(\"Trumpet (intensity 12): \" + trumpet.playNote(12));\n        System.out.println(\"Flute (intensity 30): \" + flute.playNote(30));\n        System.out.println(\"Trumpet concert pitch: \" + ((Tunable) trumpet).isConcertPitch());\n    }\n}\n",
+      "testerExpectedOutput": "Trumpet (intensity 8): 92\nTrumpet (intensity 12): 123\nFlute (intensity 30): 95\nTrumpet concert pitch: false",
+      "graderCases": [
+        {
+          "name": "Sample run (brass/penalty/woodwind cap + types)",
+          "hidden": false,
+          "body": "Brass trumpet = new Brass(\"Trumpet\",60,2);\nWoodwind flute = new Woodwind(\"Flute\",50,0);\neq(trumpet.playNote(8),92);\neq(trumpet.playNote(12),123);\neq(flute.playNote(30),95);\ncheck(trumpet instanceof Instrument, \"Brass must extend Instrument\");\ncheck(trumpet instanceof Tunable, \"Brass must implement Tunable\");"
+        },
+        {
+          "name": "Intensity 10 brass, no penalty",
+          "hidden": true,
+          "body": "eq(new Brass(\"T\",60,0).playNote(10),100);"
+        },
+        {
+          "name": "Intensity 11 brass penalty",
+          "hidden": true,
+          "body": "eq(new Brass(\"T\",60,0).playNote(11),119);"
+        },
+        {
+          "name": "Woodwind exactly at cap boundary (95 stays 95)",
+          "hidden": true,
+          "body": "eq(new Woodwind(\"W\",85,0).playNote(5),95);\neq(new Woodwind(\"W\",85,0).playNote(4),93);"
+        },
+        {
+          "name": "isConcertPitch only when transpose 0",
+          "hidden": true,
+          "body": "check(new Woodwind(\"W\",50,0).isConcertPitch(), \"transpose 0 is concert pitch\");\ncheck(!new Brass(\"B\",60,2).isConcertPitch(), \"transpose 2 is not concert pitch\");"
+        },
+        {
+          "name": "pitchClass folds into [0,11] including negatives",
+          "hidden": true,
+          "body": "eq(new Brass(\"B\",60,14).pitchClass(),2);\neq(new Brass(\"B\",60,-1).pitchClass(),11);\neq(new Brass(\"B\",60,-13).pitchClass(),11);\neq(new Brass(\"B\",60,12).pitchClass(),0);"
+        },
+        {
+          "name": "Polymorphic dispatch through Instrument reference",
+          "hidden": true,
+          "body": "Instrument i = new Woodwind(\"W\",50,0);\neq(i.playNote(0),50);\nInstrument j = new Brass(\"B\",60,0);\neq(j.playNote(0),60);"
+        }
+      ]
+    },
+    {
+      "id": "q10-submarine-depth-simulator",
+      "order": 10,
+      "title": "Submarine Dive Controller",
+      "points": 14,
+      "theme": "Marine Engineering",
+      "prompt": "This capstone requires a question-specific abstract class **and** a question-specific interface, extended/implemented together by your concrete class.\n\nCreate an abstract class `Submersible` in `Submersible.java`:\n* **Protected fields:** `String callSign`, `int depth`, `int integrity`.\n* **Constructor:** `Submersible(String callSign)` starts at `depth = 0`, `integrity = 100`.\n* **Getters:** `getDepth()`, `getIntegrity()`.\n* Method `isLost()`: returns `true` when `integrity <= 0`.\n* **Abstract method:** `public abstract void dive(int meters);`\n* Concrete method `surface(int meters)`: subtract `meters` from `depth`, clamped so `depth` never drops below `0`.\n\nCreate an interface `DepthLimited` in `DepthLimited.java`:\n* Abstract method: `int crushDepth();`\n* Default method: `default boolean isImplodeRisk(int currentDepth)`: `true` only when `currentDepth` is **strictly greater** than `crushDepth()`.\n* Default method: `default int safetyMargin(int currentDepth)`: `crushDepth() - currentDepth`, but **never negative** (floored at `0`).\n\nCreate a class `AttackSub` in `AttackSub.java` **extending `Submersible` and implementing `DepthLimited`**:\n* **Private field:** `int crush` (the crush depth, provided in the constructor).\n* **Constructor:** `AttackSub(String callSign, int crushDepth)` calling `super(callSign)`.\n* `crushDepth()` returns `crush`.\n* `dive(int meters)`: add `meters` to `depth`. If the **new** depth is strictly greater than `crush`, the hull takes `15` points of damage; `integrity` is floored at `0`.\n* Method `emergencyBlow()`: set `depth` back to `0` and deduct `25` integrity (floored at `0`).\n\n*Edge cases to think about (not in the sample): diving to exactly the crush depth does no damage; surfacing past the surface clamps at 0; integrity floors at 0 (never negative) and then `isLost()` is true; `isImplodeRisk` is strict at the boundary; `safetyMargin` never goes negative.*",
+      "sampleRun": "AttackSub s = new AttackSub(\"Nautilus\", 200);\ns.dive(50); s.dive(50); s.dive(50); s.dive(50); // depth 200, integrity 100\nSystem.out.println(\"Depth: \" + s.getDepth() + \"m | Integrity: \" + s.getIntegrity() + \"%\");\ns.dive(50); // past crush depth -> -15 integrity\nSystem.out.println(\"Depth: \" + s.getDepth() + \"m | Integrity: \" + s.getIntegrity() + \"%\");\ns.emergencyBlow();\nSystem.out.println(\"Depth: \" + s.getDepth() + \"m | Integrity: \" + s.getIntegrity() + \"%\");",
+      "expectedOutput": "Depth: 200m | Integrity: 100%\nDepth: 250m | Integrity: 85%\nDepth: 0m | Integrity: 60%",
+      "starterFiles": [
+        {
+          "filename": "Submersible.java",
+          "contents": "public abstract class Submersible {\n    protected String callSign;\n    protected int depth;\n    protected int integrity;\n\n    // TODO: constructor -> depth 0, integrity 100; getters; isLost()\n\n    public abstract void dive(int meters);\n\n    public void surface(int meters) {\n        // TODO: rise, clamp depth at 0\n    }\n}\n"
+        },
+        {
+          "filename": "DepthLimited.java",
+          "contents": "public interface DepthLimited {\n    int crushDepth();\n\n    // TODO: default isImplodeRisk(int currentDepth) -> strictly past crush depth\n\n    // TODO: default safetyMargin(int currentDepth) -> crush - current, floored at 0\n}\n"
+        },
+        {
+          "filename": "AttackSub.java",
+          "contents": "public class AttackSub extends Submersible implements DepthLimited {\n    // TODO: private int crush + constructor via super(callSign)\n\n    @Override\n    public int crushDepth() {\n        return 0;\n    }\n\n    @Override\n    public void dive(int meters) {\n        // TODO: depth += meters; if depth > crush, -15 integrity (floor 0)\n    }\n\n    public void emergencyBlow() {\n        // TODO: depth = 0; -25 integrity (floor 0)\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Deep dive past crush depth causing integrity drop, then emergency blow."
+        },
+        {
+          "name": "Test 2 [Hidden] (Dive to Exact Crush Depth)",
+          "visible": false,
+          "description": "Diving to exactly the crush depth does NOT damage the hull."
+        },
+        {
+          "name": "Test 3 [Hidden] (Surface Past Sea Level)",
+          "visible": false,
+          "description": "Surfacing more than the current depth clamps depth to 0."
+        },
+        {
+          "name": "Test 4 [Hidden] (Integrity Floors at 0)",
+          "visible": false,
+          "description": "Repeated deep dives floor integrity at 0 (never negative) and isLost() becomes true."
+        },
+        {
+          "name": "Test 5 [Hidden] (Emergency Blow Floor)",
+          "visible": false,
+          "description": "Emergency blow with low integrity floors at 0 and marks the craft lost."
+        },
+        {
+          "name": "Test 6 [Hidden] (Implode Risk Boundary)",
+          "visible": false,
+          "description": "isImplodeRisk is strict: false at crush depth, true one meter past."
+        },
+        {
+          "name": "Test 7 [Hidden] (Safety Margin Non-Negative)",
+          "visible": false,
+          "description": "safetyMargin never returns a negative value."
+        },
+        {
+          "name": "Test 8 [Hidden] (Fresh Craft State)",
+          "visible": false,
+          "description": "A new craft starts at depth 0, integrity 100, not lost, with its crush depth."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        AttackSub s = new AttackSub(\"Nautilus\", 200);\n        s.dive(50); s.dive(50); s.dive(50); s.dive(50);\n        System.out.println(\"Depth: \" + s.getDepth() + \"m | Integrity: \" + s.getIntegrity() + \"%\");\n        s.dive(50);\n        System.out.println(\"Depth: \" + s.getDepth() + \"m | Integrity: \" + s.getIntegrity() + \"%\");\n        s.emergencyBlow();\n        System.out.println(\"Depth: \" + s.getDepth() + \"m | Integrity: \" + s.getIntegrity() + \"%\");\n    }\n}\n",
+      "testerExpectedOutput": "Depth: 200m | Integrity: 100%\nDepth: 250m | Integrity: 85%\nDepth: 0m | Integrity: 60%",
+      "graderCases": [
+        {
+          "name": "Sample run (dive to 250m, emergency blow)",
+          "hidden": false,
+          "body": "AttackSub s = new AttackSub(\"Nautilus\",200);\ns.dive(50); s.dive(50); s.dive(50); s.dive(50);\neq(s.getDepth(),200); eq(s.getIntegrity(),100);\ns.dive(50);\neq(s.getDepth(),250); eq(s.getIntegrity(),85);\ns.emergencyBlow();\neq(s.getDepth(),0); eq(s.getIntegrity(),60);\ncheck(s instanceof Submersible, \"must extend Submersible\");\ncheck(s instanceof DepthLimited, \"must implement DepthLimited\");"
+        },
+        {
+          "name": "Dive to exactly crush depth does no damage",
+          "hidden": true,
+          "body": "AttackSub s = new AttackSub(\"A\",200);\ns.dive(200);\neq(s.getDepth(),200); eq(s.getIntegrity(),100);"
+        },
+        {
+          "name": "Surface clamps at zero, never negative depth",
+          "hidden": true,
+          "body": "AttackSub s = new AttackSub(\"A\",200);\ns.dive(20);\ns.surface(50);\neq(s.getDepth(),0);"
+        },
+        {
+          "name": "Integrity floors at 0 and marks craft lost",
+          "hidden": true,
+          "body": "AttackSub s = new AttackSub(\"A\",200);\nfor (int i=0;i<20;i++) s.dive(50);\neq(s.getIntegrity(),0);\ncheck(s.isLost(), \"integrity 0 means lost\");"
+        },
+        {
+          "name": "Emergency blow below 25 integrity floors at 0 (lost)",
+          "hidden": true,
+          "body": "AttackSub s = new AttackSub(\"A\",200);\ns.dive(250); s.dive(50); s.dive(50);\neq(s.getIntegrity(),55);\ns.dive(50); s.dive(50);\neq(s.getIntegrity(),25);\ns.emergencyBlow();\neq(s.getIntegrity(),0);\ncheck(s.isLost(), \"blow at 25 leaves 0 => lost\");"
+        },
+        {
+          "name": "isImplodeRisk strictly past crush depth",
+          "hidden": true,
+          "body": "AttackSub s = new AttackSub(\"A\",200);\ncheck(!s.isImplodeRisk(200), \"at crush depth is not past it\");\ncheck(s.isImplodeRisk(201), \"201 past crush 200\");"
+        },
+        {
+          "name": "safetyMargin never negative",
+          "hidden": true,
+          "body": "AttackSub s = new AttackSub(\"A\",200);\neq(s.safetyMargin(150),50);\neq(s.safetyMargin(200),0);\neq(s.safetyMargin(260),0);"
+        },
+        {
+          "name": "Fresh craft starts at surface with full integrity",
+          "hidden": true,
+          "body": "AttackSub s = new AttackSub(\"A\",300);\neq(s.getDepth(),0); eq(s.getIntegrity(),100);\ncheck(!s.isLost(), \"new craft not lost\");\neq(s.crushDepth(),300);"
+        }
+      ]
+    }
+  ]
+}
