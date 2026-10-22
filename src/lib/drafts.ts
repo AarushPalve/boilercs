@@ -58,3 +58,51 @@ export function clearQuestionDrafts(
 ): void {
   filenames.forEach((f) => clearDraft(examSlug, questionId, f));
 }
+
+// ---------------------------------------------------------------------------
+// User-created extra files.
+//
+// Beyond the starter files, a learner can add their own files (new tabs). We
+// persist the *list* of those filenames (their contents use the same per-file
+// draft storage above) so an accidental reload keeps the tabs too.
+// ---------------------------------------------------------------------------
+
+const FILES_PREFIX = 'boiler-cs:files:';
+
+function filesKey(examSlug: string, questionId: string): string {
+  return `${FILES_PREFIX}${examSlug}:${questionId}`;
+}
+
+export function loadAddedFiles(examSlug: string, questionId: string): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.sessionStorage.getItem(filesKey(examSlug, questionId));
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((x) => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveAddedFiles(
+  examSlug: string,
+  questionId: string,
+  filenames: string[],
+): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.setItem(filesKey(examSlug, questionId), JSON.stringify(filenames));
+  } catch {
+    // best-effort
+  }
+}
+
+export function clearAddedFiles(examSlug: string, questionId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.sessionStorage.removeItem(filesKey(examSlug, questionId));
+  } catch {
+    // ignore
+  }
+}

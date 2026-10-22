@@ -237,6 +237,11 @@ pre {
   align-items: center;
   gap: 0.35rem;
 }
+.nav-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
 .brand:hover {
   color: var(--aged-parchment);
   text-decoration: none;
@@ -574,6 +579,60 @@ pre.output--error {
   background: var(--c-green-black);
   border-top-color: var(--antique-gold);
 }
+
+/* Tabs can now be either a plain <button> (add button) or a <span> wrapper
+   containing a label button + a close button (for removable user files). */
+.ed__tab {
+  display: inline-flex;
+  align-items: center;
+}
+.ed__tab-label {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.55rem 0.4rem 0.55rem 1rem;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.ed__tab--removable .ed__tab-label {
+  padding-right: 0.25rem;
+}
+.ed__tab:not(.ed__tab--removable) .ed__tab-label {
+  padding-right: 1rem;
+}
+.ed__tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-right: 0.5rem;
+  padding: 0;
+  font-size: 0.95rem;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: var(--warm-alabaster);
+  opacity: 0.6;
+  cursor: pointer;
+}
+.ed__tab-close:hover {
+  opacity: 1;
+  color: #e9b7bb;
+  background: rgba(114, 47, 55, 0.2);
+}
+.ed__tab-add {
+  color: var(--antique-gold);
+  font-family: var(--font-ui);
+  letter-spacing: 0.04em;
+}
+.ed__tab-add:hover {
+  color: var(--aged-parchment);
+  background: var(--candle);
+}
 .ed__tabs-spacer {
   flex: 1;
 }
@@ -683,6 +742,42 @@ pre.output--error {
 }
 .ed__console-body .output {
   margin: 0 0 0.5rem;
+}
+
+/* Files the learner's program wrote at runtime (read-only). */
+.outfiles {
+  margin: 0.2rem 0 0.5rem;
+}
+.outfile {
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+.outfile__name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--aged-parchment);
+  background: var(--c-plum);
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--gold-soft);
+}
+.outfile__icon {
+  color: var(--antique-gold);
+}
+.outfile__trunc {
+  color: var(--warm-alabaster);
+  opacity: 0.7;
+}
+.outfile__body {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  max-height: 16rem;
+  overflow: auto;
 }
 
 /* Small / ghost button variants used in the Ed chrome */

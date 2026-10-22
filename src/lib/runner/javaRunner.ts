@@ -17,6 +17,50 @@ export interface CaseResult {
   hidden: boolean;
 }
 
+/** A file created / modified by the learner's program during a Run. */
+export interface OutputFile {
+  name: string;
+  /** Decoded text contents (UTF-8). */
+  contents: string;
+  /** True if the captured bytes were truncated by the server (>64 KB). */
+  truncated: boolean;
+}
+
+/**
+ * Pull `@@FILE@@<name>@@<base64>` markers out of stdout (emitted by the run
+ * launcher for files the program wrote) and return them decoded, along with
+ * the stdout that remains after removing those marker lines.
+ */
+export function parseOutputFiles(
+  stdout: string,
+): { files: OutputFile[]; cleanStdout: string } {
+  const files: OutputFile[] = [];
+  const kept: string[] = [];
+  for (const line of stdout.split('\n')) {
+    const m = line.match(/^@@FILE@@([^@]+)@@([\s\S]*)$/);
+    if (m) {
+      const name = m[1];
+      let contents = '';
+      let truncated = false;
+      try {
+        const b64 = m[2];
+        // Browser base64 decode → bytes → UTF-8 text.
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        contents = new TextDecoder('utf-8').decode(bytes);
+        truncated = bytes.length >= 64 * 1024;
+      } catch {
+        contents = '(could not decode file contents)';
+      }
+      files.push({ name, contents, truncated });
+    } else {
+      kept.push(line);
+    }
+  }
+  return { files, cleanStdout: kept.join('\n') };
+}
+
 export interface RunJavaOptions {
   files: StarterFilePayload[];
   stdin?: string;

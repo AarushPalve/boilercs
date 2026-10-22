@@ -55,6 +55,84 @@ function javaStr(s: string): string {
 }
 
 /**
+ * Generate a run launcher: a reserved entry class (`BoilerRun`) that snapshots
+ * the working directory, invokes the learner's real `main` by reflection (so
+ * their class is never renamed), then prints any files that were created or
+ * modified during the run as parseable markers:
+ *   @@FILE@@<name>@@<base64 of the file's bytes>
+ * The client decodes these and shows them as read-only "output file" tabs, so
+ * a program that writes e.g. `hello.txt` with a FileWriter reveals its result.
+ */
+function buildRunLauncher(mainClass: string): string {
+  return `import java.util.*;
+import java.io.*;
+import java.nio.file.*;
+
+public class BoilerRun {
+    public static void main(String[] __args) throws Throwable {
+        File dir = new File(".");
+        Map<String, long[]> before = snapshot(dir);
+
+        Throwable thrown = null;
+        try {
+            Class<?> __c = Class.forName(${javaStr(mainClass)});
+            java.lang.reflect.Method __m = __c.getDeclaredMethod("main", String[].class);
+            __m.setAccessible(true);
+            __m.invoke(null, (Object) new String[0]);
+        } catch (java.lang.reflect.InvocationTargetException e) {
+            thrown = e.getCause() != null ? e.getCause() : e;
+        } catch (Throwable t) {
+            thrown = t;
+        } finally {
+            System.out.flush();
+            emitFiles(dir, before);
+        }
+
+        if (thrown != null) {
+            if (thrown instanceof RuntimeException) throw (RuntimeException) thrown;
+            if (thrown instanceof Error) throw (Error) thrown;
+            throw new RuntimeException(thrown);
+        }
+    }
+
+    static Map<String, long[]> snapshot(File dir) {
+        Map<String, long[]> m = new HashMap<>();
+        File[] fs = dir.listFiles();
+        if (fs != null) for (File f : fs) {
+            if (f.isFile()) m.put(f.getName(), new long[]{ f.lastModified(), f.length() });
+        }
+        return m;
+    }
+
+    static void emitFiles(File dir, Map<String, long[]> before) {
+        File[] fs = dir.listFiles();
+        if (fs == null) return;
+        Arrays.sort(fs, Comparator.comparing(File::getName));
+        for (File f : fs) {
+            if (!f.isFile()) continue;
+            String name = f.getName();
+            // Skip our own source/class artifacts.
+            if (name.endsWith(".class") || name.endsWith(".java")) continue;
+            if (name.equals("input") || name.equals("output")) continue;
+            long[] prev = before.get(name);
+            boolean changed = prev == null
+                || prev[0] != f.lastModified()
+                || prev[1] != f.length();
+            if (!changed) continue;
+            try {
+                byte[] bytes = Files.readAllBytes(f.toPath());
+                // Cap very large files so we don't blow the output limit.
+                if (bytes.length > 64 * 1024) bytes = Arrays.copyOf(bytes, 64 * 1024);
+                String b64 = Base64.getEncoder().encodeToString(bytes);
+                System.out.println("@@FILE@@" + name + "@@" + b64);
+            } catch (IOException ignored) {}
+        }
+    }
+}
+`;
+}
+
+/**
  * Generate the grading harness: a `public class Main` whose `main` runs each
  * case in isolation and prints a parseable line per case:
  *   @@CASE@@<index>@@<PASS|FAIL>@@<message>
@@ -218,6 +296,20 @@ function buildCode(body: RunBody): { code?: string; error?: string } {
       };
     }
     keepPublic = mainClass || detectPublicType(files.find((f) => hasMain(f.contents))!.contents);
+
+    // Plain Run: when the learner's program lives in a named class (not a
+    // Java 25 compact source file), wrap it in a launcher that captures any
+    // files the program writes (FileWriter, etc.) and reports them back. The
+    // launcher becomes the public entry point; the learner's class is demoted
+    // to package-private like any other non-entry type.
+    const entryName = keepPublic;
+    const entryIsNamedClass = Boolean(entryName) && /\bclass\s+/.test(
+      files.find((f) => hasMain(f.contents))?.contents ?? '',
+    );
+    if (entryIsNamedClass) {
+      units.push({ filename: 'BoilerRun.java', contents: buildRunLauncher(entryName as string) });
+      keepPublic = 'BoilerRun';
+    }
   }
 
   // Preserve Java 25 compact-source semantics for a single top-level-main file.

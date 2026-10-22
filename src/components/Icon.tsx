@@ -20,6 +20,7 @@ type IconName =
   | 'chevronRight'
   | 'github'
   | 'layers'
+  | 'message'
   | 'arrowRight';
 
 const PATHS: Record<IconName, React.ReactNode> = {
@@ -94,6 +95,9 @@ const PATHS: Record<IconName, React.ReactNode> = {
   ),
   github: (
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-1-2.6c3-.3 6-1.5 6-6.5a5 5 0 0 0-1.4-3.5 4.7 4.7 0 0 0-.1-3.5s-1.1-.3-3.5 1.3a12 12 0 0 0-6 0C6.1 1.7 5 2 5 2a4.7 4.7 0 0 0-.1 3.5A5 5 0 0 0 3.5 9c0 5 3 6.2 6 6.5a3.4 3.4 0 0 0-1 2.6V22" />
+  ),
+  message: (
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
   ),
 };
 

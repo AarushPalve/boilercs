@@ -4,9 +4,23 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { Question } from '@/lib/types';
 import type { RunResult } from '@/lib/runner/types';
-import { runJava, parseCaseResults, type CaseResult } from '@/lib/runner/javaRunner';
+import {
+  runJava,
+  parseCaseResults,
+  parseOutputFiles,
+  type CaseResult,
+  type OutputFile,
+} from '@/lib/runner/javaRunner';
 import { runJavaScript, type JsRun } from '@/lib/runner/jsRunner';
-import { loadDraft, saveDraft, clearQuestionDrafts } from '@/lib/drafts';
+import {
+  loadDraft,
+  saveDraft,
+  clearDraft,
+  clearQuestionDrafts,
+  loadAddedFiles,
+  saveAddedFiles,
+  clearAddedFiles,
+} from '@/lib/drafts';
 import {
   loadScore,
   recordScore,
@@ -52,19 +66,29 @@ export default function QuestionWorkspace({
   prevHref,
   nextHref,
 }: Props) {
-  const filenames = useMemo(
+  const starterNames = useMemo(
     () => question.starterFiles.map((f) => f.filename),
     [question],
   );
 
+  // Files the learner has added beyond the starters (extra tabs).
+  const [addedFiles, setAddedFiles] = useState<string[]>([]);
+
+  // Full tab order: starter files first, then user-added files.
+  const filenames = useMemo(
+    () => [...starterNames, ...addedFiles],
+    [starterNames, addedFiles],
+  );
+
   // Per-file editor contents, seeded from drafts (sessionStorage) or starters.
   const [files, setFiles] = useState<Record<string, string>>({});
-  const [activeFile, setActiveFile] = useState(filenames[0] ?? '');
+  const [activeFile, setActiveFile] = useState(starterNames[0] ?? '');
   const [stdin, setStdin] = useState('');
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<RunResult | null>(null);
   const [runMode, setRunMode] = useState<'run' | 'test' | 'grade'>('run');
   const [caseResults, setCaseResults] = useState<CaseResult[] | null>(null);
+  const [outputFiles, setOutputFiles] = useState<OutputFile[]>([]);
   const [dirty, setDirty] = useState(false);
   const [savedScore, setSavedScore] = useState<QuestionScore | null>(null);
 
@@ -77,8 +101,14 @@ export default function QuestionWorkspace({
       const draft = loadDraft(examSlug, question.id, f.filename);
       seeded[f.filename] = draft ?? f.contents;
     }
+    // Restore any files the learner previously added for this question.
+    const added = loadAddedFiles(examSlug, question.id);
+    for (const name of added) {
+      seeded[name] = loadDraft(examSlug, question.id, name) ?? '';
+    }
+    setAddedFiles(added);
     setFiles(seeded);
-    setActiveFile(question.starterFiles[0]?.filename ?? '');
+    setActiveFile(question.starterFiles[0]?.filename ?? added[0] ?? '');
     setStdin('');
     setResult(null);
     setDirty(false);
@@ -108,14 +138,77 @@ export default function QuestionWorkspace({
     [examSlug, question.id],
   );
 
+  // Add a new, empty file as its own tab. Java files default to a class stub
+  // matching the filename. Returns nothing; switches focus to the new file.
+  const handleAddFile = useCallback(() => {
+    const raw = window.prompt('New file name (e.g. Helper.java):');
+    if (raw == null) return;
+    let name = raw.trim();
+    if (!name) return;
+    // For Java, a bare class name gets a .java extension automatically.
+    if (language === 'java' && !name.includes('.')) name = `${name}.java`;
+
+    if (filenames.includes(name)) {
+      window.alert(`A file named "${name}" already exists.`);
+      setActiveFile(name);
+      return;
+    }
+
+    // Seed Java files with a class stub derived from the filename.
+    let seed = '';
+    if (language === 'java' && name.toLowerCase().endsWith('.java')) {
+      const base = name.slice(0, -'.java'.length);
+      if (/^[A-Za-z_]\w*$/.test(base)) {
+        seed = `public class ${base} {\n    \n}\n`;
+      }
+    }
+
+    setFiles((prev) => ({ ...prev, [name]: seed }));
+    setAddedFiles((prev) => {
+      const nextAdded = [...prev, name];
+      saveAddedFiles(examSlug, question.id, nextAdded);
+      return nextAdded;
+    });
+    saveDraft(examSlug, question.id, name, seed);
+    setActiveFile(name);
+    setDirty(true);
+  }, [examSlug, question.id, language, filenames]);
+
+  // Remove a user-added file (starter files can't be removed).
+  const handleDeleteFile = useCallback(
+    (name: string) => {
+      if (starterNames.includes(name)) return;
+      if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
+
+      setFiles((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+      setAddedFiles((prev) => {
+        const nextAdded = prev.filter((f) => f !== name);
+        saveAddedFiles(examSlug, question.id, nextAdded);
+        return nextAdded;
+      });
+      clearDraft(examSlug, question.id, name);
+      setActiveFile((cur) => (cur === name ? starterNames[0] ?? '' : cur));
+      setDirty(true);
+    },
+    [examSlug, question.id, starterNames],
+  );
+
   const handleReset = useCallback(() => {
-    // Stop any in-flight JS run and restore starters.
+    // Stop any in-flight JS run and restore starters (dropping added files).
     activeJsRun.current?.stop();
     activeJsRun.current = null;
     const fresh: Record<string, string> = {};
     for (const f of question.starterFiles) fresh[f.filename] = f.contents;
-    setFiles(fresh);
+    // Clear drafts for starters AND any user-added files.
     clearQuestionDrafts(examSlug, question.id, filenames);
+    clearAddedFiles(examSlug, question.id);
+    setAddedFiles([]);
+    setFiles(fresh);
+    setActiveFile(question.starterFiles[0]?.filename ?? '');
     setResult(null);
     setDirty(false);
     setRunning(false);
@@ -140,10 +233,15 @@ export default function QuestionWorkspace({
       setRunMode(mode);
       setResult(null);
       setCaseResults(null);
+      setOutputFiles([]);
 
-      const payload = question.starterFiles.map((f) => ({
-        filename: f.filename,
-        contents: files[f.filename] ?? f.contents,
+      // Build the payload from every open tab: starter files plus any files
+      // the learner added. Starter contents fall back to their defaults.
+      const starterDefaults: Record<string, string> = {};
+      for (const f of question.starterFiles) starterDefaults[f.filename] = f.contents;
+      const payload = filenames.map((name) => ({
+        filename: name,
+        contents: files[name] ?? starterDefaults[name] ?? '',
       }));
 
       try {
@@ -180,6 +278,11 @@ export default function QuestionWorkspace({
           res = await runJava({ files: payload, stdin, testerCode: question.testerCode });
         } else {
           res = await runJava({ files: payload, stdin });
+          // The run launcher appends @@FILE@@ markers for any files the
+          // program wrote (FileWriter, etc.). Surface them as read-only tabs.
+          const parsedFiles = parseOutputFiles(res.stdout);
+          setOutputFiles(parsedFiles.files);
+          res = { ...res, stdout: parsedFiles.cleanStdout.trim() };
         }
         setResult(res);
       } catch (err) {
@@ -195,6 +298,7 @@ export default function QuestionWorkspace({
     },
     [
       files,
+      filenames,
       language,
       question.starterFiles,
       question.testerCode,
@@ -355,17 +459,48 @@ export default function QuestionWorkspace({
           <div className="ed__editor">
             {/* File tab strip */}
             <div className="ed__tabs" role="tablist">
-              {filenames.map((fn) => (
+              {filenames.map((fn) => {
+                const removable = !starterNames.includes(fn);
+                return (
+                  <span
+                    key={fn}
+                    className={`ed__tab ${fn === activeFile ? 'is-active' : ''} ${
+                      removable ? 'ed__tab--removable' : ''
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={fn === activeFile}
+                      className="ed__tab-label"
+                      onClick={() => setActiveFile(fn)}
+                    >
+                      {fn}
+                    </button>
+                    {removable ? (
+                      <button
+                        type="button"
+                        className="ed__tab-close"
+                        title={`Delete ${fn}`}
+                        aria-label={`Delete ${fn}`}
+                        onClick={() => handleDeleteFile(fn)}
+                      >
+                        ×
+                      </button>
+                    ) : null}
+                  </span>
+                );
+              })}
+              {language === 'java' ? (
                 <button
-                  key={fn}
-                  role="tab"
-                  aria-selected={fn === activeFile}
-                  className={`ed__tab ${fn === activeFile ? 'is-active' : ''}`}
-                  onClick={() => setActiveFile(fn)}
+                  type="button"
+                  className="ed__tab ed__tab-add"
+                  title="Add a new file"
+                  onClick={handleAddFile}
                 >
-                  {fn}
+                  + New file
                 </button>
-              ))}
+              ) : null}
               <span className="ed__tabs-spacer" />
               <span className="ed__lang">{language === 'java' ? 'Java 25' : 'JavaScript'}</span>
             </div>
@@ -558,6 +693,28 @@ export default function QuestionWorkspace({
                     </>
                   ) : null}
 
+                  {outputFiles.length > 0 ? (
+                    <div className="outfiles">
+                      <div className="ed__stream-label">
+                        files written ({outputFiles.length})
+                      </div>
+                      {outputFiles.map((f) => (
+                        <div className="outfile" key={f.name}>
+                          <div className="outfile__name">
+                            <span className="outfile__icon" aria-hidden>
+                              ▤
+                            </span>
+                            {f.name}
+                            {f.truncated ? (
+                              <span className="outfile__trunc"> (truncated)</span>
+                            ) : null}
+                          </div>
+                          <pre className="output outfile__body">{f.contents}</pre>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
                   {result.stderr ? (
                     <>
                       <div className="ed__stream-label">
@@ -567,7 +724,7 @@ export default function QuestionWorkspace({
                     </>
                   ) : null}
 
-                  {!result.stdout && !result.stderr ? (
+                  {!result.stdout && !result.stderr && outputFiles.length === 0 ? (
                     <p className="muted">(No output produced.)</p>
                   ) : null}
                 </>

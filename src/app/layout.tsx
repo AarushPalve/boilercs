@@ -32,6 +32,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <nav className="site-nav">
               <Link href="/">Courses</Link>
               <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSeIQh_Rdr3To4nMsr63NebB6NoXQ8PlOskTonTcE8QO1YKF9A/viewform?usp=publish-editor"
+                target="_blank"
+                rel="noreferrer"
+                className="nav-feedback"
+              >
+                <Icon name="message" size={16} /> Feedback
+              </a>
+              <a
                 href="https://github.com"
                 target="_blank"
                 rel="noreferrer"
