@@ -864,6 +864,87 @@ pre.output--error {
   padding: 0;
   color: var(--warm-alabaster);
 }
+.md ol {
+  margin: 0 0 0.85rem;
+  padding-left: 1.5rem;
+}
+
+/* --- Interactive lessons --- */
+.unit-section {
+  margin-bottom: 2.25rem;
+}
+.lesson-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  border: 1px solid var(--gold-soft);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.lesson-list li + li .question-row {
+  border-top: 1px solid var(--gold-soft);
+}
+.lesson-body {
+  max-width: 52rem;
+  margin: 1.25rem 0 2rem;
+}
+.lesson-body .md-code {
+  font-size: 0.86rem;
+}
+.lesson-nav {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--gold-soft);
+  padding-top: 1.25rem;
+  margin-top: 1rem;
+}
+.lesson-nav .btn:last-child {
+  margin-left: auto;
+}
+
+/* --- Runnable code snippet (lesson walkthroughs) --- */
+.snippet {
+  border: 1px solid var(--gold-soft);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0 0 1.1rem;
+  background: var(--inkwell-black);
+}
+.snippet__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: var(--c-plum);
+  border-bottom: 1px solid var(--gold-soft);
+}
+.snippet__lang {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--antique-gold);
+}
+.snippet__spacer {
+  flex: 1;
+}
+.snippet__hint {
+  font-size: 0.78rem;
+}
+.snippet .ce {
+  border: none;
+  border-radius: 0;
+}
+.snippet__console {
+  border-top: 1px solid var(--gold-soft);
+  padding: 0.6rem 0.8rem;
+  background: var(--c-navy);
+}
+.snippet__console .output {
+  margin: 0 0 0.5rem;
+}
 
 .stdin-box {
   width: 100%;

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getAllClasses, getClass, unitExamCount } from '@/lib/curriculum';
+import { getAllClasses, getClass, unitExamCount, unitLessonCount } from '@/lib/curriculum';
 import Icon from '@/components/Icon';
 
 export function generateStaticParams() {
@@ -43,7 +43,11 @@ export default function ClassPage({ params }: { params: { classSlug: string } })
           <div className="card-grid">
             {course.units.map((unit) => {
               const count = unitExamCount(unit);
-              const comingSoon = count === 0;
+              const lessons = unitLessonCount(course.slug, unit.slug);
+              const comingSoon = count === 0 && lessons === 0;
+              const badges: string[] = [];
+              if (lessons > 0) badges.push(`${lessons} lesson${lessons === 1 ? '' : 's'}`);
+              if (count > 0) badges.push(`${count} exam${count === 1 ? '' : 's'}`);
               return (
                 <article key={unit.slug} className={`card${comingSoon ? ' is-disabled' : ''}`}>
                   <div className="card-head">
@@ -55,9 +59,7 @@ export default function ClassPage({ params }: { params: { classSlug: string } })
                         <Icon name="lock" size={13} /> Coming soon
                       </span>
                     ) : (
-                      <span className="badge">
-                        {count} exam{count === 1 ? '' : 's'}
-                      </span>
+                      <span className="badge">{badges.join(' · ')}</span>
                     )}
                   </div>
                   <h3 className="card-title">{unit.title}</h3>

@@ -7,13 +7,15 @@
 // Hierarchy: Class -> Unit (midterm) -> Exam -> Question
 // ---------------------------------------------------------------------------
 
-import type { Catalog, CourseClass, Exam, Unit } from './types';
+import type { Catalog, CourseClass, Exam, Unit, LessonSet, Lesson } from './types';
 
 import classesJson from '../../public/data/classes.json';
 import exam1 from '../../public/data/exams/practice-exam-1.json';
 import exam2 from '../../public/data/exams/practice-exam-2.json';
 import exam3 from '../../public/data/exams/practice-exam-3.json';
 import exam4 from '../../public/data/exams/practice-exam-4.json';
+import lessonsCs180M1 from '../../public/data/lessons/cs180-midterm-1.json';
+import lessonsCs180M2 from '../../public/data/lessons/cs180-midterm-2.json';
 
 // Build-time registry: maps exam slug -> Exam object.
 const EXAM_REGISTRY: Record<string, Exam> = {
@@ -22,6 +24,17 @@ const EXAM_REGISTRY: Record<string, Exam> = {
   [exam3.slug]: exam3 as Exam,
   [exam4.slug]: exam4 as Exam,
 };
+
+// Build-time registry: maps a "<classSlug>-<unitSlug>" key -> LessonSet.
+const LESSON_REGISTRY: Record<string, LessonSet> = {
+  [lessonsCs180M1.slug]: lessonsCs180M1 as LessonSet,
+  [lessonsCs180M2.slug]: lessonsCs180M2 as LessonSet,
+};
+
+/** Registry key for a unit's lesson set. */
+function lessonSetKey(classSlug: string, unitSlug: string): string {
+  return `${classSlug}-${unitSlug}`;
+}
 
 export function getCatalog(): Catalog {
   return classesJson as Catalog;
@@ -81,6 +94,47 @@ export function getClassUnitExamTriples(): {
         if (EXAM_REGISTRY[examSlug]) {
           triples.push({ classSlug: c.slug, unitSlug: u.slug, examSlug });
         }
+      }
+    }
+  }
+  return triples;
+}
+
+
+// ---- Lessons ---------------------------------------------------------------
+
+/** The lesson set attached to a unit, if any. */
+export function getLessonSet(classSlug: string, unitSlug: string): LessonSet | undefined {
+  return LESSON_REGISTRY[lessonSetKey(classSlug, unitSlug)];
+}
+
+/** A single lesson within a unit's lesson set. */
+export function getLesson(
+  classSlug: string,
+  unitSlug: string,
+  lessonId: string,
+): Lesson | undefined {
+  return getLessonSet(classSlug, unitSlug)?.lessons.find((l) => l.id === lessonId);
+}
+
+/** How many lessons a unit has (0 if none). */
+export function unitLessonCount(classSlug: string, unitSlug: string): number {
+  return getLessonSet(classSlug, unitSlug)?.lessons.length ?? 0;
+}
+
+/** All (classSlug, unitSlug, lessonId) triples for static route generation. */
+export function getClassUnitLessonTriples(): {
+  classSlug: string;
+  unitSlug: string;
+  lessonId: string;
+}[] {
+  const triples: { classSlug: string; unitSlug: string; lessonId: string }[] = [];
+  for (const c of getCatalog().classes) {
+    for (const u of c.units) {
+      const set = getLessonSet(c.slug, u.slug);
+      if (!set) continue;
+      for (const lesson of set.lessons) {
+        triples.push({ classSlug: c.slug, unitSlug: u.slug, lessonId: lesson.id });
       }
     }
   }

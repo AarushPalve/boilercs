@@ -129,3 +129,35 @@ export interface CourseClass {
 export interface Catalog {
   classes: CourseClass[];
 }
+
+// ---------------------------------------------------------------------------
+// Interactive lessons (guided, read-through tutorials that accompany a unit's
+// practice exams). Authored as markdown and loaded from static JSON, mirroring
+// the exam data layer. Hierarchy: Class -> Unit -> LessonSet -> Lesson.
+// ---------------------------------------------------------------------------
+
+/** A single interactive lesson within a unit. */
+export interface Lesson {
+  /** Stable slug used in the route, e.g. "lesson-1-primitive-types". */
+  id: string;
+  /** Display order within the lesson set. */
+  order: number;
+  /** e.g. "Primitive Types, Arithmetic, Casting & Overflow". */
+  title: string;
+  /** Short theme/topic tag for the card, e.g. "Foundations". */
+  theme: string;
+  /** Markdown body of the full lesson (all three stages). */
+  body: string;
+}
+
+/** A set of lessons attached to one unit (midterm). */
+export interface LessonSet {
+  /** Stable slug used in the registry / route, e.g. "cs180-midterm-1". */
+  slug: string;
+  /** e.g. "Interactive Mastery Guide — Midterm 1". */
+  title: string;
+  /** Short description for the unit page section. */
+  description: string;
+  /** The lessons in order. */
+  lessons: Lesson[];
+}

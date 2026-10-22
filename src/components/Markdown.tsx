@@ -36,11 +36,18 @@ function renderMarkdown(md: string): string {
   const html: string[] = [];
   let i = 0;
   let inList = false;
+  let inOList = false;
 
   const closeList = () => {
     if (inList) {
       html.push('</ul>');
       inList = false;
+    }
+  };
+  const closeOList = () => {
+    if (inOList) {
+      html.push('</ol>');
+      inOList = false;
     }
   };
 
@@ -51,6 +58,7 @@ function renderMarkdown(md: string): string {
     const fence = line.match(/^```(\w*)\s*$/);
     if (fence) {
       closeList();
+      closeOList();
       const buf: string[] = [];
       i++;
       while (i < lines.length && !/^```\s*$/.test(lines[i])) {
@@ -66,15 +74,30 @@ function renderMarkdown(md: string): string {
     const h = line.match(/^(#{1,4})\s+(.*)$/);
     if (h) {
       closeList();
+      closeOList();
       const level = h[1].length;
       html.push(`<h${level}>${inlineFormat(h[2])}</h${level}>`);
       i++;
       continue;
     }
 
-    // list item (support nested indent as plain items)
+    // ordered list item (e.g. "1. text")
+    const oli = line.match(/^\s*\d+\.\s+(.*)$/);
+    if (oli) {
+      closeList();
+      if (!inOList) {
+        html.push('<ol>');
+        inOList = true;
+      }
+      html.push(`<li>${inlineFormat(oli[1])}</li>`);
+      i++;
+      continue;
+    }
+
+    // unordered list item (support nested indent as plain items)
     const li = line.match(/^\s*[*-]\s+(.*)$/);
     if (li) {
+      closeOList();
       if (!inList) {
         html.push('<ul>');
         inList = true;
@@ -87,16 +110,19 @@ function renderMarkdown(md: string): string {
     // blank line
     if (line.trim() === '') {
       closeList();
+      closeOList();
       i++;
       continue;
     }
 
     // paragraph
     closeList();
+    closeOList();
     html.push(`<p>${inlineFormat(line)}</p>`);
     i++;
   }
   closeList();
+  closeOList();
   return html.join('\n');
 }
 
@@ -107,7 +133,7 @@ export default function Markdown({ source }: { source: string }) {
     if (typeof window === 'undefined') return rendered;
     return DOMPurify.sanitize(rendered, {
       ALLOWED_TAGS: [
-        'h1', 'h2', 'h3', 'h4', 'p', 'ul', 'li', 'strong', 'em', 'code', 'pre', 'br',
+        'h1', 'h2', 'h3', 'h4', 'p', 'ul', 'ol', 'li', 'strong', 'em', 'code', 'pre', 'br',
       ],
       ALLOWED_ATTR: ['class'],
     });

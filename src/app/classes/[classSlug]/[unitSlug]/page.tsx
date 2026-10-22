@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getClassUnitPairs, getClass, getUnit, getExam } from '@/lib/curriculum';
+import { getClassUnitPairs, getClass, getUnit, getExam, getLessonSet } from '@/lib/curriculum';
 import Icon from '@/components/Icon';
 
 export function generateStaticParams() {
@@ -20,6 +20,9 @@ export default function UnitPage({
     .map((s) => getExam(s))
     .filter((e): e is NonNullable<typeof e> => Boolean(e));
 
+  const lessonSet = getLessonSet(params.classSlug, params.unitSlug);
+  const base = `/classes/${course.slug}/${unit.slug}`;
+
   return (
     <div className="container page">
       <nav className="crumbs">
@@ -37,13 +40,41 @@ export default function UnitPage({
         </p>
       </header>
 
-      {exams.length === 0 ? (
+      {lessonSet && lessonSet.lessons.length > 0 ? (
+        <section className="unit-section">
+          <h2 className="section-head">
+            <Icon name="bookOpen" size={18} /> Interactive lessons
+          </h2>
+          <p className="muted" style={{ maxWidth: '48rem', marginTop: '-0.4rem' }}>
+            {lessonSet.description}
+          </p>
+          <ol className="lesson-list">
+            {lessonSet.lessons.map((lesson) => (
+              <li key={lesson.id}>
+                <Link href={`${base}/lessons/${lesson.id}`} className="question-row">
+                  <span className="question-row__num">
+                    {String(lesson.order).padStart(2, '0')}
+                  </span>
+                  <div className="question-row__body">
+                    <span className="question-row__theme">{lesson.theme}</span>
+                    <span className="question-row__title">{lesson.title}</span>
+                  </div>
+                  <span className="meta">Lesson</span>
+                  <Icon name="chevronRight" size={16} className="question-row__chev" />
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ) : null}
+
+      {exams.length === 0 && (!lessonSet || lessonSet.lessons.length === 0) ? (
         <div className="empty-state">
           <Icon name="lock" size={22} />
-          <h3>No exams yet</h3>
-          <p className="muted">Practice exams for this unit are being prepared.</p>
+          <h3>No content yet</h3>
+          <p className="muted">Practice exams and lessons for this unit are being prepared.</p>
         </div>
-      ) : (
+      ) : exams.length === 0 ? null : (
         <>
           <h2 className="section-head">
             <Icon name="code" size={18} /> Practice exams
