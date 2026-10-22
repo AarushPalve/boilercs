@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Icon name="message" size={16} /> Feedback
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/AarushPalve/boilercs"
                 target="_blank"
                 rel="noreferrer"
                 className="nav-github"
