@@ -3,755 +3,689 @@
   "title": "Practice Exam 2",
   "timeLimitMinutes": 60,
   "totalPoints": 100,
-  "description": "10 free-response challenges across Electric Vehicles, Libraries, Robotics, Accounting, Gastronomy, Automotive, Instrumentation, Networking, Finance, and Space Exploration themes.",
+  "description": "10 free-response coding challenges covering File I/O, static fields, encapsulation & bounds, interfaces & polymorphism, overloading & constructor chaining, composition, exception-handling input loops, file processing, inheritance & super, and instanceof downcasting.",
   "questions": [
     {
-      "id": "q1-ev-charging-station",
+      "id": "q1-audit-log",
       "order": 1,
-      "title": "EV Charging Station",
+      "title": "Audit Log",
       "points": 6,
-      "theme": "Electric Vehicles",
-      "prompt": "Create a class `EVStation` in `EVStation.java`:\n* **Private fields:** `String stationId`, `String city`, `int totalPorts`, `double pricePerKWh`.\n* **Constructor 1:** `EVStation(String stationId, String city, int totalPorts, double pricePerKWh)`.\n* **Constructor 2:** `EVStation(String stationId, String city)` which assigns `totalPorts = 4` and `pricePerKWh = 0.35`.\n* **Getters and Setters:** For all four fields.\n  * In `setTotalPorts(int totalPorts)`: Must have at least 1 port and at most 32. If `< 1`, set to `1`. If `> 32`, set to `32`.\n  * In `setPricePerKWh(double price)`: If `< 0.05`, set to `0.05`.",
-      "sampleRun": "EVStation s = new EVStation(\"EV-IN-01\", \"West Lafayette\");\nSystem.out.println(s.getStationId() + \" (\" + s.getCity() + \"): \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());\ns.setTotalPorts(50);\ns.setPricePerKWh(0.01);\nSystem.out.println(\"Updated: \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());",
-      "expectedOutput": "EV-IN-01 (West Lafayette): 4 ports @ $0.35\nUpdated: 32 ports @ $0.05",
+      "theme": "File I/O",
+      "prompt": "Write a program in `Main.java` that creates a file named `audit.log` containing exactly these three lines:\n\n```\n[START] System initialized.\n[AUTH] User admin verified.\n[END] Session terminated.\n```\n\nEach line must end with a newline character (`\\n`), including the last. If `audit.log` exists, replace its contents cleanly. The program prints nothing to the console.\n\nUse try-with-resources so the file handle is closed and flushed.",
+      "sampleRun": "// After execution, audit.log contains exactly:\n// [START] System initialized.\n// [AUTH] User admin verified.\n// [END] Session terminated.\n// (each line terminated by \\n, nothing printed to the console)",
+      "expectedOutput": "",
       "starterFiles": [
         {
-          "filename": "EVStation.java",
-          "contents": "public class EVStation {\n    // TODO: private fields stationId, city, totalPorts, pricePerKWh\n\n    // TODO: 4-arg + 2-arg constructors (defaults 4 ports, 0.35)\n\n    // TODO: getters/setters (ports clamped [1,32]; price floor 0.05)\n}\n"
+          "filename": "Main.java",
+          "contents": "import java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        // TODO: write audit.log with exactly three lines, each ending in \\n.\n        // Print nothing. Overwrite any existing file. Use try-with-resources.\n    }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Default constructor fields; port upper clamp (50 -> 32); minimum price clamp (0.01 -> 0.05)."
+          "description": "File audit.log exists with exact text and terminal newline."
         },
         {
-          "name": "Test 2 [Hidden] (Lower Port Clamp)",
+          "name": "Test 2 [Hidden] (Clean Truncation)",
           "visible": false,
-          "description": "setTotalPorts(0) and setTotalPorts(-2) clamp to 1."
+          "description": "Truncates existing file containing 50KB of data to exact 3 lines."
         },
         {
-          "name": "Test 3 [Hidden] (Port Boundaries)",
+          "name": "Test 3 [Hidden] (Silent Console)",
           "visible": false,
-          "description": "Setting ports to 1 and 32 preserved."
+          "description": "No output on System.out or System.err."
         },
         {
-          "name": "Test 4 [Hidden] (4-Arg Constructor)",
+          "name": "Test 4 [Hidden] (Case and Space Precision)",
           "visible": false,
-          "description": "All 4 arguments initialized directly."
-        },
-        {
-          "name": "Test 5 [Hidden] (Price Exact Threshold)",
-          "visible": false,
-          "description": "Price of 0.05 accepted without change."
-        },
-        {
-          "name": "Test 6 [Hidden] (City and ID Mutators)",
-          "visible": false,
-          "description": "String fields updated cleanly."
+          "description": "Exact bracket formatting [AUTH] and spacing verified."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        EVStation s = new EVStation(\"EV-IN-01\", \"West Lafayette\");\n        System.out.println(s.getStationId() + \" (\" + s.getCity() + \"): \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());\n        s.setTotalPorts(50);\n        s.setPricePerKWh(0.01);\n        System.out.println(\"Updated: \" + s.getTotalPorts() + \" ports @ $\" + s.getPricePerKWh());\n    }\n}\n",
-      "testerExpectedOutput": "EV-IN-01 (West Lafayette): 4 ports @ $0.35\nUpdated: 32 ports @ $0.05"
+      "graderCases": [
+        {
+          "name": "Sample run (exact three lines + terminal newline)",
+          "hidden": false,
+          "body": "Main.main(new String[0]);\nString content = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"audit.log\")));\neq(content, \"[START] System initialized.\\n[AUTH] User admin verified.\\n[END] Session terminated.\\n\");"
+        },
+        {
+          "name": "Clean truncation of large existing file",
+          "hidden": true,
+          "body": "StringBuilder sb = new StringBuilder();\nfor (int i = 0; i < 4000; i++) sb.append(\"garbage data line\\n\");\njava.nio.file.Files.write(java.nio.file.Paths.get(\"audit.log\"), sb.toString().getBytes());\nMain.main(new String[0]);\nString content = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"audit.log\")));\neq(content, \"[START] System initialized.\\n[AUTH] User admin verified.\\n[END] Session terminated.\\n\");"
+        },
+        {
+          "name": "Exact bracket/space precision",
+          "hidden": true,
+          "body": "Main.main(new String[0]);\nString content = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"audit.log\")));\ncheck(content.contains(\"[AUTH] User admin verified.\\n\"), \"exact [AUTH] line with single spaces required\");\ncheck(content.indexOf('\\r') < 0, \"no carriage returns allowed\");"
+        }
+      ]
     },
     {
-      "id": "q2-library-catalog-book",
+      "id": "q2-digital-book",
       "order": 2,
-      "title": "Library Catalog Book",
+      "title": "Digital Book",
       "points": 8,
-      "theme": "Libraries",
-      "prompt": "Create a class `CatalogBook` in `CatalogBook.java`:\n* **Private fields:** `String isbn`, `String title`, `int publicationYear`.\n* **Constructor:** `CatalogBook(String isbn, String title, int publicationYear)`.\n* **`toString()`:** Return:\n  ```\n  ISBN: <isbn>\n  Title: <title>\n  Year: <publicationYear>\n  ```\n  *(Separated by `\\n` with no trailing newline)*\n* **`equals(Object o)`:** Two catalog books are equal if their `isbn` matches **exactly (case-sensitive)**. Return `false` if `o` is `null` or not an instance of `CatalogBook`.",
-      "sampleRun": "CatalogBook b1 = new CatalogBook(\"978-0134685991\", \"Effective Java\", 2018);\nCatalogBook b2 = new CatalogBook(\"978-0134685991\", \"Effective Java (Copy 2)\", 2020);\nSystem.out.println(b1);\nSystem.out.println(\"Same ISBN: \" + b1.equals(b2));",
-      "expectedOutput": "ISBN: 978-0134685991\nTitle: Effective Java\nYear: 2018\nSame ISBN: true",
+      "theme": "Classes & Static Fields",
+      "prompt": "Implement the class `DigitalBook` in `DigitalBook.java`; fields must be private.\n\n* A digital book knows its title (`String`) and file size in megabytes (`double`).\n* `DigitalBook(String title, double sizeMB)` stores both fields and increments a static download counter.\n* `getTitle()` and `getSizeMB()` return the fields; `setSizeMB(double sizeMB)` updates the file size.\n* `static int getTotalDownloads()` returns the total number of `DigitalBook` instances created.\n* `Main.java` is a test driver; do not edit it.",
+      "sampleRun": "DigitalBook b1 = new DigitalBook(\"Java Basics\", 4.2);\nDigitalBook b2 = new DigitalBook(\"Algorithms\", 12.0);\nSystem.out.println(b1.getTitle());\nSystem.out.println(b1.getSizeMB());\nSystem.out.println(DigitalBook.getTotalDownloads());\nb1.setSizeMB(5.0);\nSystem.out.println(b1.getSizeMB());",
+      "expectedOutput": "Java Basics\n4.2\n2\n5.0",
       "starterFiles": [
         {
-          "filename": "CatalogBook.java",
-          "contents": "public class CatalogBook {\n    // TODO: private fields isbn, title, publicationYear\n\n    // TODO: constructor\n\n    // TODO: toString() 3-line format\n\n    // TODO: equals() -> exact (case-sensitive) isbn match; null/type safe\n}\n"
+          "filename": "DigitalBook.java",
+          "contents": "public class DigitalBook {\n    // TODO: private fields title, sizeMB; private static downloads\n\n    // TODO: constructor(String, double) -> store + increment downloads\n\n    // TODO: getTitle(), getSizeMB(), setSizeMB(double)\n\n    // TODO: static int getTotalDownloads()\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Multi-line output format and equality based solely on matching ISBN."
+          "description": "2 instances created, getters, setter, static downloads returns 2."
+        },
+        {
+          "name": "Test 2 [Hidden] (Static Isolation)",
+          "visible": false,
+          "description": "Calling getTotalDownloads() prior to any instantiation returns 0."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero File Size)",
+          "visible": false,
+          "description": "Size 0.0 stores accurately without resetting counter."
+        },
+        {
+          "name": "Test 4 [Hidden] (Field Encapsulation)",
+          "visible": false,
+          "description": "All fields confirmed private."
+        },
+        {
+          "name": "Test 5 [Hidden] (Null Title)",
+          "visible": false,
+          "description": "new DigitalBook(null, 5.0) increments downloads without crashing."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        DigitalBook b1 = new DigitalBook(\"Java Basics\", 4.2);\n        DigitalBook b2 = new DigitalBook(\"Algorithms\", 12.0);\n        System.out.println(b1.getTitle());\n        System.out.println(b1.getSizeMB());\n        System.out.println(DigitalBook.getTotalDownloads());\n        b1.setSizeMB(5.0);\n        System.out.println(b1.getSizeMB());\n    }\n}\n",
+      "testerExpectedOutput": "Java Basics\n4.2\n2\n5.0",
+      "graderCases": [
+        {
+          "name": "Sample run (getters, setter, count)",
+          "hidden": false,
+          "body": "int before = DigitalBook.getTotalDownloads();\nDigitalBook b1 = new DigitalBook(\"Java Basics\", 4.2);\nDigitalBook b2 = new DigitalBook(\"Algorithms\", 12.0);\neq(b1.getTitle(), \"Java Basics\");\neqD(b1.getSizeMB(), 4.2);\neq(DigitalBook.getTotalDownloads() - before, 2);\nb1.setSizeMB(5.0);\neqD(b1.getSizeMB(), 5.0);"
+        },
+        {
+          "name": "Zero file size stores, counter increments",
+          "hidden": true,
+          "body": "int before = DigitalBook.getTotalDownloads();\nDigitalBook b = new DigitalBook(\"Z\", 0.0);\neqD(b.getSizeMB(), 0.0);\neq(DigitalBook.getTotalDownloads() - before, 1);"
+        },
+        {
+          "name": "Fields private",
+          "hidden": true,
+          "body": "java.lang.reflect.Field t = DigitalBook.class.getDeclaredField(\"title\");\ncheck(java.lang.reflect.Modifier.isPrivate(t.getModifiers()), \"title must be private\");"
+        },
+        {
+          "name": "Null title increments cleanly",
+          "hidden": true,
+          "body": "int before = DigitalBook.getTotalDownloads();\nDigitalBook b = new DigitalBook(null, 5.0);\neq(b.getTitle(), null);\neq(DigitalBook.getTotalDownloads() - before, 1);"
+        }
+      ]
+    },
+    {
+      "id": "q3-audio-equalizer",
+      "order": 3,
+      "title": "Audio Equalizer",
+      "points": 8,
+      "theme": "Encapsulation & Bounds",
+      "prompt": "Write the class `AudioEqualizer` in `AudioEqualizer.java`; all fields must be private.\n\n* A bass gain level is an integer from -12 to 12 decibels (dB) inclusive.\n* `setBass(int bass)` updates the bass level only if it is within `[-12, 12]`; an out-of-range value changes nothing.\n* The constructor `AudioEqualizer(int bass)` sends its argument through `setBass`. An invalid initial value leaves the bass at `0`.\n* `getBass()` returns the current bass level.\n* `boost()` raises the bass by 1 unless it is already 12.\n* `cut()` lowers the bass by 1 unless it is already -12.\n* `Main.java` is a test driver; do not edit it.",
+      "sampleRun": "AudioEqualizer eq = new AudioEqualizer(11);\neq.boost();\nSystem.out.println(eq.getBass());\neq.boost();\nSystem.out.println(eq.getBass());\neq.setBass(25);\nSystem.out.println(eq.getBass());\nSystem.out.println(new AudioEqualizer(-20).getBass());",
+      "expectedOutput": "12\n12\n12\n0",
+      "starterFiles": [
+        {
+          "filename": "AudioEqualizer.java",
+          "contents": "public class AudioEqualizer {\n    // TODO: private int bass (initialize to 0)\n\n    // TODO: constructor(int bass) -> routes through setBass\n\n    // TODO: setBass(int) -> store only if in [-12, 12]\n\n    // TODO: getBass(), boost() (clamp at 12), cut() (clamp at -12)\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Boost to upper limit 12, rejected out-of-range 25, invalid constructor defaults to 0."
+        },
+        {
+          "name": "Test 2 [Hidden] (Negative Symmetrical Clamp)",
+          "visible": false,
+          "description": "At -12, calling cut() 5 times remains at -12."
+        },
+        {
+          "name": "Test 3 [Hidden] (Off-by-One Constructor Rejection)",
+          "visible": false,
+          "description": "new AudioEqualizer(-13) and new AudioEqualizer(13) default to 0."
+        },
+        {
+          "name": "Test 4 [Hidden] (Off-by-One Setter Rejection)",
+          "visible": false,
+          "description": "At 5, calling setBass(13) or setBass(-13) keeps 5."
+        },
+        {
+          "name": "Test 5 [Hidden] (Exact Minimum Valid Value)",
+          "visible": false,
+          "description": "new AudioEqualizer(-12) initializes to -12."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        AudioEqualizer eq = new AudioEqualizer(11);\n        eq.boost();\n        System.out.println(eq.getBass());\n        eq.boost();\n        System.out.println(eq.getBass());\n        eq.setBass(25);\n        System.out.println(eq.getBass());\n        System.out.println(new AudioEqualizer(-20).getBass());\n    }\n}\n",
+      "testerExpectedOutput": "12\n12\n12\n0",
+      "graderCases": [
+        {
+          "name": "Sample run (boost cap, reject 25, default -20->0)",
+          "hidden": false,
+          "body": "AudioEqualizer eq = new AudioEqualizer(11);\neq.boost(); eq(eq.getBass(), 12);\neq.boost(); eq(eq.getBass(), 12);\neq.setBass(25); eq(eq.getBass(), 12);\neq(new AudioEqualizer(-20).getBass(), 0);"
+        },
+        {
+          "name": "Negative symmetrical clamp",
+          "hidden": true,
+          "body": "AudioEqualizer eq = new AudioEqualizer(-12);\nfor (int i = 0; i < 5; i++) eq.cut();\neq(eq.getBass(), -12);"
+        },
+        {
+          "name": "Off-by-one constructor rejection",
+          "hidden": true,
+          "body": "eq(new AudioEqualizer(-13).getBass(), 0);\neq(new AudioEqualizer(13).getBass(), 0);"
+        },
+        {
+          "name": "Off-by-one setter rejection",
+          "hidden": true,
+          "body": "AudioEqualizer eq = new AudioEqualizer(5);\neq.setBass(13); eq(eq.getBass(), 5);\neq.setBass(-13); eq(eq.getBass(), 5);"
+        },
+        {
+          "name": "Exact min valid value",
+          "hidden": true,
+          "body": "eq(new AudioEqualizer(-12).getBass(), -12);\neq(new AudioEqualizer(12).getBass(), 12);"
+        }
+      ]
+    },
+    {
+      "id": "q4-medical-clinic-triage",
+      "order": 4,
+      "title": "Medical Clinic Triage",
+      "points": 10,
+      "theme": "Interfaces & Polymorphism",
+      "prompt": "Files given (read-only, provided as extra tabs): `Triageable.java` (interface with `String patientName()` and `int urgencyScore()`; the score can be negative), `WalkInPatient.java` and `EmergencyPatient.java` (implement `Triageable`), and `Main.java` (driver). Do not edit them.\n\nWrite `ClinicTriage.java` containing two static methods:\n* `static int totalUrgency(Triageable[] queue)`: returns the sum of every `urgencyScore()`.\n* `static String mostUrgent(Triageable[] queue)`: returns the `patientName()` of the element with the largest `urgencyScore()`.\n  * **Tie-Breaking Rule:** On a tie, the first one encountered wins.\n  * **Empty Array Rule:** An empty array returns `0` and `\"\"`.\n  * **Null Safety:** Skip any `null` elements in `queue` safely.",
+      "sampleRun": "Triageable[] queue = { new WalkInPatient(\"John\"), new EmergencyPatient(\"Mia\") };\n// John score is 20; Mia score is 85\nSystem.out.println(ClinicTriage.totalUrgency(queue));\nSystem.out.println(ClinicTriage.mostUrgent(queue));",
+      "expectedOutput": "105\nMia",
+      "starterFiles": [
+        {
+          "filename": "ClinicTriage.java",
+          "contents": "public class ClinicTriage {\n    public static int totalUrgency(Triageable[] queue) {\n        // TODO: sum urgencyScore() over non-null elements; 0 if empty/null\n        return 0;\n    }\n\n    public static String mostUrgent(Triageable[] queue) {\n        // TODO: name of highest urgencyScore() (first wins on tie); \"\" if none\n        return \"\";\n    }\n}\n"
+        },
+        {
+          "filename": "Triageable.java",
+          "contents": "public interface Triageable {\n    String patientName();\n    int urgencyScore();\n}\n"
+        },
+        {
+          "filename": "WalkInPatient.java",
+          "contents": "public class WalkInPatient implements Triageable {\n    private final String name;\n    public WalkInPatient(String name) { this.name = name; }\n    public String patientName() { return name; }\n    public int urgencyScore() { return 20; }\n}\n"
+        },
+        {
+          "filename": "EmergencyPatient.java",
+          "contents": "public class EmergencyPatient implements Triageable {\n    private final String name;\n    public EmergencyPatient(String name) { this.name = name; }\n    public String patientName() { return name; }\n    public int urgencyScore() { return 85; }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Sums urgency scores and identifies highest urgency patient."
+        },
+        {
+          "name": "Test 2 [Hidden] (All Negative Urgency Scores)",
+          "visible": false,
+          "description": "Scores {-50, -10, -30} returns most urgent -10."
+        },
+        {
+          "name": "Test 3 [Hidden] (Array with Nulls)",
+          "visible": false,
+          "description": "{null, new WalkInPatient(\"A\"), null} calculates without crashing."
+        },
+        {
+          "name": "Test 4 [Hidden] (Empty Queue)",
+          "visible": false,
+          "description": "new Triageable[0] returns 0 and \"\"."
+        },
+        {
+          "name": "Test 5 [Hidden] (Tied High Scores)",
+          "visible": false,
+          "description": "Two patients tied at score 90 returns the first patient's name."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Triageable[] queue = { new WalkInPatient(\"John\"), new EmergencyPatient(\"Mia\") };\n        System.out.println(ClinicTriage.totalUrgency(queue));\n        System.out.println(ClinicTriage.mostUrgent(queue));\n    }\n}\n",
+      "testerExpectedOutput": "105\nMia",
+      "graderCases": [
+        {
+          "name": "Sample run (sum + most urgent)",
+          "hidden": false,
+          "body": "Triageable[] queue = { new WalkInPatient(\"John\"), new EmergencyPatient(\"Mia\") };\neq(ClinicTriage.totalUrgency(queue), 105);\neq(ClinicTriage.mostUrgent(queue), \"Mia\");"
+        },
+        {
+          "name": "All negative scores",
+          "hidden": true,
+          "body": "Triageable a = new Triageable() { public String patientName() { return \"a\"; } public int urgencyScore() { return -50; } };\nTriageable b = new Triageable() { public String patientName() { return \"b\"; } public int urgencyScore() { return -10; } };\nTriageable c = new Triageable() { public String patientName() { return \"c\"; } public int urgencyScore() { return -30; } };\nTriageable[] q = { a, b, c };\neq(ClinicTriage.totalUrgency(q), -90);\neq(ClinicTriage.mostUrgent(q), \"b\");"
+        },
+        {
+          "name": "Array with nulls",
+          "hidden": true,
+          "body": "Triageable[] q = { null, new WalkInPatient(\"A\"), null };\neq(ClinicTriage.totalUrgency(q), 20);\neq(ClinicTriage.mostUrgent(q), \"A\");"
+        },
+        {
+          "name": "Empty queue",
+          "hidden": true,
+          "body": "Triageable[] q = new Triageable[0];\neq(ClinicTriage.totalUrgency(q), 0);\neq(ClinicTriage.mostUrgent(q), \"\");"
+        },
+        {
+          "name": "Tied high scores returns first",
+          "hidden": true,
+          "body": "Triageable a = new Triageable() { public String patientName() { return \"first\"; } public int urgencyScore() { return 90; } };\nTriageable b = new Triageable() { public String patientName() { return \"second\"; } public int urgencyScore() { return 90; } };\neq(ClinicTriage.mostUrgent(new Triageable[]{ a, b }), \"first\");"
+        }
+      ]
+    },
+    {
+      "id": "q5-flight-reservation",
+      "order": 5,
+      "title": "Flight Reservation Overloading",
+      "points": 10,
+      "theme": "Overloading & Constructor Chaining",
+      "prompt": "Create `FlightBooking` in `FlightBooking.java` with private fields: `String flightCode`, `int seatNumber`, and `boolean firstClass`.\n\nImplement constructor and method overloading:\n* `FlightBooking(String flightCode, int seatNumber, boolean firstClass)`: sets all fields.\n* `FlightBooking(String flightCode, int seatNumber)`: overloads constructor, defaulting `firstClass` to `false` (chain using `this(...)`).\n* `FlightBooking(String flightCode)`: overloads constructor, defaulting `seatNumber` to `30` and `firstClass` to `false` (chain using `this(...)`).\n* `getFlightCode()`, `getSeatNumber()`, and `isFirstClass()` return the fields.\n* `baggageFee(int bags)`: first bag is free (if bags >= 1); each additional bag costs `$35.00`. If `firstClass` is true, all bags are free (`0.0`).\n* `baggageFee(int bags, double overweightFeePerBag)`: overloads `baggageFee` by adding `overweightFeePerBag` to every bag charged (firstClass still receives all bags free).\n  * If `bags <= 0`, return `0.0`.",
+      "sampleRun": "FlightBooking b1 = new FlightBooking(\"DL180\", 12, false);\nFlightBooking b2 = new FlightBooking(\"UA450\");\nSystem.out.println(b1.baggageFee(3));\nSystem.out.println(b1.baggageFee(3, 15.0));\nSystem.out.println(b2.getSeatNumber());\nSystem.out.println(b2.isFirstClass());\nFlightBooking b3 = new FlightBooking(\"AA100\", 2, true);\nSystem.out.println(b3.baggageFee(5, 50.0));",
+      "expectedOutput": "70.0\n100.0\n30\nfalse\n0.0",
+      "starterFiles": [
+        {
+          "filename": "FlightBooking.java",
+          "contents": "public class FlightBooking {\n    // TODO: private fields flightCode, seatNumber, firstClass\n\n    // TODO: 3-arg constructor\n\n    // TODO: 2-arg constructor -> this(flightCode, seatNumber, false)\n\n    // TODO: 1-arg constructor -> this(flightCode, 30, false)\n\n    // TODO: getters getFlightCode(), getSeatNumber(), isFirstClass()\n\n    // TODO: baggageFee(int bags) -> first bag free, +35 per extra, 0 if firstClass\n\n    // TODO: baggageFee(int bags, double overweightFeePerBag)\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "3-arg, 1-arg defaults, baggage fee, overweight fee overload, first class waiver."
+        },
+        {
+          "name": "Test 2 [Hidden] (Single Bag Boundary)",
+          "visible": false,
+          "description": "Exactly 1 bag returns 0.0 (first bag is free)."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero or Negative Bags)",
+          "visible": false,
+          "description": "0 bags or negative bags returns 0.0."
+        },
+        {
+          "name": "Test 4 [Hidden] (First Class Overweight Immunity)",
+          "visible": false,
+          "description": "First class with 10 bags and $100 overweight fee per bag still returns 0.0."
+        },
+        {
+          "name": "Test 5 [Hidden] (Constructor Chaining Check)",
+          "visible": false,
+          "description": "Verifies constructor delegation via this(...)."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        FlightBooking b1 = new FlightBooking(\"DL180\", 12, false);\n        FlightBooking b2 = new FlightBooking(\"UA450\");\n        System.out.println(b1.baggageFee(3));\n        System.out.println(b1.baggageFee(3, 15.0));\n        System.out.println(b2.getSeatNumber());\n        System.out.println(b2.isFirstClass());\n        FlightBooking b3 = new FlightBooking(\"AA100\", 2, true);\n        System.out.println(b3.baggageFee(5, 50.0));\n    }\n}\n",
+      "testerExpectedOutput": "70.0\n100.0\n30\nfalse\n0.0",
+      "graderCases": [
+        {
+          "name": "Sample run (overloads + first class waiver)",
+          "hidden": false,
+          "body": "FlightBooking b1 = new FlightBooking(\"DL180\", 12, false);\nFlightBooking b2 = new FlightBooking(\"UA450\");\neqD(b1.baggageFee(3), 70.0);\neqD(b1.baggageFee(3, 15.0), 100.0);\neq(b2.getSeatNumber(), 30);\ncheck(!b2.isFirstClass(), \"default firstClass must be false\");\nFlightBooking b3 = new FlightBooking(\"AA100\", 2, true);\neqD(b3.baggageFee(5, 50.0), 0.0);"
+        },
+        {
+          "name": "Single bag is free",
+          "hidden": true,
+          "body": "FlightBooking b = new FlightBooking(\"X\", 1, false);\neqD(b.baggageFee(1), 0.0);"
+        },
+        {
+          "name": "Zero or negative bags",
+          "hidden": true,
+          "body": "FlightBooking b = new FlightBooking(\"X\", 1, false);\neqD(b.baggageFee(0), 0.0);\neqD(b.baggageFee(-3), 0.0);\neqD(b.baggageFee(0, 10.0), 0.0);"
+        },
+        {
+          "name": "First class overweight immunity",
+          "hidden": true,
+          "body": "FlightBooking b = new FlightBooking(\"X\", 1, true);\neqD(b.baggageFee(10, 100.0), 0.0);"
+        }
+      ]
+    },
+    {
+      "id": "q6-car-rental-agreement",
+      "order": 6,
+      "title": "Car Rental Agreement",
+      "points": 10,
+      "theme": "Composition & Dynamic Delegation",
+      "prompt": "`Driver.java` is given: `Driver(String name, boolean insuranceVerified)` with `getName()`, `hasInsurance()`, and `setInsurance(boolean insuranceVerified)`. It is provided as an extra tab — do not edit it.\n\nImplement `RentalAgreement.java`; all fields must be private:\n* `RentalAgreement(Driver driver, int days, double dailyRate)` stores all three fields.\n* `getDriver()` and `getDays()` return the fields; `setDays(int days)` changes the days.\n* `cost()`: `days * dailyRate`. If `driver.hasInsurance()` is false, add an uninsured motorist fee of `$15.00` per day (`days * 15.0`).\n  * Evaluates `driver.hasInsurance()` **dynamically every time** `cost()` is called.\n* `toString()` returns: `Rental[<name>, <days> days, $<cost formatted to 2 decimals>]`. Use `days` even if days is 1.",
+      "sampleRun": "Driver d = new Driver(\"Bob\", false);\nRentalAgreement r = new RentalAgreement(d, 4, 50.0);\nSystem.out.println(r.cost());\nSystem.out.println(r.toString());\nd.setInsurance(true);\nSystem.out.println(r.cost());\nSystem.out.println(r.toString());",
+      "expectedOutput": "260.0\nRental[Bob, 4 days, $260.00]\n200.0\nRental[Bob, 4 days, $200.00]",
+      "starterFiles": [
+        {
+          "filename": "RentalAgreement.java",
+          "contents": "public class RentalAgreement {\n    // TODO: private fields driver, days, dailyRate\n\n    // TODO: constructor(Driver, int, double)\n\n    // TODO: getDriver(), getDays(), setDays(int)\n\n    // TODO: cost() -> days*dailyRate (+days*15 if !driver.hasInsurance()), queried each call\n\n    // TODO: toString() -> \"Rental[<name>, <days> days, $X.XX]\"\n}\n"
+        },
+        {
+          "filename": "Driver.java",
+          "contents": "public class Driver {\n    private String name;\n    private boolean insuranceVerified;\n    public Driver(String name, boolean insuranceVerified) { this.name = name; this.insuranceVerified = insuranceVerified; }\n    public String getName() { return name; }\n    public boolean hasInsurance() { return insuranceVerified; }\n    public void setInsurance(boolean insuranceVerified) { this.insuranceVerified = insuranceVerified; }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Uninsured fee addition, exact toString(), dynamic cost update on insurance state change."
+        },
+        {
+          "name": "Test 2 [Hidden] (Toggling Insurance Back and Forth)",
+          "visible": false,
+          "description": "Changing insurance multiple times recalculates cost accurately."
+        },
+        {
+          "name": "Test 3 [Hidden] (Single Day Rental)",
+          "visible": false,
+          "description": "days = 1 must still output 1 days."
+        },
+        {
+          "name": "Test 4 [Hidden] (Zero Daily Rate)",
+          "visible": false,
+          "description": "dailyRate = 0.0 uninsured for 3 days returns $45.00."
+        },
+        {
+          "name": "Test 5 [Hidden] (Decimal Cent Precision)",
+          "visible": false,
+          "description": "Rates with fractional cents (e.g., $49.99) format cleanly to 2 decimals."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Driver d = new Driver(\"Bob\", false);\n        RentalAgreement r = new RentalAgreement(d, 4, 50.0);\n        System.out.println(r.cost());\n        System.out.println(r.toString());\n        d.setInsurance(true);\n        System.out.println(r.cost());\n        System.out.println(r.toString());\n    }\n}\n",
+      "testerExpectedOutput": "260.0\nRental[Bob, 4 days, $260.00]\n200.0\nRental[Bob, 4 days, $200.00]",
+      "graderCases": [
+        {
+          "name": "Sample run (uninsured fee + dynamic + toString)",
+          "hidden": false,
+          "body": "Driver d = new Driver(\"Bob\", false);\nRentalAgreement r = new RentalAgreement(d, 4, 50.0);\neqD(r.cost(), 260.0);\neq(r.toString(), \"Rental[Bob, 4 days, $260.00]\");\nd.setInsurance(true);\neqD(r.cost(), 200.0);\neq(r.toString(), \"Rental[Bob, 4 days, $200.00]\");"
+        },
+        {
+          "name": "Toggle insurance recalculates",
+          "hidden": true,
+          "body": "Driver d = new Driver(\"A\", true);\nRentalAgreement r = new RentalAgreement(d, 2, 100.0);\neqD(r.cost(), 200.0);\nd.setInsurance(false); eqD(r.cost(), 230.0);\nd.setInsurance(true); eqD(r.cost(), 200.0);"
+        },
+        {
+          "name": "Single day grammar",
+          "hidden": true,
+          "body": "Driver d = new Driver(\"A\", true);\nRentalAgreement r = new RentalAgreement(d, 1, 50.0);\neq(r.toString(), \"Rental[A, 1 days, $50.00]\");"
+        },
+        {
+          "name": "Zero daily rate uninsured",
+          "hidden": true,
+          "body": "Driver d = new Driver(\"A\", false);\nRentalAgreement r = new RentalAgreement(d, 3, 0.0);\neq(r.toString(), \"Rental[A, 3 days, $45.00]\");"
+        },
+        {
+          "name": "Decimal cent precision",
+          "hidden": true,
+          "body": "Driver d = new Driver(\"A\", true);\nRentalAgreement r = new RentalAgreement(d, 2, 49.99);\neq(r.toString(), \"Rental[A, 2 days, $99.98]\");"
+        }
+      ]
+    },
+    {
+      "id": "q7-robust-item-count",
+      "order": 7,
+      "title": "Robust Item Count",
+      "points": 12,
+      "theme": "Input Validation & Exception Loops",
+      "prompt": "Write a program in `Main.java`:\n\nAsk `Enter items: ` until the user enters a whole number from `1` to `500` inclusive.\n* For any input that cannot be parsed as an integer, print `Not an integer.`.\n* For any integer outside `1` to `500`, print `Invalid count.`.\n* When accepted, print `Accepted: ` followed by the number, then on the next line print `Total attempts: ` followed by the attempt count.\n* Every prompt counts as one attempt. Never crash.\n\n*Enter one input per line in the stdin box (the bracketed values in the sample).* ",
+      "sampleRun": "Enter items: dozen\nNot an integer.\nEnter items: 0\nInvalid count.\nEnter items: 45\nAccepted: 45\nTotal attempts: 3",
+      "expectedOutput": "Enter items: Not an integer.\nEnter items: Invalid count.\nEnter items: Accepted: 45\nTotal attempts: 3",
+      "starterFiles": [
+        {
+          "filename": "Main.java",
+          "contents": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        // TODO: loop prompting \"Enter items: \" until a valid int in [1, 500].\n        // Print \"Not an integer.\" / \"Invalid count.\" as appropriate.\n        // On success print \"Accepted: <n>\" then \"Total attempts: <count>\".\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Non-integer, invalid 0 count, valid entry, 3 attempts. Provide stdin: dozen / 0 / 45."
+        },
+        {
+          "name": "Test 2 [Hidden] (Huge Number Overflow)",
+          "visible": false,
+          "description": "Input 9999999999999 prints Not an integer. without crashing."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero and Negative Numbers)",
+          "visible": false,
+          "description": "0 and -5 print Invalid count.."
+        },
+        {
+          "name": "Test 4 [Hidden] (Exact Bounds)",
+          "visible": false,
+          "description": "1 and 500 accepted on attempt 1."
+        },
+        {
+          "name": "Test 5 [Hidden] (Decimal Input)",
+          "visible": false,
+          "description": "10.5 prints Not an integer.."
+        }
+      ]
+    },
+    {
+      "id": "q8-rain-gauge-summary",
+      "order": 8,
+      "title": "Rain Gauge Summary",
+      "points": 12,
+      "theme": "File Processing & Summary",
+      "prompt": "`rainfall.txt` holds daily rainfall in millimeters per line: an integer `>= 0`. Read the file and write `rain_report.txt` with these four lines:\n\n```\nDays: <total lines>\nAverage: <average with exactly 2 decimal places>\nMax rainfall: <largest value>\nDry days: <number of days with exactly 0 rainfall>\n```\n\nIf `rainfall.txt` cannot be opened or does not exist, print `Cannot open rainfall.txt.` to the screen, write no report file, and terminate cleanly. `Main.java` holds an empty `main`; write your solution there.\n\n*The grader creates `rainfall.txt` before running your code.*",
+      "sampleRun": "// rainfall.txt:\n// 0\n// 14\n// 0\n// 22\n// 8\n// Produces rain_report.txt:\n// Days: 5\n// Average: 8.80\n// Max rainfall: 22\n// Dry days: 2",
+      "expectedOutput": "",
+      "starterFiles": [
+        {
+          "filename": "Main.java",
+          "contents": "import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        // TODO: read rainfall.txt; on failure print \"Cannot open rainfall.txt.\" and return.\n        // Otherwise write rain_report.txt: Days/Average(2dp)/Max rainfall/Dry days(==0).\n    }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "5 days, 8.80 avg, max 22, 2 dry days (value 0)."
+        },
+        {
+          "name": "Test 2 [Hidden] (Missing File Clean Failure)",
+          "visible": false,
+          "description": "Prints Cannot open rainfall.txt., creates no file."
+        },
+        {
+          "name": "Test 3 [Hidden] (All Dry Days)",
+          "visible": false,
+          "description": "File with all 0s gives Days: 3, Average: 0.00, Max rainfall: 0, Dry days: 3."
+        },
+        {
+          "name": "Test 4 [Hidden] (Zero Dry Days)",
+          "visible": false,
+          "description": "File with positive rainfalls outputs Dry days: 0."
+        },
+        {
+          "name": "Test 5 [Hidden] (Single Day Entry)",
+          "visible": false,
+          "description": "Single line file processed accurately."
+        }
+      ],
+      "graderCases": [
+        {
+          "name": "Sample run (5 days)",
+          "hidden": false,
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"rainfall.txt\"), \"0\\n14\\n0\\n22\\n8\\n\".getBytes());\njava.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(\"rain_report.txt\"));\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"rain_report.txt\")));\neq(m, \"Days: 5\\nAverage: 8.80\\nMax rainfall: 22\\nDry days: 2\\n\");"
+        },
+        {
+          "name": "Missing file prints message, writes nothing",
+          "hidden": true,
+          "body": "java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(\"rainfall.txt\"));\njava.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(\"rain_report.txt\"));\njava.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();\njava.io.PrintStream old = System.out;\nSystem.setOut(new java.io.PrintStream(buf));\ntry { Main.main(new String[0]); } finally { System.setOut(old); }\neq(buf.toString().replace(\"\\r\",\"\").trim(), \"Cannot open rainfall.txt.\");\ncheck(!java.nio.file.Files.exists(java.nio.file.Paths.get(\"rain_report.txt\")), \"must not create rain_report.txt\");"
+        },
+        {
+          "name": "All dry days",
+          "hidden": true,
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"rainfall.txt\"), \"0\\n0\\n0\\n\".getBytes());\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"rain_report.txt\")));\neq(m, \"Days: 3\\nAverage: 0.00\\nMax rainfall: 0\\nDry days: 3\\n\");"
+        },
+        {
+          "name": "Zero dry days",
+          "hidden": true,
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"rainfall.txt\"), \"5\\n10\\n15\\n\".getBytes());\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"rain_report.txt\")));\ncheck(m.contains(\"Dry days: 0\"), \"no zero-rainfall days\");"
+        },
+        {
+          "name": "Single day entry",
+          "hidden": true,
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"rainfall.txt\"), \"7\\n\".getBytes());\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"rain_report.txt\")));\neq(m, \"Days: 1\\nAverage: 7.00\\nMax rainfall: 7\\nDry days: 0\\n\");"
+        }
+      ]
+    },
+    {
+      "id": "q9-executive-account",
+      "order": 9,
+      "title": "Executive Account",
+      "points": 12,
+      "theme": "Inheritance & Super Delegation",
+      "prompt": "`BankAccount.java` is given and complete: `BankAccount(String owner, double balance)` with `getOwner()`, `getBalance()`, `double deposit(double amount)` (balance + amount), and `toString()` returning `Account[<owner>: $<balance formatted to 2 decimals>]`. It is provided as an extra tab — do not edit it.\n\nWrite `ExecutiveAccount.java`: an executive account **is a** `BankAccount` with an investment match.\n* `ExecutiveAccount(String owner, double balance, double matchPercentage)`.\n* `getMatchPercentage()` returns the match percentage (e.g. `5.0` for 5%).\n* `deposit(double amount)`: calls `super.deposit(amount)` and additionally adds `amount * (matchPercentage / 100.0)` to the balance.\n* `toString()` returns the parent's `toString()` followed by ` (Executive)`.\n* Overrides **must** call `super.deposit(...)` and `super.toString()`. All new fields must be private.",
+      "sampleRun": "ExecutiveAccount a = new ExecutiveAccount(\"Bruce\", 1000.0, 10.0);\nSystem.out.println(a.getOwner());\nSystem.out.println(a.deposit(200.0));\nSystem.out.println(a.toString());\nBankAccount b = a;\nSystem.out.println(b.deposit(100.0));",
+      "expectedOutput": "Bruce\n1220.0\nAccount[Bruce: $1220.00] (Executive)\n1330.0",
+      "starterFiles": [
+        {
+          "filename": "ExecutiveAccount.java",
+          "contents": "public class ExecutiveAccount extends BankAccount {\n    // TODO: private double matchPercentage\n\n    // TODO: constructor(String, double, double) calling super(owner, balance)\n\n    // TODO: getMatchPercentage()\n\n    // TODO: override deposit(double) -> super.deposit(amount) + amount*(match/100.0)\n\n    // TODO: override toString() -> super.toString() + \" (Executive)\"\n}\n"
+        },
+        {
+          "filename": "BankAccount.java",
+          "contents": "public class BankAccount {\n    private String owner;\n    private double balance;\n    public BankAccount(String owner, double balance) { this.owner = owner; this.balance = balance; }\n    public String getOwner() { return owner; }\n    public double getBalance() { return balance; }\n    public double deposit(double amount) { balance += amount; return balance; }\n    public String toString() { return String.format(\"Account[%s: $%.2f]\", owner, balance); }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Super constructor, deposit with match bonus, toString() appending (Executive), polymorphic call."
+        },
+        {
+          "name": "Test 2 [Hidden] (Parent Recompilation Verification)",
+          "visible": false,
+          "description": "If parent deposit changes, bypassing super.deposit(...) fails."
+        },
+        {
+          "name": "Test 3 [Hidden] (Zero Match)",
+          "visible": false,
+          "description": "Match percentage 0.0 behaves identically to standard deposit."
+        },
+        {
+          "name": "Test 4 [Hidden] (Field Encapsulation)",
+          "visible": false,
+          "description": "All new fields private."
+        }
+      ],
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        ExecutiveAccount a = new ExecutiveAccount(\"Bruce\", 1000.0, 10.0);\n        System.out.println(a.getOwner());\n        System.out.println(a.deposit(200.0));\n        System.out.println(a.toString());\n        BankAccount b = a;\n        System.out.println(b.deposit(100.0));\n    }\n}\n",
+      "testerExpectedOutput": "Bruce\n1220.0\nAccount[Bruce: $1220.00] (Executive)\n1330.0",
+      "graderCases": [
+        {
+          "name": "Sample run (deposit match + toString + polymorphism)",
+          "hidden": false,
+          "body": "ExecutiveAccount a = new ExecutiveAccount(\"Bruce\", 1000.0, 10.0);\neq(a.getOwner(), \"Bruce\");\neqD(a.deposit(200.0), 1220.0);\neq(a.toString(), \"Account[Bruce: $1220.00] (Executive)\");\nBankAccount b = a;\neqD(b.deposit(100.0), 1330.0);"
+        },
+        {
+          "name": "Match percentage getter",
+          "hidden": true,
+          "body": "ExecutiveAccount a = new ExecutiveAccount(\"X\", 0.0, 7.5);\neqD(a.getMatchPercentage(), 7.5);"
+        },
+        {
+          "name": "Zero match equals standard deposit",
+          "hidden": true,
+          "body": "ExecutiveAccount a = new ExecutiveAccount(\"X\", 100.0, 0.0);\neqD(a.deposit(50.0), 150.0);"
+        },
+        {
+          "name": "toString builds on parent",
+          "hidden": true,
+          "body": "ExecutiveAccount a = new ExecutiveAccount(\"Y\", 500.0, 0.0);\ncheck(a.toString().endsWith(\" (Executive)\"), \"must append (Executive)\");\ncheck(a.toString().startsWith(\"Account[Y: $500.00]\"), \"must build on parent toString\");"
+        },
+        {
+          "name": "Fields private",
+          "hidden": true,
+          "body": "for (java.lang.reflect.Field f : ExecutiveAccount.class.getDeclaredFields())\n    check(java.lang.reflect.Modifier.isPrivate(f.getModifiers()), \"all ExecutiveAccount fields must be private\");"
+        }
+      ]
+    },
+    {
+      "id": "q10-media-library-classifier",
+      "order": 10,
+      "title": "Media Library Classifier",
+      "points": 12,
+      "theme": "instanceof & Downcasting",
+      "prompt": "`Media.java`, `Movie.java`, and `Podcast.java` are given and read-only (provided as extra tabs):\n* `Media(String title)` with `getTitle()`.\n* `Movie extends Media`: has method `int getDurationMinutes()`.\n* `Podcast extends Media`: has method `String getHost()`.\n\nWrite `MediaClassifier.java` containing two static methods:\n* `static String describe(Media m)`:\n  * For a `Movie`, returns `Movie: ` followed by title and duration in brackets (e.g. `Movie: Inception [148 mins]`).\n  * For a `Podcast`, returns `Podcast: ` followed by title and host in parentheses (e.g. `Podcast: Daily (Host: Michael)`).\n  * For any other `Media`, returns `Media: ` followed by title.\n  * If `m` is `null`, return `\"None\"`.\n* `static int countMovies(Media[] items)`: returns how many elements are instances of `Movie`. Safely ignores `null` elements.",
+      "sampleRun": "Media m1 = new Movie(\"Inception\", 148);\nMedia m2 = new Podcast(\"Daily\", \"Michael\");\nMedia m3 = new Media(\"Audiobook\");\nSystem.out.println(MediaClassifier.describe(m1));\nSystem.out.println(MediaClassifier.describe(m2));\nSystem.out.println(MediaClassifier.describe(m3));\nSystem.out.println(MediaClassifier.countMovies(new Media[] { m1, m2, m3 }));",
+      "expectedOutput": "Movie: Inception [148 mins]\nPodcast: Daily (Host: Michael)\nMedia: Audiobook\n1",
+      "starterFiles": [
+        {
+          "filename": "MediaClassifier.java",
+          "contents": "public class MediaClassifier {\n    public static String describe(Media m) {\n        // TODO: null -> \"None\"; Movie -> \"Movie: <title> [<dur> mins]\";\n        // Podcast -> \"Podcast: <title> (Host: <host>)\"; else \"Media: <title>\"\n        return \"\";\n    }\n\n    public static int countMovies(Media[] items) {\n        // TODO: count Movie instances, skipping null\n        return 0;\n    }\n}\n"
+        },
+        {
+          "filename": "Media.java",
+          "contents": "public class Media {\n    private String title;\n    public Media(String title) { this.title = title; }\n    public String getTitle() { return title; }\n}\n"
+        },
+        {
+          "filename": "Movie.java",
+          "contents": "public class Movie extends Media {\n    private int durationMinutes;\n    public Movie(String title, int durationMinutes) { super(title); this.durationMinutes = durationMinutes; }\n    public int getDurationMinutes() { return durationMinutes; }\n}\n"
+        },
+        {
+          "filename": "Podcast.java",
+          "contents": "public class Podcast extends Media {\n    private String host;\n    public Podcast(String title, String host) { super(title); this.host = host; }\n    public String getHost() { return host; }\n}\n"
+        }
+      ],
+      "tests": [
+        {
+          "name": "Test 1 [Visible] (Sample Run)",
+          "visible": true,
+          "description": "Describes Movie, Podcast, base Media; counts 1 movie."
         },
         {
           "name": "Test 2 [Hidden] (Null Safety)",
           "visible": false,
-          "description": "b1.equals(null) returns false."
+          "description": "describe(null) returns \"None\"; countMovies(new Media[]{null, m1, null}) returns 1."
         },
         {
-          "name": "Test 3 [Hidden] (Type Check)",
+          "name": "Test 3 [Hidden] (Unseen Media Subclass)",
           "visible": false,
-          "description": "b1.equals(\"978-0134685991\") returns false."
+          "description": "Subclass Audiobook extends Media returns Media: <title>."
         },
         {
-          "name": "Test 4 [Hidden] (Different ISBN)",
+          "name": "Test 4 [Hidden] (Subclass of Movie)",
           "visible": false,
-          "description": "Same title and year, different ISBN returns false."
+          "description": "FeatureFilm extends Movie correctly downcasts as a Movie and returns Movie: <title> [<dur> mins]."
         },
         {
-          "name": "Test 5 [Hidden] (Case-Sensitive ISBN)",
+          "name": "Test 5 [Hidden] (Empty Array)",
           "visible": false,
-          "description": "\"isbn-100\" vs \"ISBN-100\" returns false."
+          "description": "new Media[0] returns 0."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CatalogBook b1 = new CatalogBook(\"978-0134685991\", \"Effective Java\", 2018);\n        CatalogBook b2 = new CatalogBook(\"978-0134685991\", \"Effective Java (Copy 2)\", 2020);\n        System.out.println(b1);\n        System.out.println(\"Same ISBN: \" + b1.equals(b2));\n    }\n}\n",
-      "testerExpectedOutput": "ISBN: 978-0134685991\nTitle: Effective Java\nYear: 2018\nSame ISBN: true"
-    },
-    {
-      "id": "q3-drone-altitude-guard",
-      "order": 3,
-      "title": "Drone Altitude Guard",
-      "points": 8,
-      "theme": "Robotics & Drones",
-      "prompt": "Create an unchecked exception `CeilingExceededException` in `CeilingExceededException.java` that extends `RuntimeException` with a constructor taking `String message`.\n\nIn `DroneController.java`, implement:\n`public static int climb(int currentAltitude, int delta, int maxCeiling) throws CeilingExceededException`\n* If `delta <= 0`, throw `IllegalArgumentException` with message: `\"Climb delta must be positive\"`.\n* If `currentAltitude + delta > maxCeiling`, throw `CeilingExceededException` with message:\n  `\"Ceiling violated: attempted <currentAltitude + delta>m, ceiling is <maxCeiling>m\"`.\n* Otherwise, return `currentAltitude + delta`.",
-      "sampleRun": "try {\n    int alt = DroneController.climb(50, 40, 120);\n    System.out.println(\"Altitude: \" + alt + \"m\");\n    DroneController.climb(alt, 50, 120);\n} catch (CeilingExceededException e) {\n    System.out.println(e.getMessage());\n}",
-      "expectedOutput": "Altitude: 90m\nCeiling violated: attempted 140m, ceiling is 120m",
-      "starterFiles": [
-        {
-          "filename": "CeilingExceededException.java",
-          "contents": "public class CeilingExceededException extends RuntimeException {\n    // TODO: constructor taking String message -> super(message)\n}\n"
-        },
-        {
-          "filename": "DroneController.java",
-          "contents": "public class DroneController {\n    public static int climb(int currentAltitude, int delta, int maxCeiling) {\n        // TODO: validate delta > 0, check ceiling, else return sum\n        return 0;\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "Valid climb followed by CeilingExceededException."
-        },
-        {
-          "name": "Test 2 [Hidden] (Exact Ceiling Match)",
-          "visible": false,
-          "description": "currentAltitude + delta == maxCeiling returns maxCeiling."
-        },
-        {
-          "name": "Test 3 [Hidden] (Zero Delta)",
-          "visible": false,
-          "description": "delta = 0 throws IllegalArgumentException."
-        },
-        {
-          "name": "Test 4 [Hidden] (Negative Delta)",
-          "visible": false,
-          "description": "delta = -10 throws IllegalArgumentException."
-        },
-        {
-          "name": "Test 5 [Hidden] (Unchecked Exception Verification)",
-          "visible": false,
-          "description": "Verifies CeilingExceededException extends RuntimeException."
-        },
-        {
-          "name": "Test 6 [Hidden] (Starting at Ceiling)",
-          "visible": false,
-          "description": "Any positive climb from maxCeiling throws CeilingExceededException."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try {\n            int alt = DroneController.climb(50, 40, 120);\n            System.out.println(\"Altitude: \" + alt + \"m\");\n            DroneController.climb(alt, 50, 120);\n        } catch (CeilingExceededException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n",
-      "testerExpectedOutput": "Altitude: 90m\nCeiling violated: attempted 140m, ceiling is 120m"
-    },
-    {
-      "id": "q4-taxable-asset",
-      "order": 4,
-      "title": "Taxable Asset",
-      "points": 8,
-      "theme": "Financial Accounting",
-      "prompt": "Create an interface `Taxable` in `Taxable.java`:\n* Abstract method: `double getMarketValue();`\n* Default method: `default double calculateTax(double propertyTaxRate)`:\n  * If `propertyTaxRate < 0.0 || propertyTaxRate > 0.20`, return `0.0`.\n  * Otherwise, return `getMarketValue() * propertyTaxRate`.\n* Default method: `default boolean isHighValue()`: returns `true` if `getMarketValue() >= 500000.0`, else `false`.\n\nCreate a class `RealEstate` in `RealEstate.java` that implements `Taxable`:\n* **Private field:** `double estimatedValue`.\n* **Constructor:** `RealEstate(double estimatedValue)`.\n* Implement `getMarketValue()` returning `estimatedValue`.",
-      "sampleRun": "RealEstate home = new RealEstate(600000.0);\nSystem.out.printf(\"Value: $%.2f\\n\", home.getMarketValue());\nSystem.out.printf(\"Tax at 2%%: $%.2f\\n\", home.calculateTax(0.02));\nSystem.out.println(\"High Value: \" + home.isHighValue());\nSystem.out.println(\"Invalid Tax Rate: \" + home.calculateTax(0.25));",
-      "expectedOutput": "Value: $600000.00\nTax at 2%: $12000.00\nHigh Value: true\nInvalid Tax Rate: 0.0",
-      "starterFiles": [
-        {
-          "filename": "Taxable.java",
-          "contents": "public interface Taxable {\n    double getMarketValue();\n\n    // TODO: default calculateTax(double rate) with [0.0, 0.20] guard\n\n    // TODO: default isHighValue() -> value >= 500000.0\n}\n"
-        },
-        {
-          "filename": "RealEstate.java",
-          "contents": "public class RealEstate implements Taxable {\n    // TODO: private double estimatedValue + constructor\n\n    public double getMarketValue() {\n        return 0.0;\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "High value asset, valid tax, invalid out-of-range tax rate (>0.20)."
-        },
-        {
-          "name": "Test 2 [Hidden] (Exact 500,000 High Value Boundary)",
-          "visible": false,
-          "description": "estimatedValue = 500000.0 returns isHighValue() == true."
-        },
-        {
-          "name": "Test 3 [Hidden] (Under High Value Boundary)",
-          "visible": false,
-          "description": "estimatedValue = 499999.99 returns false."
-        },
-        {
-          "name": "Test 4 [Hidden] (Exact Max Tax Rate 0.20)",
-          "visible": false,
-          "description": "propertyTaxRate = 0.20 computes tax correctly."
-        },
-        {
-          "name": "Test 5 [Hidden] (Negative Tax Rate)",
-          "visible": false,
-          "description": "propertyTaxRate = -0.01 returns 0.0."
-        },
-        {
-          "name": "Test 6 [Hidden] (Polymorphic Reference)",
-          "visible": false,
-          "description": "Taxable t = new RealEstate(200000.0); calls default methods properly."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        RealEstate home = new RealEstate(600000.0);\n        System.out.printf(\"Value: $%.2f\\n\", home.getMarketValue());\n        System.out.printf(\"Tax at 2%%: $%.2f\\n\", home.calculateTax(0.02));\n        System.out.println(\"High Value: \" + home.isHighValue());\n        System.out.println(\"Invalid Tax Rate: \" + home.calculateTax(0.25));\n    }\n}\n",
-      "testerExpectedOutput": "Value: $600000.00\nTax at 2%: $12000.00\nHigh Value: true\nInvalid Tax Rate: 0.0"
-    },
-    {
-      "id": "q5-culinary-recipe-subclasses",
-      "order": 5,
-      "title": "Culinary Recipe Subclasses",
-      "points": 10,
-      "theme": "Gastronomy",
-      "prompt": "Create a class `Recipe` in `Recipe.java`:\n* **Protected fields:** `String name`, `int prepTimeMinutes`.\n* **Constructor:** `Recipe(String name, int prepTimeMinutes)`.\n* Method `getTotalTime()` returning `prepTimeMinutes`.\n\nCreate subclass `BakedRecipe` in `BakedRecipe.java` extending `Recipe`:\n* **Private fields:** `int bakeTimeMinutes`, `int ovenTempFahrenheit`.\n* **Constructor:** `BakedRecipe(String name, int prepTimeMinutes, int bakeTimeMinutes, int ovenTempFahrenheit)` using `super`.\n* Override `getTotalTime()`:\n  * Sum `prepTimeMinutes + bakeTimeMinutes`.\n  * If `ovenTempFahrenheit > 400`, add `10` minutes for preheating.",
-      "sampleRun": "Recipe salad = new Recipe(\"Caesar Salad\", 15);\nBakedRecipe cookies = new BakedRecipe(\"Choc Chip\", 20, 12, 350);\nBakedRecipe pizza = new BakedRecipe(\"Pan Pizza\", 30, 20, 450);\nSystem.out.println(salad.name + \": \" + salad.getTotalTime() + \" mins\");\nSystem.out.println(cookies.name + \": \" + cookies.getTotalTime() + \" mins\");\nSystem.out.println(pizza.name + \": \" + pizza.getTotalTime() + \" mins\");",
-      "expectedOutput": "Caesar Salad: 15 mins\nChoc Chip: 32 mins\nPan Pizza: 60 mins",
-      "starterFiles": [
-        {
-          "filename": "Recipe.java",
-          "contents": "public class Recipe {\n    protected String name;\n    protected int prepTimeMinutes;\n    // TODO: constructor\n\n    public int getTotalTime() {\n        return prepTimeMinutes;\n    }\n}\n"
-        },
-        {
-          "filename": "BakedRecipe.java",
-          "contents": "public class BakedRecipe extends Recipe {\n    // TODO: private fields bakeTimeMinutes, ovenTempFahrenheit + constructor via super\n\n    @Override\n    public int getTotalTime() {\n        // TODO: prep + bake; +10 if ovenTempFahrenheit > 400\n        return 0;\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "Base recipe, baked recipe <= 400F, baked recipe > 400F with preheat."
-        },
-        {
-          "name": "Test 2 [Hidden] (Exact 400F Boundary)",
-          "visible": false,
-          "description": "Oven temp 400F does NOT add 10 preheat minutes (30 + 20 = 50)."
-        },
-        {
-          "name": "Test 3 [Hidden] (401F Boundary)",
-          "visible": false,
-          "description": "Oven temp 401F adds 10 minutes."
-        },
-        {
-          "name": "Test 4 [Hidden] (0 Bake Time)",
-          "visible": false,
-          "description": "Bake time 0 with temp 450 adds 10 preheat minutes."
-        },
-        {
-          "name": "Test 5 [Hidden] (Dynamic Dispatch)",
-          "visible": false,
-          "description": "Recipe r = new BakedRecipe(\"Bread\", 15, 40, 425); returns 65."
-        },
-        {
-          "name": "Test 6 [Hidden] (Superclass Access)",
-          "visible": false,
-          "description": "Correct field access to name and prepTimeMinutes."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Recipe salad = new Recipe(\"Caesar Salad\", 15);\n        BakedRecipe cookies = new BakedRecipe(\"Choc Chip\", 20, 12, 350);\n        BakedRecipe pizza = new BakedRecipe(\"Pan Pizza\", 30, 20, 450);\n        System.out.println(salad.name + \": \" + salad.getTotalTime() + \" mins\");\n        System.out.println(cookies.name + \": \" + cookies.getTotalTime() + \" mins\");\n        System.out.println(pizza.name + \": \" + pizza.getTotalTime() + \" mins\");\n    }\n}\n",
-      "testerExpectedOutput": "Caesar Salad: 15 mins\nChoc Chip: 32 mins\nPan Pizza: 60 mins"
-    },
-    {
-      "id": "q6-fleet-carbon-footprint",
-      "order": 6,
-      "title": "Fleet Carbon Footprint",
-      "points": 10,
-      "theme": "Automotive & Environment",
-      "prompt": "Given base class `Vehicle` with method `double getEmissions()` and subclass `HybridVehicle` (which overrides `getEmissions()` applying a battery fuel offset), implement `FleetAnalyzer.java`:\n* `public static double calculateTotalEmissions(Vehicle[] fleet)`:\n  * Sums `getEmissions()` across all non-null vehicles.\n  * If `fleet` is `null` or empty, return `0.0`.\n* `public static int countZeroEmissionVehicles(Vehicle[] fleet)`:\n  * Returns how many non-null vehicles have `getEmissions() <= 0.0`.\n  * If `fleet` is `null`, return `0`.\n\n*(The autograder provides `Vehicle` and `HybridVehicle`.)*",
-      "sampleRun": "Vehicle[] cars = new Vehicle[] {\n    new Vehicle(\"Sedan\", 180.0),\n    null,\n    new HybridVehicle(\"Prius\", 120.0, 120.0), // net emission = 0.0\n    new Vehicle(\"SUV\", 250.0)\n};\nSystem.out.println(\"Total: \" + FleetAnalyzer.calculateTotalEmissions(cars));\nSystem.out.println(\"Zero Emission: \" + FleetAnalyzer.countZeroEmissionVehicles(cars));",
-      "expectedOutput": "Total: 430.0\nZero Emission: 1",
-      "starterFiles": [
-        {
-          "filename": "FleetAnalyzer.java",
-          "contents": "public class FleetAnalyzer {\n    public static double calculateTotalEmissions(Vehicle[] fleet) {\n        // TODO: sum non-null getEmissions(); 0.0 if null/empty\n        return 0.0;\n    }\n\n    public static int countZeroEmissionVehicles(Vehicle[] fleet) {\n        // TODO: count non-null getEmissions() <= 0.0; 0 if null\n        return 0;\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "Mixed fleet with null, standard vehicle, and zero-emission hybrid."
-        },
-        {
-          "name": "Test 2 [Hidden] (Null Fleet)",
-          "visible": false,
-          "description": "Passing null to either method returns 0.0 or 0."
-        },
-        {
-          "name": "Test 3 [Hidden] (Empty Array)",
-          "visible": false,
-          "description": "new Vehicle[0] returns 0.0 and 0."
-        },
-        {
-          "name": "Test 4 [Hidden] (All Zero Emission)",
-          "visible": false,
-          "description": "All hybrid vehicles netting 0.0 returns total fleet length."
-        },
-        {
-          "name": "Test 5 [Hidden] (Negative Emission Guard)",
-          "visible": false,
-          "description": "Hybrid where battery offset exceeds emissions returns 0.0."
-        },
-        {
-          "name": "Test 6 [Hidden] (All Null Elements)",
-          "visible": false,
-          "description": "new Vehicle[]{null, null} returns 0.0 and 0."
-        },
-        {
-          "name": "Test 7 [Hidden] (Polymorphic Method Call)",
-          "visible": false,
-          "description": "Dynamic dispatch verified on overridden methods."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Vehicle[] cars = new Vehicle[] {\n            new Vehicle(\"Sedan\", 180.0),\n            null,\n            new HybridVehicle(\"Prius\", 120.0, 120.0), // net emission = 0.0\n            new Vehicle(\"SUV\", 250.0)\n        };\n        System.out.println(\"Total: \" + FleetAnalyzer.calculateTotalEmissions(cars));\n        System.out.println(\"Zero Emission: \" + FleetAnalyzer.countZeroEmissionVehicles(cars));\n    }\n}\n",
-      "testerExpectedOutput": "Total: 430.0\nZero Emission: 1",
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Media m1 = new Movie(\"Inception\", 148);\n        Media m2 = new Podcast(\"Daily\", \"Michael\");\n        Media m3 = new Media(\"Audiobook\");\n        System.out.println(MediaClassifier.describe(m1));\n        System.out.println(MediaClassifier.describe(m2));\n        System.out.println(MediaClassifier.describe(m3));\n        System.out.println(MediaClassifier.countMovies(new Media[] { m1, m2, m3 }));\n    }\n}\n",
+      "testerExpectedOutput": "Movie: Inception [148 mins]\nPodcast: Daily (Host: Michael)\nMedia: Audiobook\n1",
       "graderCases": [
         {
-          "name": "Sample run (mixed fleet, null + hybrid)",
+          "name": "Sample run (describe + count)",
           "hidden": false,
-          "body": "Vehicle[] cars = { new Vehicle(\"Sedan\",180.0), null, new HybridVehicle(\"Prius\",120.0,120.0), new Vehicle(\"SUV\",250.0) };\neqD(FleetAnalyzer.calculateTotalEmissions(cars),430.0);\neq(FleetAnalyzer.countZeroEmissionVehicles(cars),1);"
+          "body": "Media m1 = new Movie(\"Inception\", 148);\nMedia m2 = new Podcast(\"Daily\", \"Michael\");\nMedia m3 = new Media(\"Audiobook\");\neq(MediaClassifier.describe(m1), \"Movie: Inception [148 mins]\");\neq(MediaClassifier.describe(m2), \"Podcast: Daily (Host: Michael)\");\neq(MediaClassifier.describe(m3), \"Media: Audiobook\");\neq(MediaClassifier.countMovies(new Media[]{ m1, m2, m3 }), 1);"
         },
         {
-          "name": "Null fleet returns 0.0 and 0",
+          "name": "Null safety",
           "hidden": true,
-          "body": "eqD(FleetAnalyzer.calculateTotalEmissions(null),0.0);\neq(FleetAnalyzer.countZeroEmissionVehicles(null),0);"
+          "body": "eq(MediaClassifier.describe(null), \"None\");\nMedia m1 = new Movie(\"A\", 90);\neq(MediaClassifier.countMovies(new Media[]{ null, m1, null }), 1);"
         },
         {
-          "name": "Empty array returns 0.0 and 0",
+          "name": "Subclass of Movie",
           "hidden": true,
-          "body": "Vehicle[] f = new Vehicle[0];\neqD(FleetAnalyzer.calculateTotalEmissions(f),0.0);\neq(FleetAnalyzer.countZeroEmissionVehicles(f),0);"
+          "body": "class FeatureFilm extends Movie { FeatureFilm(String t, int d) { super(t, d); } }\nMedia f = new FeatureFilm(\"Epic\", 200);\neq(MediaClassifier.describe(f), \"Movie: Epic [200 mins]\");\neq(MediaClassifier.countMovies(new Media[]{ f }), 1);"
         },
         {
-          "name": "All zero-emission hybrids counted fully",
+          "name": "Empty array",
           "hidden": true,
-          "body": "Vehicle[] f = { new HybridVehicle(\"a\",100.0,100.0), new HybridVehicle(\"b\",50.0,50.0) };\neq(FleetAnalyzer.countZeroEmissionVehicles(f),2);\neqD(FleetAnalyzer.calculateTotalEmissions(f),0.0);"
-        },
-        {
-          "name": "Negative net emission guarded to 0.0",
-          "hidden": true,
-          "body": "Vehicle[] f = { new HybridVehicle(\"x\",80.0,200.0) };\neqD(FleetAnalyzer.calculateTotalEmissions(f),0.0);\neq(FleetAnalyzer.countZeroEmissionVehicles(f),1);"
-        },
-        {
-          "name": "All null elements return 0.0 and 0",
-          "hidden": true,
-          "body": "Vehicle[] f = { null, null };\neqD(FleetAnalyzer.calculateTotalEmissions(f),0.0);\neq(FleetAnalyzer.countZeroEmissionVehicles(f),0);"
-        },
-        {
-          "name": "Dynamic dispatch on hybrid override",
-          "hidden": true,
-          "body": "Vehicle[] f = { new HybridVehicle(\"x\",200.0,50.0) };\neqD(FleetAnalyzer.calculateTotalEmissions(f),150.0);\neq(FleetAnalyzer.countZeroEmissionVehicles(f),0);"
-        }
-      ]
-    },
-    {
-      "id": "q7-sensor-stream-min-max",
-      "order": 7,
-      "title": "Sensor Stream Min-Max",
-      "points": 12,
-      "theme": "Scientific Instrumentation",
-      "prompt": "In `SensorDataReader.java`, write:\n`public static double findSensorRange(String filename) throws FileNotFoundException`\n* The file contains comma-separated reading lines: `SensorId,ReadingValue`\n  Example: `TEMP-A,98.6`\n* The first line is a header (`SensorId,ReadingValue`) and must be skipped.\n* Find the maximum reading and the minimum reading among all rows.\n* Return the range: `maxReading - minReading`.\n* If the file has no data rows (only the header), return `0.0`.\n* If the file does not exist, throw `FileNotFoundException`. Ensure resources are closed.",
-      "sampleRun": "// readings.csv:\n// SensorId,ReadingValue\n// S1,45.2\n// S2,12.8\n// S3,78.5\n// S4,33.1\nSystem.out.printf(\"Range: %.2f\\n\", SensorDataReader.findSensorRange(\"readings.csv\"));\n// 78.5 - 12.8 = 65.7",
-      "expectedOutput": "Range: 65.70",
-      "starterFiles": [
-        {
-          "filename": "SensorDataReader.java",
-          "contents": "import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.util.Scanner;\n\npublic class SensorDataReader {\n    public static double findSensorRange(String filename)\n            throws FileNotFoundException {\n        // TODO: skip header, track min/max, return max-min; 0.0 if no data\n        return 0.0;\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "Computes range between 78.5 and 12.8."
-        },
-        {
-          "name": "Test 2 [Hidden] (Header Only File)",
-          "visible": false,
-          "description": "File with only header returns 0.0."
-        },
-        {
-          "name": "Test 3 [Hidden] (Single Row Data)",
-          "visible": false,
-          "description": "Single reading row has max == min, returns 0.0."
-        },
-        {
-          "name": "Test 4 [Hidden] (Missing File)",
-          "visible": false,
-          "description": "Throws FileNotFoundException."
-        },
-        {
-          "name": "Test 5 [Hidden] (Negative Sensor Values)",
-          "visible": false,
-          "description": "Readings from -25.0 to 15.0 compute range 40.0."
-        },
-        {
-          "name": "Test 6 [Hidden] (All Identical Readings)",
-          "visible": false,
-          "description": "All rows with 50.0 returns range 0.0."
-        },
-        {
-          "name": "Test 7 [Hidden] (Trailing Blank Lines)",
-          "visible": false,
-          "description": "Handled cleanly."
-        },
-        {
-          "name": "Test 8 [Hidden] (Clean Stream Close)",
-          "visible": false,
-          "description": "File closed with try-with-resources."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"readings.csv\", \"UTF-8\")) { __w.print(\"SensorId,ReadingValue\\nS1,45.2\\nS2,12.8\\nS3,78.5\\nS4,33.1\\n78.5 - 12.8 = 65.7\"); }\n        System.out.printf(\"Range: %.2f\\n\", SensorDataReader.findSensorRange(\"readings.csv\"));\n    }\n}\n",
-      "testerExpectedOutput": "Range: 65.70",
-      "graderCases": [
-        {
-          "name": "Sample run (range 78.5 - 12.8)",
-          "hidden": false,
-          "body": "String f = \"g_sensor.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"SensorId,ReadingValue\\nS1,45.2\\nS2,12.8\\nS3,78.5\\nS4,33.1\"); }\neqD(SensorDataReader.findSensorRange(f),65.7);"
-        },
-        {
-          "name": "Header only file returns 0.0",
-          "hidden": true,
-          "body": "String f = \"g_header.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"SensorId,ReadingValue\"); }\neqD(SensorDataReader.findSensorRange(f),0.0);"
-        },
-        {
-          "name": "Single row -> range 0.0",
-          "hidden": true,
-          "body": "String f = \"g_one.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"SensorId,ReadingValue\\nS1,50.0\"); }\neqD(SensorDataReader.findSensorRange(f),0.0);"
-        },
-        {
-          "name": "Missing file throws FileNotFoundException",
-          "hidden": true,
-          "body": "try { SensorDataReader.findSensorRange(\"g_missing_sensor_999.csv\"); check(false,\"should throw\"); }\ncatch (java.io.FileNotFoundException e) { }"
-        },
-        {
-          "name": "Negative readings range 40.0",
-          "hidden": true,
-          "body": "String f = \"g_neg.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"SensorId,ReadingValue\\nA,-25.0\\nB,15.0\\nC,-5.0\"); }\neqD(SensorDataReader.findSensorRange(f),40.0);"
-        },
-        {
-          "name": "All identical readings -> 0.0",
-          "hidden": true,
-          "body": "String f = \"g_same.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"SensorId,ReadingValue\\nA,50.0\\nB,50.0\\nC,50.0\"); }\neqD(SensorDataReader.findSensorRange(f),0.0);"
-        },
-        {
-          "name": "Trailing blank lines handled",
-          "hidden": true,
-          "body": "String f = \"g_trail.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"SensorId,ReadingValue\\nA,10.0\\nB,30.0\\n\\n\\n\"); }\neqD(SensorDataReader.findSensorRange(f),20.0);"
-        }
-      ]
-    },
-    {
-      "id": "q8-high-latency-network-reporter",
-      "order": 8,
-      "title": "Network Node Latency Rating",
-      "points": 12,
-      "theme": "Networking",
-      "prompt": "This question gives you a question-specific abstract class **and** a question-specific interface. Your class must extend one and implement the other.\n\nCreate an abstract class `NetworkNode` in `NetworkNode.java`:\n* **Protected field:** `String hostname`.\n* **Constructor:** `NetworkNode(String hostname)`.\n* **Getter:** `getHostname()`.\n* **Abstract method:** `public abstract int pingMs();` (the raw round-trip ping).\n\nCreate an interface `LatencyRated` in `LatencyRated.java`:\n* Abstract method: `int latencyMs();` (the *effective* latency).\n* Default method: `default boolean isSlow(int thresholdMs)`: returns `true` when `latencyMs() >= thresholdMs` (inclusive).\n* Default method: `default char grade()`: `'A'` if `latencyMs() < 50`, `'B'` if `< 100`, `'C'` if `< 200`, otherwise `'F'`.\n\nCreate a class `EdgeServer` in `EdgeServer.java` that **extends `NetworkNode` and implements `LatencyRated`**:\n* **Private fields:** `int basePingMs`, `int activeConnections`, `int capacity`.\n* **Constructor:** `EdgeServer(String hostname, int basePingMs, int activeConnections, int capacity)` calling `super`.\n* `pingMs()` returns `basePingMs` (the raw ping, unaffected by load).\n* `latencyMs()`: returns `basePingMs` normally, but when `activeConnections` is **strictly greater** than `capacity`, congestion **doubles** the effective latency.",
-      "sampleRun": "EdgeServer s = new EdgeServer(\"db.domain.com\", 150, 10, 100);\nSystem.out.println(\"Ping: \" + s.pingMs() + \"ms\");\nSystem.out.println(\"Latency: \" + s.latencyMs() + \"ms\");\nSystem.out.println(\"Grade: \" + s.grade());\nSystem.out.println(\"Slow (>=100): \" + s.isSlow(100));",
-      "expectedOutput": "Ping: 150ms\nLatency: 150ms\nGrade: C\nSlow (>=100): true",
-      "starterFiles": [
-        {
-          "filename": "NetworkNode.java",
-          "contents": "public abstract class NetworkNode {\n    protected String hostname;\n\n    // TODO: constructor + getHostname()\n\n    public abstract int pingMs();\n}\n"
-        },
-        {
-          "filename": "LatencyRated.java",
-          "contents": "public interface LatencyRated {\n    int latencyMs();\n\n    // TODO: default isSlow(int thresholdMs) -> latencyMs() >= thresholdMs\n\n    // TODO: default grade() -> 'A'<50, 'B'<100, 'C'<200, else 'F'\n}\n"
-        },
-        {
-          "filename": "EdgeServer.java",
-          "contents": "public class EdgeServer extends NetworkNode implements LatencyRated {\n    // TODO: private fields basePingMs, activeConnections, capacity + constructor via super\n\n    @Override\n    public int pingMs() {\n        return 0;\n    }\n\n    @Override\n    public int latencyMs() {\n        // TODO: basePingMs, doubled when activeConnections > capacity\n        return 0;\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "Under capacity: ping equals latency; grade and inclusive isSlow."
-        },
-        {
-          "name": "Test 2 [Hidden] (At Capacity No Congestion)",
-          "visible": false,
-          "description": "activeConnections == capacity does NOT double latency."
-        },
-        {
-          "name": "Test 3 [Hidden] (Over Capacity Doubles)",
-          "visible": false,
-          "description": "activeConnections one over capacity doubles effective latency."
-        },
-        {
-          "name": "Test 4 [Hidden] (isSlow Inclusive)",
-          "visible": false,
-          "description": "isSlow is true at exactly the threshold, false just above it."
-        },
-        {
-          "name": "Test 5 [Hidden] (Grade Boundaries)",
-          "visible": false,
-          "description": "49->A, 50->B, 99->B, 100->C, 199->C, 200->F."
-        },
-        {
-          "name": "Test 6 [Hidden] (Congestion Lowers Grade)",
-          "visible": false,
-          "description": "Congestion doubling can move a node to a worse grade."
-        },
-        {
-          "name": "Test 7 [Hidden] (Polymorphic Ping)",
-          "visible": false,
-          "description": "pingMs invoked through a NetworkNode reference."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        EdgeServer s = new EdgeServer(\"db.domain.com\", 150, 10, 100);\n        System.out.println(\"Ping: \" + s.pingMs() + \"ms\");\n        System.out.println(\"Latency: \" + s.latencyMs() + \"ms\");\n        System.out.println(\"Grade: \" + s.grade());\n        System.out.println(\"Slow (>=100): \" + s.isSlow(100));\n    }\n}\n",
-      "testerExpectedOutput": "Ping: 150ms\nLatency: 150ms\nGrade: C\nSlow (>=100): true",
-      "graderCases": [
-        {
-          "name": "Sample run (under capacity, base latency + types)",
-          "hidden": false,
-          "body": "EdgeServer s = new EdgeServer(\"db.domain.com\",150,10,100);\neq(s.pingMs(),150);\neq(s.latencyMs(),150);\neq(s.getHostname(),\"db.domain.com\");\ncheck(s instanceof NetworkNode, \"must extend NetworkNode\");\ncheck(s instanceof LatencyRated, \"must implement LatencyRated\");"
-        },
-        {
-          "name": "At capacity (equal) does NOT congest",
-          "hidden": true,
-          "body": "EdgeServer s = new EdgeServer(\"h\",40,100,100);\neq(s.latencyMs(),40);"
-        },
-        {
-          "name": "Over capacity doubles latency",
-          "hidden": true,
-          "body": "EdgeServer s = new EdgeServer(\"h\",40,101,100);\neq(s.latencyMs(),80);"
-        },
-        {
-          "name": "isSlow is inclusive at threshold",
-          "hidden": true,
-          "body": "EdgeServer s = new EdgeServer(\"h\",100,0,100);\ncheck(s.isSlow(100), \"100 >= 100 is slow\");\ncheck(!s.isSlow(101), \"100 < 101 not slow\");"
-        },
-        {
-          "name": "Grade boundaries A/B/C/F",
-          "hidden": true,
-          "body": "eq(new EdgeServer(\"h\",49,0,100).grade(),'A');\neq(new EdgeServer(\"h\",50,0,100).grade(),'B');\neq(new EdgeServer(\"h\",99,0,100).grade(),'B');\neq(new EdgeServer(\"h\",100,0,100).grade(),'C');\neq(new EdgeServer(\"h\",199,0,100).grade(),'C');\neq(new EdgeServer(\"h\",200,0,100).grade(),'F');"
-        },
-        {
-          "name": "Congestion can drop the grade",
-          "hidden": true,
-          "body": "EdgeServer s = new EdgeServer(\"h\",60,200,100);\neq(s.latencyMs(),120);\neq(s.grade(),'C');"
-        },
-        {
-          "name": "Polymorphic ping through NetworkNode reference",
-          "hidden": true,
-          "body": "NetworkNode n = new EdgeServer(\"h\",33,0,100);\neq(n.pingMs(),33);"
-        }
-      ]
-    },
-    {
-      "id": "q9-bank-loan-hierarchy",
-      "order": 9,
-      "title": "Bank Loan Hierarchy",
-      "points": 12,
-      "theme": "Personal Finance",
-      "prompt": "This question requires a question-specific abstract class **and** a question-specific interface. Every concrete loan must extend the class and implement the interface.\n\nCreate an abstract class `Loan` in `Loan.java`:\n* **Protected fields:** `double principal`, `double annualInterestRate`.\n* **Constructor:** `Loan(double principal, double annualInterestRate)`.\n* **Abstract method:** `public abstract double calculateTotalRepayment(int years);`\n\nCreate an interface `Amortizable` in `Amortizable.java`:\n* Abstract method: `double totalOwed(int years);`\n* Default method: `default double monthlyPayment(int years)`: the total owed spread evenly over `years * 12` months. **If `years <= 0`, return `0.0`** (there are no scheduled payments — do not divide by zero).\n* Default method: `default boolean isAffordable(int years, double monthlyBudget)`: returns `true` when `monthlyPayment(years) <= monthlyBudget`.\n\nCreate `PersonalLoan` in `PersonalLoan.java` **extending `Loan` and implementing `Amortizable`**:\n* **Constructor:** `PersonalLoan(double principal, double annualInterestRate)`.\n* `calculateTotalRepayment(int years)`: simple interest `principal + (principal * annualInterestRate * years)`.\n* `totalOwed(int years)` must return the same value as `calculateTotalRepayment(years)`.\n\nCreate `MortgageLoan` in `MortgageLoan.java` **extending `Loan` and implementing `Amortizable`**:\n* **Private field:** `double originationFee`.\n* **Constructor:** `MortgageLoan(double principal, double annualInterestRate, double originationFee)` using `super`.\n* `calculateTotalRepayment(int years)`: simple interest + `originationFee`; if `years >= 30`, subtract a `$1000.0` long-term closing discount.\n* `totalOwed(int years)` must return the same value as `calculateTotalRepayment(years)`.",
-      "sampleRun": "Loan personal = new PersonalLoan(10000.0, 0.05); // 5% for 3 years: 10000 + 1500 = 11500\nLoan mortgage = new MortgageLoan(200000.0, 0.04, 3000.0); // 30 years: 200k + 240k + 3k - 1k = 442k\nSystem.out.println(\"Personal: \" + personal.calculateTotalRepayment(3));\nSystem.out.println(\"Mortgage: \" + mortgage.calculateTotalRepayment(30));",
-      "expectedOutput": "Personal: 11500.0\nMortgage: 442000.0",
-      "starterFiles": [
-        {
-          "filename": "Loan.java",
-          "contents": "public abstract class Loan {\n    protected double principal;\n    protected double annualInterestRate;\n    // TODO: constructor\n\n    public abstract double calculateTotalRepayment(int years);\n}\n"
-        },
-        {
-          "filename": "Amortizable.java",
-          "contents": "public interface Amortizable {\n    double totalOwed(int years);\n\n    // TODO: default monthlyPayment(int years) -> total / (years*12); 0.0 if years <= 0\n\n    // TODO: default isAffordable(int years, double monthlyBudget)\n}\n"
-        },
-        {
-          "filename": "PersonalLoan.java",
-          "contents": "public class PersonalLoan extends Loan implements Amortizable {\n    // TODO: constructor via super\n\n    @Override\n    public double calculateTotalRepayment(int years) {\n        // TODO: principal + principal*rate*years\n        return 0.0;\n    }\n\n    @Override\n    public double totalOwed(int years) {\n        return calculateTotalRepayment(years);\n    }\n}\n"
-        },
-        {
-          "filename": "MortgageLoan.java",
-          "contents": "public class MortgageLoan extends Loan implements Amortizable {\n    // TODO: private double originationFee + constructor via super\n\n    @Override\n    public double calculateTotalRepayment(int years) {\n        // TODO: simple interest + fee; -1000 if years >= 30\n        return 0.0;\n    }\n\n    @Override\n    public double totalOwed(int years) {\n        return calculateTotalRepayment(years);\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "Personal simple interest and mortgage with 30-year discount."
-        },
-        {
-          "name": "Test 2 [Hidden] (29-Year Mortgage)",
-          "visible": false,
-          "description": "29-year mortgage does NOT get the $1000 discount."
-        },
-        {
-          "name": "Test 3 [Hidden] (30-Year Mortgage Boundary)",
-          "visible": false,
-          "description": "Exactly 30 years applies $1000 discount."
-        },
-        {
-          "name": "Test 4 [Hidden] (Zero Years)",
-          "visible": false,
-          "description": "Repayment at 0 years equals principal (plus fee for mortgage)."
-        },
-        {
-          "name": "Test 5 [Hidden] (Monthly Payment)",
-          "visible": false,
-          "description": "monthlyPayment spreads total owed evenly over years*12 months."
-        },
-        {
-          "name": "Test 6 [Hidden] (Monthly Payment Zero Years)",
-          "visible": false,
-          "description": "monthlyPayment(0) returns 0.0 without dividing by zero."
-        },
-        {
-          "name": "Test 7 [Hidden] (Affordability Inclusive)",
-          "visible": false,
-          "description": "isAffordable is inclusive: equal to budget is affordable, just above is not."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Loan personal = new PersonalLoan(10000.0, 0.05);\n        Loan mortgage = new MortgageLoan(200000.0, 0.04, 3000.0);\n        System.out.println(\"Personal: \" + personal.calculateTotalRepayment(3));\n        System.out.println(\"Mortgage: \" + mortgage.calculateTotalRepayment(30));\n    }\n}\n",
-      "testerExpectedOutput": "Personal: 11500.0\nMortgage: 442000.0",
-      "graderCases": [
-        {
-          "name": "Sample run (personal + 30yr mortgage discount + types)",
-          "hidden": false,
-          "body": "Loan personal = new PersonalLoan(10000.0,0.05);\nLoan mortgage = new MortgageLoan(200000.0,0.04,3000.0);\neqD(personal.calculateTotalRepayment(3),11500.0);\neqD(mortgage.calculateTotalRepayment(30),442000.0);\ncheck(personal instanceof Loan, \"must extend Loan\");\ncheck(personal instanceof Amortizable, \"must implement Amortizable\");"
-        },
-        {
-          "name": "29-year mortgage: no discount",
-          "hidden": true,
-          "body": "MortgageLoan m = new MortgageLoan(200000.0,0.04,3000.0);\neqD(m.calculateTotalRepayment(29),200000.0 + 200000.0*0.04*29 + 3000.0);"
-        },
-        {
-          "name": "Exactly 30 years applies discount",
-          "hidden": true,
-          "body": "MortgageLoan m = new MortgageLoan(100000.0,0.03,2000.0);\neqD(m.calculateTotalRepayment(30),100000.0 + 100000.0*0.03*30 + 2000.0 - 1000.0);"
-        },
-        {
-          "name": "Zero years = principal (plus fee for mortgage)",
-          "hidden": true,
-          "body": "eqD(new PersonalLoan(5000.0,0.1).calculateTotalRepayment(0),5000.0);\neqD(new MortgageLoan(5000.0,0.1,250.0).calculateTotalRepayment(0),5250.0);"
-        },
-        {
-          "name": "monthlyPayment spreads total over months",
-          "hidden": true,
-          "body": "PersonalLoan p = new PersonalLoan(12000.0,0.0);\neqD(p.monthlyPayment(1),1000.0);"
-        },
-        {
-          "name": "monthlyPayment with 0 years is 0.0 (no divide-by-zero)",
-          "hidden": true,
-          "body": "PersonalLoan p = new PersonalLoan(12000.0,0.05);\neqD(p.monthlyPayment(0),0.0);"
-        },
-        {
-          "name": "isAffordable compares monthly to budget",
-          "hidden": true,
-          "body": "PersonalLoan p = new PersonalLoan(12000.0,0.0);\ncheck(p.isAffordable(1,1000.0), \"1000 monthly within 1000 budget\");\ncheck(!p.isAffordable(1,999.0), \"1000 monthly exceeds 999 budget\");"
-        }
-      ]
-    },
-    {
-      "id": "q10-mars-rover-mission-controller",
-      "order": 10,
-      "title": "Mars Rover Controller",
-      "points": 14,
-      "theme": "Space Exploration",
-      "prompt": "This capstone requires a question-specific abstract class **and** a question-specific interface, extended/implemented together by your concrete class.\n\nCreate an abstract class `Rover` in `Rover.java`:\n* **Protected fields:** `String roverId`, `int battery`, `int samples`.\n* **Constructor:** `Rover(String roverId)` starts at `battery = 100`, `samples = 0`.\n* **Getters:** `getBattery()`, `getSamples()`.\n* Method `isDead()`: returns `true` when `battery <= 0`.\n* Method `recharge(int percent)`: add `percent` to `battery`, **capped at 100**.\n* **Abstract method:** `public abstract boolean collectSample();`\n\nCreate an interface `PowerManaged` in `PowerManaged.java`:\n* Abstract method: `int batteryLevel();`\n* Abstract method: `int minimumOperatingLevel();`\n* Default method: `default boolean canOperate()`: returns `true` when `batteryLevel() >= minimumOperatingLevel()`.\n* Default method: `default int reserve()`: `batteryLevel() - minimumOperatingLevel()`, but **never negative** (floored at `0`).\n\nCreate a class `ScienceRover` in `ScienceRover.java` **extending `Rover` and implementing `PowerManaged`**:\n* **Constructor:** `ScienceRover(String roverId)` calling `super`.\n* `batteryLevel()` returns the current battery.\n* `minimumOperatingLevel()` returns `25` (the cost of one drill).\n* `collectSample()`: if `battery < 25`, **refuse** — return `false` and change nothing. Otherwise deduct `25` battery, add `1` sample, and return `true`.",
-      "sampleRun": "ScienceRover r = new ScienceRover(\"Curiosity\");\nSystem.out.println(\"Drilled: \" + r.collectSample());\nSystem.out.println(\"Battery: \" + r.getBattery() + \"% | Samples: \" + r.getSamples());\nr.recharge(50);\nSystem.out.println(\"After recharge: \" + r.getBattery() + \"%\");",
-      "expectedOutput": "Drilled: true\nBattery: 75% | Samples: 1\nAfter recharge: 100%",
-      "starterFiles": [
-        {
-          "filename": "Rover.java",
-          "contents": "public abstract class Rover {\n    protected String roverId;\n    protected int battery;\n    protected int samples;\n\n    // TODO: constructor -> battery 100, samples 0; getters; isDead()\n\n    public void recharge(int percent) {\n        // TODO: add percent, cap at 100\n    }\n\n    public abstract boolean collectSample();\n}\n"
-        },
-        {
-          "filename": "PowerManaged.java",
-          "contents": "public interface PowerManaged {\n    int batteryLevel();\n    int minimumOperatingLevel();\n\n    // TODO: default canOperate() -> batteryLevel() >= minimumOperatingLevel()\n\n    // TODO: default reserve() -> difference, floored at 0\n}\n"
-        },
-        {
-          "filename": "ScienceRover.java",
-          "contents": "public class ScienceRover extends Rover implements PowerManaged {\n    // TODO: constructor via super\n\n    @Override\n    public int batteryLevel() {\n        return 0;\n    }\n\n    @Override\n    public int minimumOperatingLevel() {\n        return 25;\n    }\n\n    @Override\n    public boolean collectSample() {\n        // TODO: refuse (false) if battery < 25; else -25 battery, +1 sample, true\n        return false;\n    }\n}\n"
-        }
-      ],
-      "tests": [
-        {
-          "name": "Test 1 [Visible] (Sample Run)",
-          "visible": true,
-          "description": "Collect a sample, then recharge capped at 100."
-        },
-        {
-          "name": "Test 2 [Hidden] (Recharge Cap)",
-          "visible": false,
-          "description": "Recharging above 100 caps at 100."
-        },
-        {
-          "name": "Test 3 [Hidden] (Drill Refused Under 25%)",
-          "visible": false,
-          "description": "A refused drill returns false and leaves battery and samples unchanged."
-        },
-        {
-          "name": "Test 4 [Hidden] (Exact 25% Drills to 0)",
-          "visible": false,
-          "description": "Drilling with exactly 25% succeeds, lands on 0%, and isDead() becomes true."
-        },
-        {
-          "name": "Test 5 [Hidden] (canOperate Threshold)",
-          "visible": false,
-          "description": "canOperate is true at or above the minimum operating level, false below."
-        },
-        {
-          "name": "Test 6 [Hidden] (Reserve Non-Negative)",
-          "visible": false,
-          "description": "reserve never returns a negative value."
-        },
-        {
-          "name": "Test 7 [Hidden] (Fresh Rover State)",
-          "visible": false,
-          "description": "A new rover starts at 100% battery, 0 samples, not dead."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        ScienceRover r = new ScienceRover(\"Curiosity\");\n        System.out.println(\"Drilled: \" + r.collectSample());\n        System.out.println(\"Battery: \" + r.getBattery() + \"% | Samples: \" + r.getSamples());\n        r.recharge(50);\n        System.out.println(\"After recharge: \" + r.getBattery() + \"%\");\n    }\n}\n",
-      "testerExpectedOutput": "Drilled: true\nBattery: 75% | Samples: 1\nAfter recharge: 100%",
-      "graderCases": [
-        {
-          "name": "Sample run (collect, recharge cap + types)",
-          "hidden": false,
-          "body": "ScienceRover r = new ScienceRover(\"Curiosity\");\neq(r.getBattery(),100); eq(r.getSamples(),0);\ncheck(r.collectSample(), \"should drill at full battery\");\neq(r.getBattery(),75); eq(r.getSamples(),1);\nr.recharge(50);\neq(r.getBattery(),100);\ncheck(r instanceof Rover, \"must extend Rover\");\ncheck(r instanceof PowerManaged, \"must implement PowerManaged\");"
-        },
-        {
-          "name": "Recharge caps at 100",
-          "hidden": true,
-          "body": "ScienceRover r = new ScienceRover(\"A\");\nr.recharge(30);\neq(r.getBattery(),100);"
-        },
-        {
-          "name": "Drill refused below 25% (state unchanged)",
-          "hidden": true,
-          "body": "ScienceRover r = new ScienceRover(\"A\");\nr.collectSample(); r.collectSample(); r.collectSample();\neq(r.getBattery(),25); eq(r.getSamples(),3);\nr.collectSample();\neq(r.getBattery(),0); eq(r.getSamples(),4);\ncheck(!r.collectSample(), \"no power to drill\");\neq(r.getBattery(),0); eq(r.getSamples(),4);"
-        },
-        {
-          "name": "Exactly 25% drills and lands on 0 (dead)",
-          "hidden": true,
-          "body": "ScienceRover r = new ScienceRover(\"A\");\nr.collectSample(); r.collectSample(); r.collectSample();\neq(r.getBattery(),25);\ncheck(r.collectSample(), \"25 is enough to drill\");\neq(r.getBattery(),0);\ncheck(r.isDead(), \"battery 0 means dead\");"
-        },
-        {
-          "name": "canOperate reflects minimum operating level",
-          "hidden": true,
-          "body": "ScienceRover r = new ScienceRover(\"A\");\neq(r.minimumOperatingLevel(),25);\ncheck(r.canOperate(), \"100 >= 25\");\nr.collectSample(); r.collectSample(); r.collectSample();\ncheck(r.canOperate(), \"25 >= 25\");\nr.collectSample();\ncheck(!r.canOperate(), \"0 < 25\");"
-        },
-        {
-          "name": "reserve never negative",
-          "hidden": true,
-          "body": "ScienceRover r = new ScienceRover(\"A\");\neq(r.reserve(),75);\nr.collectSample(); r.collectSample(); r.collectSample(); r.collectSample();\neq(r.reserve(),0);"
-        },
-        {
-          "name": "Fresh rover starts full, not dead, zero samples",
-          "hidden": true,
-          "body": "ScienceRover r = new ScienceRover(\"A\");\neq(r.getBattery(),100); eq(r.getSamples(),0);\ncheck(!r.isDead(), \"new rover not dead\");"
+          "body": "eq(MediaClassifier.countMovies(new Media[0]), 0);"
         }
       ]
     }

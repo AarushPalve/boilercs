@@ -3,760 +3,699 @@
   "title": "Practice Exam 4",
   "timeLimitMinutes": 60,
   "totalPoints": 100,
-  "description": "10 free-response challenges across Digital Media, Navigation, Chemical Engineering, Information Security, Public Utilities, Postal & Courier, DevOps, Blood Bank, Urban Planning, and Nuclear Engineering themes.",
+  "description": "10 free-response coding challenges covering File I/O, static fields, encapsulation & bounds, interfaces & polymorphism, overloading & constructor chaining, composition, exception-handling input loops, file processing, inheritance & super, and instanceof downcasting.",
   "questions": [
     {
-      "id": "q1-streaming-media-track",
+      "id": "q1-secret-key-token",
       "order": 1,
-      "title": "Streaming Media Track",
+      "title": "Secret Key Token",
       "points": 6,
-      "theme": "Digital Media",
-      "prompt": "Create a class `MusicTrack` in `MusicTrack.java`:\n* **Private fields:** `String trackTitle`, `String artist`, `int durationSeconds`, `int playCount`.\n* **Constructor 1:** `MusicTrack(String trackTitle, String artist, int durationSeconds, int playCount)`.\n* **Constructor 2:** `MusicTrack(String trackTitle, String artist)` which sets `durationSeconds = 180` and `playCount = 0`.\n* **Getters and Setters:** For all four fields.\n  * In `setDurationSeconds(int seconds)`: If `seconds < 1`, set to `1`.\n  * In `setPlayCount(int count)`: If `count < 0`, set to `0`.",
-      "sampleRun": "MusicTrack song = new MusicTrack(\"Hail Purdue\", \"Purdue Band\");\nSystem.out.println(song.getTrackTitle() + \" by \" + song.getArtist() + \" [\" + song.getDurationSeconds() + \"s] Plays: \" + song.getPlayCount());\nsong.setDurationSeconds(-30);\nsong.setPlayCount(-5);\nSystem.out.println(\"Updated: [\" + song.getDurationSeconds() + \"s] Plays: \" + song.getPlayCount());",
-      "expectedOutput": "Hail Purdue by Purdue Band [180s] Plays: 0\nUpdated: [1s] Plays: 0",
+      "theme": "File I/O",
+      "prompt": "Write a program in `Main.java` that creates `token.dat` holding exactly these four lines:\n\n```\nTOKEN_TYPE=BEARER\nKEY_ID=sec-9901\nEXPIRES_IN=3600\nSTATUS=ACTIVE\n```\n\nEach line ends with a line break (`\\n`), including the last. If `token.dat` exists, replace its contents. Prints nothing to the screen.\n\nUse try-with-resources so the file handle is closed and flushed.",
+      "sampleRun": "// After running, token.dat holds exactly:\n// TOKEN_TYPE=BEARER\n// KEY_ID=sec-9901\n// EXPIRES_IN=3600\n// STATUS=ACTIVE\n// (each line terminated by \\n, nothing printed to the console)",
+      "expectedOutput": "",
       "starterFiles": [
         {
-          "filename": "MusicTrack.java",
-          "contents": "public class MusicTrack {\n    // TODO: private fields trackTitle, artist, durationSeconds, playCount\n\n    // TODO: 4-arg + 2-arg constructors (defaults duration 180, playCount 0)\n\n    // TODO: getters/setters (duration floor 1; playCount floor 0)\n}\n"
+          "filename": "Main.java",
+          "contents": "import java.io.FileWriter;\nimport java.io.IOException;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        // TODO: write token.dat with exactly four lines, each ending in \\n.\n        // Print nothing. Overwrite any existing file. Use try-with-resources.\n    }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Default constructor fields; duration lower clamp (1s); negative play count clamp (0)."
+          "description": "File token.dat exists with exact lines."
         },
         {
-          "name": "Test 2 [Hidden] (Duration Zero)",
+          "name": "Test 2 [Hidden] (Clean Overwrite)",
           "visible": false,
-          "description": "setDurationSeconds(0) clamps to 1."
+          "description": "Overwrites previous content cleanly."
         },
         {
-          "name": "Test 3 [Hidden] (Positive Updates)",
+          "name": "Test 3 [Hidden] (Console Silence)",
           "visible": false,
-          "description": "Setting valid seconds (240) and plays (1500) updates correctly."
+          "description": "No console output."
         },
         {
-          "name": "Test 4 [Hidden] (4-Arg Constructor)",
+          "name": "Test 4 [Hidden] (Terminal Line Break)",
           "visible": false,
-          "description": "All fields initialized properly."
-        },
-        {
-          "name": "Test 5 [Hidden] (String Mutators)",
-          "visible": false,
-          "description": "Title and artist setters update fields."
-        },
-        {
-          "name": "Test 6 [Hidden] (Exact Minimum Valid Duration)",
-          "visible": false,
-          "description": "setDurationSeconds(1) preserved as 1."
+          "description": "Validates all lines end with newline."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        MusicTrack song = new MusicTrack(\"Hail Purdue\", \"Purdue Band\");\n        System.out.println(song.getTrackTitle() + \" by \" + song.getArtist() + \" [\" + song.getDurationSeconds() + \"s] Plays: \" + song.getPlayCount());\n        song.setDurationSeconds(-30);\n        song.setPlayCount(-5);\n        System.out.println(\"Updated: [\" + song.getDurationSeconds() + \"s] Plays: \" + song.getPlayCount());\n    }\n}\n",
-      "testerExpectedOutput": "Hail Purdue by Purdue Band [180s] Plays: 0\nUpdated: [1s] Plays: 0"
+      "graderCases": [
+        {
+          "name": "Sample run (exact four lines + terminal newline)",
+          "hidden": false,
+          "body": "Main.main(new String[0]);\nString content = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"token.dat\")));\neq(content, \"TOKEN_TYPE=BEARER\\nKEY_ID=sec-9901\\nEXPIRES_IN=3600\\nSTATUS=ACTIVE\\n\");"
+        },
+        {
+          "name": "Clean overwrite",
+          "hidden": true,
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"token.dat\"), \"OLD=junk\\nMORE=junk\\nEVEN=more\\nAND=more\\nextra\\n\".getBytes());\nMain.main(new String[0]);\nString content = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"token.dat\")));\neq(content, \"TOKEN_TYPE=BEARER\\nKEY_ID=sec-9901\\nEXPIRES_IN=3600\\nSTATUS=ACTIVE\\n\");"
+        },
+        {
+          "name": "Terminal line break, no carriage returns",
+          "hidden": true,
+          "body": "Main.main(new String[0]);\nString content = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"token.dat\")));\ncheck(content.endsWith(\"STATUS=ACTIVE\\n\"), \"must end with final newline\");\ncheck(content.indexOf('\\r') < 0, \"no carriage returns allowed\");"
+        }
+      ]
     },
     {
-      "id": "q2-gps-coordinate-waypoint",
+      "id": "q2-ev-charger",
       "order": 2,
-      "title": "GPS Coordinate Waypoint",
+      "title": "EV Charger",
       "points": 8,
-      "theme": "Navigation & Cartography",
-      "prompt": "Create a class `Waypoint` in `Waypoint.java`:\n* **Private fields:** `String label`, `double latitude`, `double longitude`.\n* **Constructor:** `Waypoint(String label, double latitude, double longitude)`.\n* **`toString()`:** Return:\n  ```\n  Waypoint: <label>\n  Lat: <latitude formatted to 4 decimal places>\n  Lon: <longitude formatted to 4 decimal places>\n  ```\n  *(Separated by `\\n` with no trailing newline)*\n* **`equals(Object o)`:** Two waypoints are equal if their coordinates are approximately equal: `Math.abs(latitude - o.latitude) < 0.0001` AND `Math.abs(longitude - o.longitude) < 0.0001`, regardless of label. Return `false` if `o` is `null` or not a `Waypoint`.",
-      "sampleRun": "Waypoint w1 = new Waypoint(\"Bell Tower\", 40.42750, -86.91700);\nWaypoint w2 = new Waypoint(\"Near Bell Tower\", 40.42754, -86.91705);\nSystem.out.println(w1);\nSystem.out.println(\"Close enough: \" + w1.equals(w2));",
-      "expectedOutput": "Waypoint: Bell Tower\nLat: 40.4275\nLon: -86.9170\nClose enough: true",
+      "theme": "Classes & Static Fields",
+      "prompt": "Implement `EVCharger` in `EVCharger.java`; fields must be private.\n\n* A charger knows its station ID (`String`) and output in kilowatts (`double`).\n* `EVCharger(String stationId, double kw)` stores both fields and increments a static charger counter.\n* `getStationId()` and `getKw()` return the fields; `setKw(double kw)` updates the kilowatt rating.\n* `static int getActiveChargers()` returns how many `EVCharger` objects have been created.\n* `Main.java` is a test driver; do not edit it.",
+      "sampleRun": "EVCharger c1 = new EVCharger(\"STATION-A\", 50.0);\nEVCharger c2 = new EVCharger(\"STATION-B\", 150.0);\nSystem.out.println(c1.getStationId());\nSystem.out.println(c1.getKw());\nSystem.out.println(EVCharger.getActiveChargers());\nc1.setKw(75.0);\nSystem.out.println(c1.getKw());",
+      "expectedOutput": "STATION-A\n50.0\n2\n75.0",
       "starterFiles": [
         {
-          "filename": "Waypoint.java",
-          "contents": "public class Waypoint {\n    // TODO: private fields label, latitude, longitude\n\n    // TODO: constructor\n\n    // TODO: toString() with 4-decimal lat/lon\n\n    // TODO: equals() -> both coords within < 0.0001; null/type safe\n}\n"
+          "filename": "EVCharger.java",
+          "contents": "public class EVCharger {\n    // TODO: private fields stationId, kw; private static activeChargers\n\n    // TODO: constructor(String, double) -> store + increment activeChargers\n\n    // TODO: getStationId(), getKw(), setKw(double)\n\n    // TODO: static int getActiveChargers()\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "4 decimal place formatting; coordinate proximity equality test (<0.0001)."
+          "description": "2 instances created, getters, setter, static count check."
         },
         {
-          "name": "Test 2 [Hidden] (Null Safety)",
+          "name": "Test 2 [Hidden] (Pre-Instantiation Counter)",
           "visible": false,
-          "description": "w1.equals(null) returns false."
+          "description": "getActiveChargers() returns 0 initially."
         },
         {
-          "name": "Test 3 [Hidden] (Different Class)",
+          "name": "Test 3 [Hidden] (Encapsulation)",
           "visible": false,
-          "description": "w1.equals(\"Bell Tower\") returns false."
+          "description": "All fields confirmed private."
         },
         {
-          "name": "Test 4 [Hidden] (Far Coordinates)",
+          "name": "Test 4 [Hidden] (Zero KW)",
           "visible": false,
-          "description": "Latitude difference >= 0.0001 returns false."
+          "description": "0.0 kW updates cleanly."
         },
         {
-          "name": "Test 5 [Hidden] (Longitude Exceeds Threshold)",
+          "name": "Test 5 [Hidden] (Null Station ID)",
           "visible": false,
-          "description": "Longitude difference >= 0.0001 returns false."
-        },
-        {
-          "name": "Test 6 [Hidden] (Exact 0.0001 Difference Boundary)",
-          "visible": false,
-          "description": "Exactly 0.0001 difference returns false (must be strictly < 0.0001)."
+          "description": "Null station ID handled safely."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Waypoint w1 = new Waypoint(\"Bell Tower\", 40.42750, -86.91700);\n        Waypoint w2 = new Waypoint(\"Near Bell Tower\", 40.42754, -86.91705);\n        System.out.println(w1);\n        System.out.println(\"Close enough: \" + w1.equals(w2));\n    }\n}\n",
-      "testerExpectedOutput": "Waypoint: Bell Tower\nLat: 40.4275\nLon: -86.9170\nClose enough: true"
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        EVCharger c1 = new EVCharger(\"STATION-A\", 50.0);\n        EVCharger c2 = new EVCharger(\"STATION-B\", 150.0);\n        System.out.println(c1.getStationId());\n        System.out.println(c1.getKw());\n        System.out.println(EVCharger.getActiveChargers());\n        c1.setKw(75.0);\n        System.out.println(c1.getKw());\n    }\n}\n",
+      "testerExpectedOutput": "STATION-A\n50.0\n2\n75.0",
+      "graderCases": [
+        {
+          "name": "Sample run (getters, setter, count)",
+          "hidden": false,
+          "body": "int before = EVCharger.getActiveChargers();\nEVCharger c1 = new EVCharger(\"STATION-A\", 50.0);\nEVCharger c2 = new EVCharger(\"STATION-B\", 150.0);\neq(c1.getStationId(), \"STATION-A\");\neqD(c1.getKw(), 50.0);\neq(EVCharger.getActiveChargers() - before, 2);\nc1.setKw(75.0);\neqD(c1.getKw(), 75.0);"
+        },
+        {
+          "name": "Zero kW updates cleanly",
+          "hidden": true,
+          "body": "EVCharger c = new EVCharger(\"X\", 10.0);\nc.setKw(0.0);\neqD(c.getKw(), 0.0);"
+        },
+        {
+          "name": "Null station id increments cleanly",
+          "hidden": true,
+          "body": "int before = EVCharger.getActiveChargers();\nEVCharger c = new EVCharger(null, 5.0);\neq(c.getStationId(), null);\neq(EVCharger.getActiveChargers() - before, 1);"
+        },
+        {
+          "name": "Fields private",
+          "hidden": true,
+          "body": "java.lang.reflect.Field k = EVCharger.class.getDeclaredField(\"kw\");\ncheck(java.lang.reflect.Modifier.isPrivate(k.getModifiers()), \"kw must be private\");"
+        }
+      ]
     },
     {
-      "id": "q3-industrial-pressure-relief",
+      "id": "q3-camera-exposure",
       "order": 3,
-      "title": "Industrial Pressure Relief",
+      "title": "Camera Shutter Speed",
       "points": 8,
-      "theme": "Chemical Engineering",
-      "prompt": "Create an unchecked exception `OverpressureException` in `OverpressureException.java` extending `RuntimeException` with a constructor taking `String message`.\n\nIn `BoilerValve.java`, write:\n`public static int adjustPressure(int currentPSI, int deltaPSI, int safeLimitPSI) throws OverpressureException`\n* If `deltaPSI == 0`, throw `IllegalArgumentException` with message: `\"Pressure change cannot be zero\"`.\n* If `currentPSI + deltaPSI > safeLimitPSI`, throw `OverpressureException` with message:\n  `\"Rupture hazard: PSI reached <currentPSI + deltaPSI>, limit is <safeLimitPSI>\"`.\n* If `currentPSI + deltaPSI < 0`, return `0` (cannot have negative absolute pressure).\n* Otherwise, return `currentPSI + deltaPSI`.",
-      "sampleRun": "try {\n    int psi = BoilerValve.adjustPressure(100, 30, 150);\n    System.out.println(\"Pressure: \" + psi + \" PSI\");\n    BoilerValve.adjustPressure(psi, 35, 150);\n} catch (OverpressureException e) {\n    System.out.println(e.getMessage());\n}",
-      "expectedOutput": "Pressure: 130 PSI\nRupture hazard: PSI reached 165, limit is 150",
+      "theme": "Encapsulation & Bounds",
+      "prompt": "Write the class `CameraExposure` in `CameraExposure.java`; fields must be private.\n\n* Exposure index is an integer step from `1` (fastest shutter) to `15` (longest exposure) inclusive.\n* `setStep(int step)` stores the value only if it is in `[1, 15]`; an out-of-range value changes nothing.\n* The constructor `CameraExposure(int step)` sends its argument through `setStep`. A bad starting value defaults step to `8`.\n* `getStep()` returns the current step.\n* `increaseExposure()` raises step by 1 unless it is already 15 (clamped).\n* `decreaseExposure()` lowers step by 1 unless it is already 1 (clamped).\n* `Main.java` is a test driver; do not edit it.\n\n*Hint:* initialize the field to `8` so that an invalid constructor argument leaves the step at `8`.",
+      "sampleRun": "CameraExposure exp = new CameraExposure(14);\nexp.increaseExposure();\nSystem.out.println(exp.getStep());\nexp.increaseExposure();\nSystem.out.println(exp.getStep());\nexp.setStep(20);\nSystem.out.println(exp.getStep());\nSystem.out.println(new CameraExposure(0).getStep());",
+      "expectedOutput": "15\n15\n15\n8",
       "starterFiles": [
         {
-          "filename": "OverpressureException.java",
-          "contents": "public class OverpressureException extends RuntimeException {\n    // TODO: constructor taking String message -> super(message)\n}\n"
-        },
-        {
-          "filename": "BoilerValve.java",
-          "contents": "public class BoilerValve {\n    public static int adjustPressure(int currentPSI, int deltaPSI, int safeLimitPSI) {\n        // TODO: validate delta != 0, check overpressure, floor at 0, else return sum\n        return 0;\n    }\n}\n"
+          "filename": "CameraExposure.java",
+          "contents": "public class CameraExposure {\n    // TODO: private int step (initialize to 8)\n\n    // TODO: constructor(int step) -> routes through setStep\n\n    // TODO: setStep(int) -> store only if in [1, 15]\n\n    // TODO: getStep(), increaseExposure() (clamp at 15), decreaseExposure() (clamp at 1)\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Successful PSI adjustment followed by OverpressureException."
+          "description": "Increases to 15, capped at 15, out-of-range rejected, bad constructor defaults to 8."
         },
         {
-          "name": "Test 2 [Hidden] (Zero Delta PSI)",
+          "name": "Test 2 [Hidden] (Decrease Clamping at 1)",
           "visible": false,
-          "description": "deltaPSI = 0 throws IllegalArgumentException."
+          "description": "Repeatedly decreasing past 1 stays at 1."
         },
         {
-          "name": "Test 3 [Hidden] (Negative Delta Below 0 PSI)",
+          "name": "Test 3 [Hidden] (Exact Boundaries)",
           "visible": false,
-          "description": "Adjusting from 20 with delta -50 returns 0."
+          "description": "Setting step to 1 and 15 succeeds."
         },
         {
-          "name": "Test 4 [Hidden] (Exact Safe Limit)",
+          "name": "Test 4 [Hidden] (Off-by-One Rejection)",
           "visible": false,
-          "description": "currentPSI + deltaPSI == safeLimitPSI returns safeLimitPSI."
+          "description": "Step 0 and 16 rejected."
         },
         {
-          "name": "Test 5 [Hidden] (Unchecked Exception Type)",
+          "name": "Test 5 [Hidden] (Constructor Valid Extremes)",
           "visible": false,
-          "description": "Verifies OverpressureException extends RuntimeException."
-        },
-        {
-          "name": "Test 6 [Hidden] (Depressurization to Exactly Zero)",
-          "visible": false,
-          "description": "Delta reducing PSI exactly to 0 returns 0."
+          "description": "new CameraExposure(1) gives 1; new CameraExposure(15) gives 15."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try {\n            int psi = BoilerValve.adjustPressure(100, 30, 150);\n            System.out.println(\"Pressure: \" + psi + \" PSI\");\n            BoilerValve.adjustPressure(psi, 35, 150);\n        } catch (OverpressureException e) {\n            System.out.println(e.getMessage());\n        }\n    }\n}\n",
-      "testerExpectedOutput": "Pressure: 130 PSI\nRupture hazard: PSI reached 165, limit is 150"
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CameraExposure exp = new CameraExposure(14);\n        exp.increaseExposure();\n        System.out.println(exp.getStep());\n        exp.increaseExposure();\n        System.out.println(exp.getStep());\n        exp.setStep(20);\n        System.out.println(exp.getStep());\n        System.out.println(new CameraExposure(0).getStep());\n    }\n}\n",
+      "testerExpectedOutput": "15\n15\n15\n8",
+      "graderCases": [
+        {
+          "name": "Sample run (increase cap, reject 20, default 0->8)",
+          "hidden": false,
+          "body": "CameraExposure exp = new CameraExposure(14);\nexp.increaseExposure(); eq(exp.getStep(), 15);\nexp.increaseExposure(); eq(exp.getStep(), 15);\nexp.setStep(20); eq(exp.getStep(), 15);\neq(new CameraExposure(0).getStep(), 8);"
+        },
+        {
+          "name": "Decrease clamp at 1",
+          "hidden": true,
+          "body": "CameraExposure exp = new CameraExposure(1);\nfor (int i = 0; i < 5; i++) exp.decreaseExposure();\neq(exp.getStep(), 1);"
+        },
+        {
+          "name": "Exact boundaries",
+          "hidden": true,
+          "body": "CameraExposure exp = new CameraExposure(8);\nexp.setStep(1); eq(exp.getStep(), 1);\nexp.setStep(15); eq(exp.getStep(), 15);"
+        },
+        {
+          "name": "Off-by-one rejection",
+          "hidden": true,
+          "body": "CameraExposure exp = new CameraExposure(8);\nexp.setStep(0); eq(exp.getStep(), 8);\nexp.setStep(16); eq(exp.getStep(), 8);"
+        },
+        {
+          "name": "Constructor valid extremes",
+          "hidden": true,
+          "body": "eq(new CameraExposure(1).getStep(), 1);\neq(new CameraExposure(15).getStep(), 15);"
+        }
+      ]
     },
     {
-      "id": "q4-encryptable-communication",
+      "id": "q4-cloud-infrastructure-billing",
       "order": 4,
-      "title": "Encryptable Communication",
-      "points": 8,
-      "theme": "Information Security",
-      "prompt": "Create an interface `Encryptable` in `Encryptable.java`:\n* Abstract method: `String encrypt(int shift);`\n* Abstract method: `String decrypt(int shift);`\n* Default method: `default boolean testCipher(int shift)`:\n  * Encrypts sample text `\"JAVA\"`, decrypts the result with the same shift, and returns `true` if the decrypted text equals `\"JAVA\"`, else `false`.\n\nCreate a class `CaesarCipher` in `CaesarCipher.java` implementing `Encryptable`:\n* **Private field:** `String message`.\n* **Constructor:** `CaesarCipher(String message)`.\n* Implement `encrypt(int shift)`: shifts only uppercase alphabetic letters (`'A'` - `'Z'`) forward cyclically by `shift` positions. Non-uppercase letters remain unchanged.\n* Implement `decrypt(int shift)`: shifts uppercase letters backward cyclically by `shift` positions (`shift` is positive).\n* You may assume `shift` is between 1 and 25.\n\n*(Note: `testCipher` constructs its own `CaesarCipher(\"JAVA\")` internally to validate the round-trip.)*",
-      "sampleRun": "CaesarCipher cipher = new CaesarCipher(\"HELLO\");\nString enc = cipher.encrypt(3);\nSystem.out.println(\"Encrypted: \" + enc);\nSystem.out.println(\"Decrypted: \" + cipher.decrypt(3));\nSystem.out.println(\"Cipher Valid: \" + cipher.testCipher(3));",
-      "expectedOutput": "Encrypted: KHOOR\nDecrypted: HELLO\nCipher Valid: true",
+      "title": "Cloud Infrastructure Billing",
+      "points": 10,
+      "theme": "Interfaces & Polymorphism",
+      "prompt": "Files given (read-only, provided as extra tabs): `CloudResource.java` (interface with `String resourceId()` and `double monthlyCost()`; the cost can be negative), `VirtualServer.java` and `DatabaseCluster.java` (implement `CloudResource`), and `Main.java` (driver). Do not edit them.\n\nWrite `CloudAccount.java` containing two static methods:\n* `static double totalCost(CloudResource[] resources)`: returns the sum of every `monthlyCost()`.\n* `static String priciestResource(CloudResource[] resources)`: returns the `resourceId()` of the element with the largest `monthlyCost()`.\n  * **Tie Rule:** On a tie, the first one encountered wins.\n  * **Empty Rule:** An empty array gives `0.0` and `\"\"`.\n  * **Null Safety:** Safely skip any `null` elements in `resources`.",
+      "sampleRun": "CloudResource[] cloud = { new VirtualServer(\"srv-web-01\"), new DatabaseCluster(\"db-main\") };\n// srv-web-01 cost is 45.0; db-main cost is 320.0\nSystem.out.println(CloudAccount.totalCost(cloud));\nSystem.out.println(CloudAccount.priciestResource(cloud));",
+      "expectedOutput": "365.0\ndb-main",
       "starterFiles": [
         {
-          "filename": "Encryptable.java",
-          "contents": "public interface Encryptable {\n    String encrypt(int shift);\n    String decrypt(int shift);\n\n    // TODO: default testCipher(int shift) -> round-trip \"JAVA\"\n}\n"
+          "filename": "CloudAccount.java",
+          "contents": "public class CloudAccount {\n    public static double totalCost(CloudResource[] resources) {\n        // TODO: sum monthlyCost() over non-null elements; 0.0 if empty/null\n        return 0.0;\n    }\n\n    public static String priciestResource(CloudResource[] resources) {\n        // TODO: resourceId() of largest monthlyCost() (first wins on tie); \"\" if none\n        return \"\";\n    }\n}\n"
         },
         {
-          "filename": "CaesarCipher.java",
-          "contents": "public class CaesarCipher implements Encryptable {\n    // TODO: private String message + constructor\n\n    public String encrypt(int shift) {\n        // TODO: shift uppercase letters forward cyclically; leave others unchanged\n        return \"\";\n    }\n\n    public String decrypt(int shift) {\n        // TODO: shift uppercase letters backward cyclically\n        return \"\";\n    }\n}\n"
+          "filename": "CloudResource.java",
+          "contents": "public interface CloudResource {\n    String resourceId();\n    double monthlyCost();\n}\n"
+        },
+        {
+          "filename": "VirtualServer.java",
+          "contents": "public class VirtualServer implements CloudResource {\n    private final String id;\n    public VirtualServer(String id) { this.id = id; }\n    public String resourceId() { return id; }\n    public double monthlyCost() { return 45.0; }\n}\n"
+        },
+        {
+          "filename": "DatabaseCluster.java",
+          "contents": "public class DatabaseCluster implements CloudResource {\n    private final String id;\n    public DatabaseCluster(String id) { this.id = id; }\n    public String resourceId() { return id; }\n    public double monthlyCost() { return 320.0; }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Caesar shift of 3 forward (\"HELLO\" -> \"KHOOR\") and backward, verifying default method."
+          "description": "Sums cloud resource costs and finds priciest resource ID."
         },
         {
-          "name": "Test 2 [Hidden] (Wrap Around Alphabet)",
+          "name": "Test 2 [Hidden] (Promotional Credits Negative Max)",
           "visible": false,
-          "description": "Shifting 'Z' forward by 1 produces 'A'."
+          "description": "All resources negative returns the least negative resource."
         },
         {
-          "name": "Test 3 [Hidden] (Wrap Around Decrypt)",
+          "name": "Test 3 [Hidden] (Array with Nulls)",
           "visible": false,
-          "description": "Shifting 'A' backward by 1 produces 'Z'."
+          "description": "Sum and priciest work on array containing null."
         },
         {
-          "name": "Test 4 [Hidden] (Non-Uppercase Characters)",
+          "name": "Test 4 [Hidden] (Exact Cost Tie)",
           "visible": false,
-          "description": "Spaces and punctuation like \"HI!\" keep \"!\" unchanged (\"KL!\")."
+          "description": "First resource encountered in tie wins."
         },
         {
-          "name": "Test 5 [Hidden] (Full 25 Shift)",
+          "name": "Test 5 [Hidden] (Empty Array)",
           "visible": false,
-          "description": "Shift by 25 rotates correctly."
-        },
-        {
-          "name": "Test 6 [Hidden] (Polymorphic Reference)",
-          "visible": false,
-          "description": "Interface reference Encryptable e = new CaesarCipher(\"TEST\"); works seamlessly."
+          "description": "Returns 0.0 and \"\"."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CaesarCipher cipher = new CaesarCipher(\"HELLO\");\n        String enc = cipher.encrypt(3);\n        System.out.println(\"Encrypted: \" + enc);\n        System.out.println(\"Decrypted: \" + cipher.decrypt(3));\n        System.out.println(\"Cipher Valid: \" + cipher.testCipher(3));\n    }\n}\n",
-      "testerExpectedOutput": "Encrypted: KHOOR\nDecrypted: HELLO\nCipher Valid: true"
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        CloudResource[] cloud = { new VirtualServer(\"srv-web-01\"), new DatabaseCluster(\"db-main\") };\n        System.out.println(CloudAccount.totalCost(cloud));\n        System.out.println(CloudAccount.priciestResource(cloud));\n    }\n}\n",
+      "testerExpectedOutput": "365.0\ndb-main",
+      "graderCases": [
+        {
+          "name": "Sample run (sum + priciest)",
+          "hidden": false,
+          "body": "CloudResource[] cloud = { new VirtualServer(\"srv-web-01\"), new DatabaseCluster(\"db-main\") };\neqD(CloudAccount.totalCost(cloud), 365.0);\neq(CloudAccount.priciestResource(cloud), \"db-main\");"
+        },
+        {
+          "name": "All negative returns least negative",
+          "hidden": true,
+          "body": "CloudResource a = new CloudResource() { public String resourceId() { return \"a\"; } public double monthlyCost() { return -200.0; } };\nCloudResource b = new CloudResource() { public String resourceId() { return \"b\"; } public double monthlyCost() { return -30.0; } };\nCloudResource c = new CloudResource() { public String resourceId() { return \"c\"; } public double monthlyCost() { return -75.0; } };\nCloudResource[] m = { a, b, c };\neqD(CloudAccount.totalCost(m), -305.0);\neq(CloudAccount.priciestResource(m), \"b\");"
+        },
+        {
+          "name": "Array with nulls",
+          "hidden": true,
+          "body": "CloudResource[] m = { null, new DatabaseCluster(\"db-1\"), null };\neqD(CloudAccount.totalCost(m), 320.0);\neq(CloudAccount.priciestResource(m), \"db-1\");"
+        },
+        {
+          "name": "Exact tie returns first",
+          "hidden": true,
+          "body": "CloudResource a = new CloudResource() { public String resourceId() { return \"first\"; } public double monthlyCost() { return 100.0; } };\nCloudResource b = new CloudResource() { public String resourceId() { return \"second\"; } public double monthlyCost() { return 100.0; } };\neq(CloudAccount.priciestResource(new CloudResource[]{ a, b }), \"first\");"
+        },
+        {
+          "name": "Empty array",
+          "hidden": true,
+          "body": "CloudResource[] m = new CloudResource[0];\neqD(CloudAccount.totalCost(m), 0.0);\neq(CloudAccount.priciestResource(m), \"\");"
+        }
+      ]
     },
     {
-      "id": "q5-residential-utility-accounts",
+      "id": "q5-course-workshop-enrollment",
       "order": 5,
-      "title": "Residential Utility Accounts",
+      "title": "Course Workshop Enrollment Overloading",
       "points": 10,
-      "theme": "Public Utilities",
-      "prompt": "Create a class `UtilityAccount` in `UtilityAccount.java`:\n* **Protected fields:** `String accountNumber`, `double usageUnits`.\n* **Constructor:** `UtilityAccount(String accountNumber, double usageUnits)`.\n* Method `calculateBill()` returning `usageUnits * 1.20`.\n\nCreate subclass `WaterAccount` in `WaterAccount.java` extending `UtilityAccount`:\n* **Private field:** `double stormWaterFee`.\n* **Constructor:** `WaterAccount(String accountNumber, double usageUnits, double stormWaterFee)` calling `super`.\n* Override `calculateBill()`:\n  * Water rate is `$0.80` per unit (instead of $1.20).\n  * Bill = `(usageUnits * 0.80) + stormWaterFee`.\n  * If `usageUnits > 100.0`, add a conservation tier surcharge of `$25.00`.",
-      "sampleRun": "UtilityAccount generic = new UtilityAccount(\"ACC-1\", 50.0);\nWaterAccount w1 = new WaterAccount(\"WTR-1\", 50.0, 15.0);\nWaterAccount w2 = new WaterAccount(\"WTR-2\", 120.0, 15.0);\nSystem.out.println(\"Generic: $\" + generic.calculateBill());\nSystem.out.println(\"Water 1: $\" + w1.calculateBill());\nSystem.out.println(\"Water 2: $\" + w2.calculateBill());",
-      "expectedOutput": "Generic: $60.0\nWater 1: $55.0\nWater 2: $136.0",
+      "theme": "Overloading & Constructor Chaining",
+      "prompt": "Create `Workshop` in `Workshop.java` with private fields: `String topic`, `int seats`, and `boolean certificateOffered`.\n\nImplement constructor and method overloading:\n* `Workshop(String topic, int seats, boolean certificateOffered)`: initializes all fields.\n* `Workshop(String topic, int seats)`: overloads constructor, defaulting `certificateOffered` to `true` (chain using `this(...)`).\n* `Workshop(String topic)`: overloads constructor, defaulting `seats` to `25` and `certificateOffered` to `true` (chain using `this(...)`).\n* `getTopic()`, `getSeats()`, and `isCertificateOffered()` return the fields.\n* `tuitionRevenue(double baseSeatPrice)`: revenue is `seats * baseSeatPrice`. If `certificateOffered` is true, add a `$20.00` credential fee per seat (`seats * 20.0`).\n* `tuitionRevenue(double baseSeatPrice, double earlyBirdDiscountPerSeat)`: overloads `tuitionRevenue` by deducting `earlyBirdDiscountPerSeat` from each seat's base price before calculating. Net seat price cannot drop below `0.0`.\n  * If `earlyBirdDiscountPerSeat < 0.0`, treat it as `0.0`.",
+      "sampleRun": "Workshop w1 = new Workshop(\"Machine Learning\", 10, true);\nWorkshop w2 = new Workshop(\"Python Scripting\");\nSystem.out.println(w1.tuitionRevenue(100.0));\nSystem.out.println(w1.tuitionRevenue(100.0, 30.0));\nSystem.out.println(w2.getSeats());\nSystem.out.println(w2.isCertificateOffered());\nSystem.out.println(w2.tuitionRevenue(10.0, 50.0));",
+      "expectedOutput": "1200.0\n900.0\n25\ntrue\n500.0",
       "starterFiles": [
         {
-          "filename": "UtilityAccount.java",
-          "contents": "public class UtilityAccount {\n    protected String accountNumber;\n    protected double usageUnits;\n    // TODO: constructor\n\n    public double calculateBill() {\n        return usageUnits * 1.20;\n    }\n}\n"
-        },
-        {
-          "filename": "WaterAccount.java",
-          "contents": "public class WaterAccount extends UtilityAccount {\n    // TODO: private double stormWaterFee + constructor via super\n\n    @Override\n    public double calculateBill() {\n        // TODO: usageUnits*0.80 + stormWaterFee; +25 if usageUnits > 100.0\n        return 0.0;\n    }\n}\n"
+          "filename": "Workshop.java",
+          "contents": "public class Workshop {\n    // TODO: private fields topic, seats, certificateOffered\n\n    // TODO: 3-arg constructor\n\n    // TODO: 2-arg constructor -> this(topic, seats, true)\n\n    // TODO: 1-arg constructor -> this(topic, 25, true)\n\n    // TODO: getters getTopic(), getSeats(), isCertificateOffered()\n\n    // TODO: tuitionRevenue(double baseSeatPrice) -> seats*base (+seats*20 if certificate)\n\n    // TODO: tuitionRevenue(double baseSeatPrice, double earlyBirdDiscountPerSeat)\n    //       clamp discount >=0; net seat price floor 0; certificate fee still applies\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Generic account, standard water account, high-usage water account (>100 units)."
+          "description": "Certificate surcharge, early bird discount overload, 1-arg defaults, base price discount clamp."
         },
         {
-          "name": "Test 2 [Hidden] (Exact 100 Unit Boundary)",
+          "name": "Test 2 [Hidden] (Negative Discount Trap)",
           "visible": false,
-          "description": "usageUnits = 100.0 does NOT incur $25 surcharge (80 + 15 = 95.0)."
+          "description": "Discount -20.0 treated as 0.0."
         },
         {
-          "name": "Test 3 [Hidden] (100.1 Units)",
+          "name": "Test 3 [Hidden] (Base Price Clamping with Certificate)",
           "visible": false,
-          "description": "usageUnits = 100.1 incurs $25 surcharge."
+          "description": "Discount exceeding base price clamps seat base to 0.0, but certificate fee remains (seats * 20.0)."
         },
         {
-          "name": "Test 4 [Hidden] (0 Usage Units)",
+          "name": "Test 4 [Hidden] (Constructor Delegation)",
           "visible": false,
-          "description": "0 usage units returns only stormWaterFee."
+          "description": "Verified chaining via this(...)."
         },
         {
-          "name": "Test 5 [Hidden] (Dynamic Dispatch)",
+          "name": "Test 5 [Hidden] (Zero Seats)",
           "visible": false,
-          "description": "UtilityAccount u = new WaterAccount(\"WTR-3\", 80.0, 10.0); returns 74.0."
-        },
-        {
-          "name": "Test 6 [Hidden] (Super Constructor)",
-          "visible": false,
-          "description": "Account number and usage units initialized through super."
+          "description": "0 seats yields 0.0 revenue."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        UtilityAccount generic = new UtilityAccount(\"ACC-1\", 50.0);\n        WaterAccount w1 = new WaterAccount(\"WTR-1\", 50.0, 15.0);\n        WaterAccount w2 = new WaterAccount(\"WTR-2\", 120.0, 15.0);\n        System.out.println(\"Generic: $\" + generic.calculateBill());\n        System.out.println(\"Water 1: $\" + w1.calculateBill());\n        System.out.println(\"Water 2: $\" + w2.calculateBill());\n    }\n}\n",
-      "testerExpectedOutput": "Generic: $60.0\nWater 1: $55.0\nWater 2: $136.0"
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Workshop w1 = new Workshop(\"Machine Learning\", 10, true);\n        Workshop w2 = new Workshop(\"Python Scripting\");\n        System.out.println(w1.tuitionRevenue(100.0));\n        System.out.println(w1.tuitionRevenue(100.0, 30.0));\n        System.out.println(w2.getSeats());\n        System.out.println(w2.isCertificateOffered());\n        System.out.println(w2.tuitionRevenue(10.0, 50.0));\n    }\n}\n",
+      "testerExpectedOutput": "1200.0\n900.0\n25\ntrue\n500.0",
+      "graderCases": [
+        {
+          "name": "Sample run (surcharge + discount + defaults + clamp)",
+          "hidden": false,
+          "body": "Workshop w1 = new Workshop(\"Machine Learning\", 10, true);\nWorkshop w2 = new Workshop(\"Python Scripting\");\neqD(w1.tuitionRevenue(100.0), 1200.0);\neqD(w1.tuitionRevenue(100.0, 30.0), 900.0);\neq(w2.getSeats(), 25);\ncheck(w2.isCertificateOffered(), \"default certificateOffered must be true\");\neqD(w2.tuitionRevenue(10.0, 50.0), 500.0);"
+        },
+        {
+          "name": "Negative discount treated as 0",
+          "hidden": true,
+          "body": "Workshop w = new Workshop(\"X\", 5, true);\neqD(w.tuitionRevenue(100.0, -20.0), 5 * 100.0 + 5 * 20.0);"
+        },
+        {
+          "name": "Base price clamp keeps certificate fee",
+          "hidden": true,
+          "body": "Workshop w = new Workshop(\"X\", 4, true);\neqD(w.tuitionRevenue(30.0, 100.0), 4 * 0.0 + 4 * 20.0);"
+        },
+        {
+          "name": "Zero seats yields zero",
+          "hidden": true,
+          "body": "Workshop w = new Workshop(\"X\", 0, true);\neqD(w.tuitionRevenue(100.0), 0.0);\neqD(w.tuitionRevenue(100.0, 10.0), 0.0);"
+        },
+        {
+          "name": "No certificate omits fee",
+          "hidden": true,
+          "body": "Workshop w = new Workshop(\"X\", 3, false);\neqD(w.tuitionRevenue(100.0), 300.0);"
+        }
+      ]
     },
     {
-      "id": "q6-package-delivery-dispatch",
+      "id": "q6-warehouse-storage-bin",
       "order": 6,
-      "title": "Package Delivery Dispatch",
+      "title": "Warehouse Storage Bin",
       "points": 10,
-      "theme": "Postal & Courier",
-      "prompt": "Given base class `Parcel` with method `double getShippingCost()` and subclass `InsuredParcel` (which overrides `getShippingCost()` adding an insurance premium), implement `DispatchManager.java`:\n* `public static double computeTotalShipping(Parcel[] packages)`:\n  * Sums `getShippingCost()` for all non-null parcels.\n  * If `packages` is `null` or empty, return `0.0`.\n* `public static int countExpressShipments(Parcel[] packages, double expressCostThreshold)`:\n  * Counts non-null parcels where `getShippingCost() >= expressCostThreshold`.\n  * If `packages` is `null`, return `0`.\n\n*(The autograder provides `Parcel` and `InsuredParcel`.)*",
-      "sampleRun": "Parcel[] truck = new Parcel[] {\n    new Parcel(\"Box1\", 12.50),\n    null,\n    new InsuredParcel(\"Jewelry\", 20.00, 15.00), // cost = 35.00\n    new Parcel(\"Envelope\", 8.00)\n};\nSystem.out.println(\"Total: \" + DispatchManager.computeTotalShipping(truck));\nSystem.out.println(\"Express count: \" + DispatchManager.countExpressShipments(truck, 20.00));",
-      "expectedOutput": "Total: 55.5\nExpress count: 1",
+      "theme": "Composition & Dynamic Delegation",
+      "prompt": "`Item.java` is given: `Item(String sku, boolean fragile)` with `getSku()`, `isFragile()`, and `setFragile(boolean fragile)`. It is provided as an extra tab — do not edit it.\n\nImplement `StorageBin.java`; all fields must be private:\n* `StorageBin(Item item, int quantity, double unitValue)` stores all three fields.\n* `getItem()` and `getQuantity()` return the fields; `setQuantity(int quantity)` updates quantity.\n* `totalValue()`: `quantity * unitValue`. If `item.isFragile()` is true, add a handling insurance surcharge of `15%` to total value (multiply by `1.15`).\n  * Checks `item.isFragile()` **dynamically every time** `totalValue()` is called.\n* `toString()` returns: `Bin[<sku>, <quantity> items, $<totalValue formatted to 2 decimals>]`. Use `items` even for quantity 1.",
+      "sampleRun": "Item it = new Item(\"SKU-102\", true);\nStorageBin bin = new StorageBin(it, 5, 20.0);\nSystem.out.println(bin.totalValue());\nSystem.out.println(bin.toString());\nit.setFragile(false);\nSystem.out.println(bin.totalValue());\nSystem.out.println(bin.toString());",
+      "expectedOutput": "115.0\nBin[SKU-102, 5 items, $115.00]\n100.0\nBin[SKU-102, 5 items, $100.00]",
       "starterFiles": [
         {
-          "filename": "DispatchManager.java",
-          "contents": "public class DispatchManager {\n    public static double computeTotalShipping(Parcel[] packages) {\n        // TODO: sum non-null getShippingCost(); 0.0 if null/empty\n        return 0.0;\n    }\n\n    public static int countExpressShipments(Parcel[] packages, double expressCostThreshold) {\n        // TODO: count non-null getShippingCost() >= threshold; 0 if null\n        return 0;\n    }\n}\n"
+          "filename": "StorageBin.java",
+          "contents": "public class StorageBin {\n    // TODO: private fields item, quantity, unitValue\n\n    // TODO: constructor(Item, int, double)\n\n    // TODO: getItem(), getQuantity(), setQuantity(int)\n\n    // TODO: totalValue() -> quantity*unitValue (*1.15 if item.isFragile()), queried each call\n\n    // TODO: toString() -> \"Bin[<sku>, <quantity> items, $X.XX]\"\n}\n"
+        },
+        {
+          "filename": "Item.java",
+          "contents": "public class Item {\n    private String sku;\n    private boolean fragile;\n    public Item(String sku, boolean fragile) { this.sku = sku; this.fragile = fragile; }\n    public String getSku() { return sku; }\n    public boolean isFragile() { return fragile; }\n    public void setFragile(boolean fragile) { this.fragile = fragile; }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Sums parcels and insured parcels skipping null; checks threshold."
+          "description": "15% fragile surcharge, exact toString(), dynamic value update when item fragility changes."
         },
         {
-          "name": "Test 2 [Hidden] (Null Array)",
+          "name": "Test 2 [Hidden] (Grammatical Check)",
           "visible": false,
-          "description": "Passing null returns 0.0 and 0."
+          "description": "quantity = 1 outputs 1 items."
         },
         {
-          "name": "Test 3 [Hidden] (Empty Array)",
+          "name": "Test 3 [Hidden] (Dynamic Mutation Reflection)",
           "visible": false,
-          "description": "new Parcel[0] returns 0.0 and 0."
+          "description": "Modifying item fragility externally reflects immediately in bin.toString()."
         },
         {
-          "name": "Test 4 [Hidden] (Exact Threshold Match)",
+          "name": "Test 4 [Hidden] (Zero Quantity)",
           "visible": false,
-          "description": "Parcel with cost == threshold is counted."
+          "description": "Quantity 0 outputs $0.00."
         },
         {
-          "name": "Test 5 [Hidden] (All Insured Parcels)",
+          "name": "Test 5 [Hidden] (Private Encapsulation)",
           "visible": false,
-          "description": "Overridden dynamic dispatch verified across array."
-        },
-        {
-          "name": "Test 6 [Hidden] (All Null Elements)",
-          "visible": false,
-          "description": "new Parcel[]{null, null} returns 0.0 and 0."
-        },
-        {
-          "name": "Test 7 [Hidden] (Zero Shipping Cost)",
-          "visible": false,
-          "description": "Free shipping parcels handled cleanly."
+          "description": "All fields confirmed private."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Parcel[] truck = new Parcel[] {\n            new Parcel(\"Box1\", 12.50),\n            null,\n            new InsuredParcel(\"Jewelry\", 20.00, 15.00), // cost = 35.00\n            new Parcel(\"Envelope\", 8.00)\n        };\n        System.out.println(\"Total: \" + DispatchManager.computeTotalShipping(truck));\n        System.out.println(\"Express count: \" + DispatchManager.countExpressShipments(truck, 20.00));\n    }\n}\n",
-      "testerExpectedOutput": "Total: 55.5\nExpress count: 1",
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Item it = new Item(\"SKU-102\", true);\n        StorageBin bin = new StorageBin(it, 5, 20.0);\n        System.out.println(bin.totalValue());\n        System.out.println(bin.toString());\n        it.setFragile(false);\n        System.out.println(bin.totalValue());\n        System.out.println(bin.toString());\n    }\n}\n",
+      "testerExpectedOutput": "115.0\nBin[SKU-102, 5 items, $115.00]\n100.0\nBin[SKU-102, 5 items, $100.00]",
       "graderCases": [
         {
-          "name": "Sample run (null + insured parcel)",
+          "name": "Sample run (surcharge + dynamic + toString)",
           "hidden": false,
-          "body": "Parcel[] t = { new Parcel(\"Box1\",12.50), null, new InsuredParcel(\"Jewelry\",20.00,15.00), new Parcel(\"Env\",8.00) };\neqD(DispatchManager.computeTotalShipping(t),55.5);\neq(DispatchManager.countExpressShipments(t,20.00),1);"
+          "body": "Item it = new Item(\"SKU-102\", true);\nStorageBin bin = new StorageBin(it, 5, 20.0);\neqD(bin.totalValue(), 115.0);\neq(bin.toString(), \"Bin[SKU-102, 5 items, $115.00]\");\nit.setFragile(false);\neqD(bin.totalValue(), 100.0);\neq(bin.toString(), \"Bin[SKU-102, 5 items, $100.00]\");"
         },
         {
-          "name": "Null array returns 0.0 and 0",
+          "name": "Single quantity grammar",
           "hidden": true,
-          "body": "eqD(DispatchManager.computeTotalShipping(null),0.0);\neq(DispatchManager.countExpressShipments(null,20.0),0);"
+          "body": "Item it = new Item(\"S\", false);\nStorageBin bin = new StorageBin(it, 1, 10.0);\neq(bin.toString(), \"Bin[S, 1 items, $10.00]\");"
         },
         {
-          "name": "Empty array returns 0.0 and 0",
+          "name": "Dynamic mutation reflection",
           "hidden": true,
-          "body": "Parcel[] t = new Parcel[0];\neqD(DispatchManager.computeTotalShipping(t),0.0);\neq(DispatchManager.countExpressShipments(t,10.0),0);"
+          "body": "Item it = new Item(\"S\", false);\nStorageBin bin = new StorageBin(it, 2, 100.0);\neqD(bin.totalValue(), 200.0);\nit.setFragile(true);\neqD(bin.totalValue(), 230.0);"
         },
         {
-          "name": "Exact threshold counted (>=)",
+          "name": "Zero quantity",
           "hidden": true,
-          "body": "Parcel[] t = { new Parcel(\"X\",20.0) };\neq(DispatchManager.countExpressShipments(t,20.0),1);\neq(DispatchManager.countExpressShipments(t,20.01),0);"
+          "body": "Item it = new Item(\"S\", true);\nStorageBin bin = new StorageBin(it, 0, 50.0);\neq(bin.toString(), \"Bin[S, 0 items, $0.00]\");"
         },
         {
-          "name": "All insured dynamic dispatch",
+          "name": "Fields private",
           "hidden": true,
-          "body": "Parcel[] t = { new InsuredParcel(\"a\",10.0,5.0), new InsuredParcel(\"b\",20.0,10.0) };\neqD(DispatchManager.computeTotalShipping(t),45.0);\neq(DispatchManager.countExpressShipments(t,30.0),1);"
-        },
-        {
-          "name": "All null elements return 0.0 and 0",
-          "hidden": true,
-          "body": "Parcel[] t = { null, null };\neqD(DispatchManager.computeTotalShipping(t),0.0);\neq(DispatchManager.countExpressShipments(t,0.0),0);"
-        },
-        {
-          "name": "Zero shipping cost handled",
-          "hidden": true,
-          "body": "Parcel[] t = { new Parcel(\"free\",0.0) };\neqD(DispatchManager.computeTotalShipping(t),0.0);\neq(DispatchManager.countExpressShipments(t,0.0),1);"
+          "body": "for (java.lang.reflect.Field f : StorageBin.class.getDeclaredFields())\n    check(java.lang.reflect.Modifier.isPrivate(f.getModifiers()), \"all StorageBin fields must be private\");"
         }
       ]
     },
     {
-      "id": "q7-server-uptime-csv-log",
+      "id": "q7-robust-battery-capacity",
       "order": 7,
-      "title": "Server Uptime CSV Log",
+      "title": "Robust Battery Capacity",
       "points": 12,
-      "theme": "DevOps",
-      "prompt": "In `UptimeReader.java`, write:\n`public static double computeAverageUptime(String filename) throws FileNotFoundException`\n* File format: `ClusterName,NodeID,UptimePercentage`\n* Skip line 1 (header: `ClusterName,NodeID,UptimePercentage`).\n* Parse `UptimePercentage` as a `double` and return the average.\n* If file contains only the header, return `0.0`.\n* If file does not exist, throw `FileNotFoundException`. Use try-with-resources.",
-      "sampleRun": "// cluster.csv:\n// ClusterName,NodeID,UptimePercentage\n// North,node-01,99.95\n// North,node-02,99.80\n// South,node-03,98.50\n// South,node-04,99.75\nSystem.out.printf(\"Avg Uptime: %.2f%%\\n\", UptimeReader.computeAverageUptime(\"cluster.csv\"));",
-      "expectedOutput": "Avg Uptime: 99.50%",
+      "theme": "Input Validation & Exception Loops",
+      "prompt": "Write a program in `Main.java`:\n\nAsk `Enter capacity: ` until the user enters a whole number from `100` to `5000` inclusive.\n* For any input that cannot be parsed as an integer, print `Not a whole number.`.\n* For any integer outside `100` to `5000`, print `Capacity out of range.`.\n* When accepted, print `Capacity: ` followed by the number, then on the next line print `Prompts: ` followed by total prompt count.\n* Every prompt counts as one attempt. Never crash.\n\n*Enter one input per line in the stdin box (the bracketed values in the sample).* ",
+      "sampleRun": "Enter capacity: fast\nNot a whole number.\nEnter capacity: 50\nCapacity out of range.\nEnter capacity: 3200\nCapacity: 3200\nPrompts: 3",
+      "expectedOutput": "Enter capacity: Not a whole number.\nEnter capacity: Capacity out of range.\nEnter capacity: Capacity: 3200\nPrompts: 3",
       "starterFiles": [
         {
-          "filename": "UptimeReader.java",
-          "contents": "import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.util.Scanner;\n\npublic class UptimeReader {\n    public static double computeAverageUptime(String filename)\n            throws FileNotFoundException {\n        // TODO: skip header, average UptimePercentage; 0.0 if no data rows\n        return 0.0;\n    }\n}\n"
+          "filename": "Main.java",
+          "contents": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        // TODO: loop prompting \"Enter capacity: \" until a valid int in [100, 5000].\n        // Print \"Not a whole number.\" / \"Capacity out of range.\" as appropriate.\n        // On success print \"Capacity: <n>\" then \"Prompts: <count>\".\n    }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "4 nodes averaged accurately to 99.50%."
+          "description": "Non-number, out of range low, valid 3200, 3 prompts. Provide stdin: fast / 50 / 3200."
         },
         {
-          "name": "Test 2 [Hidden] (Header Only File)",
+          "name": "Test 2 [Hidden] (Gigantic Integer Overflow)",
           "visible": false,
-          "description": "Returns 0.0."
+          "description": "Huge input string prints Not a whole number. without crash."
         },
         {
-          "name": "Test 3 [Hidden] (Missing File)",
+          "name": "Test 3 [Hidden] (Exact Boundaries)",
           "visible": false,
-          "description": "Throws FileNotFoundException."
+          "description": "100 and 5000 accepted on prompt 1."
         },
         {
-          "name": "Test 4 [Hidden] (Single Node)",
+          "name": "Test 4 [Hidden] (Off-by-One Boundaries)",
           "visible": false,
-          "description": "Single node returns its exact uptime percentage."
+          "description": "99 and 5001 print Capacity out of range.."
         },
         {
-          "name": "Test 5 [Hidden] (100% Perfect Nodes)",
+          "name": "Test 5 [Hidden] (Negative Capacity)",
           "visible": false,
-          "description": "All nodes at 100.0 returns 100.0."
-        },
-        {
-          "name": "Test 6 [Hidden] (Trailing Blank Lines)",
-          "visible": false,
-          "description": "Trailing whitespace handled safely."
-        },
-        {
-          "name": "Test 7 [Hidden] (Resource Closed)",
-          "visible": false,
-          "description": "Stream confirmed closed."
-        },
-        {
-          "name": "Test 8 [Hidden] (Decimal Precision)",
-          "visible": false,
-          "description": "High precision fractional uptimes averaged correctly."
-        }
-      ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        try (java.io.PrintWriter __w = new java.io.PrintWriter(\"cluster.csv\", \"UTF-8\")) { __w.print(\"ClusterName,NodeID,UptimePercentage\\nNorth,node-01,99.95\\nNorth,node-02,99.80\\nSouth,node-03,98.50\\nSouth,node-04,99.75\"); }\n        System.out.printf(\"Avg Uptime: %.2f%%\\n\", UptimeReader.computeAverageUptime(\"cluster.csv\"));\n    }\n}\n",
-      "testerExpectedOutput": "Avg Uptime: 99.50%",
-      "graderCases": [
-        {
-          "name": "Sample run (avg 99.50)",
-          "hidden": false,
-          "body": "String f = \"g_up.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ClusterName,NodeID,UptimePercentage\\nNorth,node-01,99.95\\nNorth,node-02,99.80\\nSouth,node-03,98.50\\nSouth,node-04,99.75\"); }\neqD(UptimeReader.computeAverageUptime(f),99.50);"
-        },
-        {
-          "name": "Header only returns 0.0",
-          "hidden": true,
-          "body": "String f = \"g_h.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ClusterName,NodeID,UptimePercentage\"); }\neqD(UptimeReader.computeAverageUptime(f),0.0);"
-        },
-        {
-          "name": "Missing file throws FileNotFoundException",
-          "hidden": true,
-          "body": "try { UptimeReader.computeAverageUptime(\"g_missing_up_999.csv\"); check(false,\"should throw\"); }\ncatch (java.io.FileNotFoundException e) { }"
-        },
-        {
-          "name": "Single node returns its own uptime",
-          "hidden": true,
-          "body": "String f = \"g_one.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ClusterName,NodeID,UptimePercentage\\nA,n1,97.25\"); }\neqD(UptimeReader.computeAverageUptime(f),97.25);"
-        },
-        {
-          "name": "All perfect nodes average 100.0",
-          "hidden": true,
-          "body": "String f = \"g_perf.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ClusterName,NodeID,UptimePercentage\\nA,n1,100.0\\nB,n2,100.0\"); }\neqD(UptimeReader.computeAverageUptime(f),100.0);"
-        },
-        {
-          "name": "Trailing blank lines handled",
-          "hidden": true,
-          "body": "String f = \"g_tr.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ClusterName,NodeID,UptimePercentage\\nA,n1,90.0\\nB,n2,80.0\\n\\n\\n\"); }\neqD(UptimeReader.computeAverageUptime(f),85.0);"
-        },
-        {
-          "name": "Two-node average",
-          "hidden": true,
-          "body": "String f = \"g_two.csv\";\ntry (java.io.PrintWriter w = new java.io.PrintWriter(f, \"UTF-8\")) { w.print(\"ClusterName,NodeID,UptimePercentage\\nA,n1,98.0\\nB,n2,100.0\"); }\neqD(UptimeReader.computeAverageUptime(f),99.0);"
+          "description": "-500 prints Capacity out of range.."
         }
       ]
     },
     {
-      "id": "q8-blood-donor-eligibility-filter",
+      "id": "q8-vehicle-highway-speed-tracker",
       "order": 8,
-      "title": "Blood Donor Eligibility",
+      "title": "Vehicle Highway Speed Tracker",
       "points": 12,
-      "theme": "Blood Bank",
-      "prompt": "This question gives you a question-specific abstract class **and** a question-specific interface. Your class must extend one and implement the other.\n\nCreate an abstract class `Donor` in `Donor.java`:\n* **Protected fields:** `String name`, `int age`, `double weightLbs`.\n* **Constructor:** `Donor(String name, int age, double weightLbs)`.\n* **Getters:** `getName()`, `getAge()`, `getWeightLbs()`.\n* **Abstract method:** `public abstract int deferralDays();` (minimum days between donations for this donor type).\n\nCreate an interface `Eligible` in `Eligible.java`:\n* Abstract methods: `int age();`, `double weightLbs();`\n* Default method: `default boolean isEligible(int minAge, double minWeight)`: eligibility requires **both** `age() >= minAge` **and** `weightLbs() >= minWeight` (both inclusive).\n* Default method: `default double weightShortfall(double minWeight)`: how many pounds the donor is short of `minWeight`, **never negative** (`0.0` when already met).\n\nCreate a class `WholeBloodDonor` in `WholeBloodDonor.java` that **extends `Donor` and implements `Eligible`**:\n* **Constructor:** `WholeBloodDonor(String name, int age, double weightLbs)` calling `super`.\n* `deferralDays()` returns `56` (eight weeks).\n* `age()` returns the donor's age; `weightLbs()` returns the donor's weight.",
-      "sampleRun": "WholeBloodDonor d = new WholeBloodDonor(\"Taylor\", 19, 125.5);\nSystem.out.println(\"Eligible (17/110): \" + d.isEligible(17, 110.0));\nSystem.out.println(\"Deferral days: \" + d.deferralDays());\nSystem.out.println(\"Shortfall vs 110: \" + d.weightShortfall(110.0));",
-      "expectedOutput": "Eligible (17/110): true\nDeferral days: 56\nShortfall vs 110: 0.0",
+      "theme": "File Processing & Summary",
+      "prompt": "`speeds.txt` holds radar vehicle speeds in MPH per line: a positive whole number. Read the file and write `speed_report.txt` with these four lines:\n\n```\nVehicles: <total lines>\nAverage: <average with exactly 2 decimal places>\nFastest: <maximum value>\nSpeeders: <number of vehicles strictly greater than 70>\n```\n\nIf `speeds.txt` cannot be opened or does not exist, print `Cannot open speeds.txt.` to the screen, write no report file, and terminate without crashing. `Main.java` holds an empty `main`; write your solution there.\n\n*The grader creates `speeds.txt` before running your code.*",
+      "sampleRun": "// speeds.txt:\n// 65\n// 72\n// 80\n// 68\n// 70\n// Produces speed_report.txt:\n// Vehicles: 5\n// Average: 71.00\n// Fastest: 80\n// Speeders: 2",
+      "expectedOutput": "",
       "starterFiles": [
         {
-          "filename": "Donor.java",
-          "contents": "public abstract class Donor {\n    protected String name;\n    protected int age;\n    protected double weightLbs;\n\n    // TODO: constructor + getters\n\n    public abstract int deferralDays();\n}\n"
-        },
-        {
-          "filename": "Eligible.java",
-          "contents": "public interface Eligible {\n    int age();\n    double weightLbs();\n\n    // TODO: default isEligible(int minAge, double minWeight) -> age AND weight both met\n\n    // TODO: default weightShortfall(double minWeight) -> deficit, floored at 0.0\n}\n"
-        },
-        {
-          "filename": "WholeBloodDonor.java",
-          "contents": "public class WholeBloodDonor extends Donor implements Eligible {\n    // TODO: constructor via super\n\n    @Override\n    public int deferralDays() {\n        return 56;\n    }\n\n    @Override\n    public int age() {\n        return 0;\n    }\n\n    @Override\n    public double weightLbs() {\n        return 0.0;\n    }\n}\n"
+          "filename": "Main.java",
+          "contents": "import java.io.File;\nimport java.io.FileNotFoundException;\nimport java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) throws IOException {\n        // TODO: read speeds.txt; on failure print \"Cannot open speeds.txt.\" and return.\n        // Otherwise write speed_report.txt: Vehicles/Average(2dp)/Fastest/Speeders(>70).\n    }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "An eligible donor, the deferral window, and a zero shortfall."
+          "description": "5 lines, 71.00 avg, max 80, 2 speeders strictly > 70."
         },
         {
-          "name": "Test 2 [Hidden] (Exact Boundaries Eligible)",
+          "name": "Test 2 [Hidden] (Missing File Clean Failure)",
           "visible": false,
-          "description": "Age == minAge and weight == minWeight is eligible (inclusive)."
+          "description": "Prints Cannot open speeds.txt., creates no file."
         },
         {
-          "name": "Test 3 [Hidden] (Fails Age Only)",
+          "name": "Test 3 [Hidden] (Exact 70 Limit)",
           "visible": false,
-          "description": "Below minimum age fails even with high weight."
+          "description": "Speed 70 is not a speeder."
         },
         {
-          "name": "Test 4 [Hidden] (Fails Weight Only)",
+          "name": "Test 4 [Hidden] (Trailing Newlines)",
           "visible": false,
-          "description": "Below minimum weight fails even with sufficient age (logical AND)."
+          "description": "Extra newlines at EOF do not inflate count."
         },
         {
-          "name": "Test 5 [Hidden] (Positive Shortfall)",
+          "name": "Test 5 [Hidden] (Single Vehicle Entry)",
           "visible": false,
-          "description": "weightShortfall reports the pounds short when under the minimum."
-        },
-        {
-          "name": "Test 6 [Hidden] (Shortfall Non-Negative)",
-          "visible": false,
-          "description": "weightShortfall is 0.0 (not negative) when the donor exceeds the minimum."
-        },
-        {
-          "name": "Test 7 [Hidden] (Polymorphic Deferral)",
-          "visible": false,
-          "description": "deferralDays invoked through a Donor reference."
+          "description": "Single vehicle processed accurately."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        WholeBloodDonor d = new WholeBloodDonor(\"Taylor\", 19, 125.5);\n        System.out.println(\"Eligible (17/110): \" + d.isEligible(17, 110.0));\n        System.out.println(\"Deferral days: \" + d.deferralDays());\n        System.out.println(\"Shortfall vs 110: \" + d.weightShortfall(110.0));\n    }\n}\n",
-      "testerExpectedOutput": "Eligible (17/110): true\nDeferral days: 56\nShortfall vs 110: 0.0",
       "graderCases": [
         {
-          "name": "Sample run (eligible + types)",
+          "name": "Sample run (5 vehicles)",
           "hidden": false,
-          "body": "WholeBloodDonor d = new WholeBloodDonor(\"Taylor\",19,125.5);\ncheck(d.isEligible(17,110.0), \"19yo 125.5lb meets 17/110\");\neq(d.deferralDays(),56);\ncheck(d instanceof Donor, \"must extend Donor\");\ncheck(d instanceof Eligible, \"must implement Eligible\");"
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"speeds.txt\"), \"65\\n72\\n80\\n68\\n70\\n\".getBytes());\njava.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(\"speed_report.txt\"));\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"speed_report.txt\")));\neq(m, \"Vehicles: 5\\nAverage: 71.00\\nFastest: 80\\nSpeeders: 2\\n\");"
         },
         {
-          "name": "Exact age and weight boundaries are eligible",
+          "name": "Missing file prints message, writes nothing",
           "hidden": true,
-          "body": "WholeBloodDonor d = new WholeBloodDonor(\"X\",17,110.0);\ncheck(d.isEligible(17,110.0), \"exact minimums are inclusive\");"
+          "body": "java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(\"speeds.txt\"));\njava.nio.file.Files.deleteIfExists(java.nio.file.Paths.get(\"speed_report.txt\"));\njava.io.ByteArrayOutputStream buf = new java.io.ByteArrayOutputStream();\njava.io.PrintStream old = System.out;\nSystem.setOut(new java.io.PrintStream(buf));\ntry { Main.main(new String[0]); } finally { System.setOut(old); }\neq(buf.toString().replace(\"\\r\",\"\").trim(), \"Cannot open speeds.txt.\");\ncheck(!java.nio.file.Files.exists(java.nio.file.Paths.get(\"speed_report.txt\")), \"must not create report\");"
         },
         {
-          "name": "Fails age only",
+          "name": "Exactly 70 not a speeder",
           "hidden": true,
-          "body": "WholeBloodDonor d = new WholeBloodDonor(\"X\",16,200.0);\ncheck(!d.isEligible(17,110.0), \"underage fails despite weight\");"
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"speeds.txt\"), \"70\\n71\\n69\\n\".getBytes());\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"speed_report.txt\")));\ncheck(m.contains(\"Speeders: 1\"), \"only 71 exceeds 70\");"
         },
         {
-          "name": "Fails weight only (AND logic)",
+          "name": "Trailing newlines ignored",
           "hidden": true,
-          "body": "WholeBloodDonor d = new WholeBloodDonor(\"X\",30,105.0);\ncheck(!d.isEligible(17,110.0), \"underweight fails despite age\");"
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"speeds.txt\"), \"60\\n80\\n\\n\\n\".getBytes());\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"speed_report.txt\")));\ncheck(m.contains(\"Vehicles: 2\"), \"blank trailing lines must not inflate count\");"
         },
         {
-          "name": "weightShortfall is positive when under",
+          "name": "Single vehicle entry",
           "hidden": true,
-          "body": "WholeBloodDonor d = new WholeBloodDonor(\"X\",30,105.0);\neqD(d.weightShortfall(110.0),5.0);"
-        },
-        {
-          "name": "weightShortfall never negative when over",
-          "hidden": true,
-          "body": "WholeBloodDonor d = new WholeBloodDonor(\"X\",30,160.0);\neqD(d.weightShortfall(110.0),0.0);"
-        },
-        {
-          "name": "Polymorphic deferral through Donor reference",
-          "hidden": true,
-          "body": "Donor d = new WholeBloodDonor(\"X\",30,160.0);\neq(d.deferralDays(),56);"
+          "body": "java.nio.file.Files.write(java.nio.file.Paths.get(\"speeds.txt\"), \"55\\n\".getBytes());\nMain.main(new String[0]);\nString m = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(\"speed_report.txt\")));\neq(m, \"Vehicles: 1\\nAverage: 55.00\\nFastest: 55\\nSpeeders: 0\\n\");"
         }
       ]
     },
     {
-      "id": "q9-parking-garage-structure",
+      "id": "q9-senior-research-scientist",
       "order": 9,
-      "title": "Parking Garage Structure",
+      "title": "Senior Research Scientist",
       "points": 12,
-      "theme": "Urban Planning",
-      "prompt": "This question requires a question-specific abstract class **and** a question-specific interface. Every concrete permit must extend the class and implement the interface.\n\nCreate an abstract class `ParkingPermit` in `ParkingPermit.java`:\n* **Protected fields:** `String permitHolder`, `int semesterWeeks`.\n* **Constructor:** `ParkingPermit(String permitHolder, int semesterWeeks)`.\n* **Abstract method:** `public abstract double calculatePermitCost();`\n\nCreate an interface `Proratable` in `Proratable.java`:\n* Abstract methods: `double totalCost();`, `int weeks();`\n* Default method: `default double weeklyRate()`: `totalCost() / weeks()`, but **return `0.0` if `weeks() <= 0`** (do not divide by zero).\n* Default method: `default double refundFor(int usedWeeks)`: a refund of `weeklyRate()` for each **unused** week (`weeks() - usedWeeks`), **never negative** (`0.0` if `usedWeeks` meets or exceeds the term).\n\nCreate `CommuterPermit` in `CommuterPermit.java` **extending `ParkingPermit` and implementing `Proratable`**:\n* **Constructor:** `CommuterPermit(String permitHolder, int semesterWeeks)`.\n* `calculatePermitCost()`: `$25.00` per week.\n* `totalCost()` returns the permit cost; `weeks()` returns `semesterWeeks`.\n\nCreate `GaragePermit` in `GaragePermit.java` **extending `ParkingPermit` and implementing `Proratable`**:\n* **Private field:** `boolean coveredParking`.\n* **Constructor:** `GaragePermit(String permitHolder, int semesterWeeks, boolean coveredParking)` using `super`.\n* `calculatePermitCost()`: `$40.00` per week; if `coveredParking` add a `$75.00` surcharge; if `semesterWeeks >= 16` subtract a `$30.00` full-semester rebate.\n* `totalCost()` returns the permit cost; `weeks()` returns `semesterWeeks`.",
-      "sampleRun": "ParkingPermit commuter = new CommuterPermit(\"Alex\", 16);\nParkingPermit garage = new GaragePermit(\"Brooke\", 16, true);\nSystem.out.println(\"Commuter: $\" + commuter.calculatePermitCost());\nSystem.out.println(\"Garage: $\" + garage.calculatePermitCost());\n// Garage: 16*40 = 640; +75 = 715; -30 rebate = 685",
-      "expectedOutput": "Commuter: $400.0\nGarage: $685.0",
+      "theme": "Inheritance & Super Delegation",
+      "prompt": "`Researcher.java` is given: `Researcher(String name, double baseGrant)` with `getName()`, `getBaseGrant()`, `double funding(double match)` (baseGrant + match), and `toString()` returning `Researcher <name> ($<baseGrant formatted to 1 decimal>)`. It has no zero-argument constructor. It is provided as an extra tab — do not edit it.\n\nWrite `PrincipalInvestigator.java`: a principal investigator **is a** `Researcher` with institutional lab overhead.\n* `PrincipalInvestigator(String name, double baseGrant, double labOverhead)`.\n* `getLabOverhead()` returns the lab overhead.\n* `funding(double match)`: calls `super.funding(match)` and adds `labOverhead` once.\n* `toString()` returns the parent's `toString()` followed by ` {PI}` (e.g. `Researcher Marie ($50000.0) {PI}`).\n* Overrides **must** call `super.funding(...)` and `super.toString()`. All new fields must be private.",
+      "sampleRun": "PrincipalInvestigator pi = new PrincipalInvestigator(\"Marie\", 50000.0, 15000.0);\nSystem.out.println(pi.getName());\nSystem.out.println(pi.funding(5000.0));\nSystem.out.println(pi.toString());\nResearcher r = pi;\nSystem.out.println(r.funding(5000.0));",
+      "expectedOutput": "Marie\n70000.0\nResearcher Marie ($50000.0) {PI}\n70000.0",
       "starterFiles": [
         {
-          "filename": "ParkingPermit.java",
-          "contents": "public abstract class ParkingPermit {\n    protected String permitHolder;\n    protected int semesterWeeks;\n    // TODO: constructor\n\n    public abstract double calculatePermitCost();\n}\n"
+          "filename": "PrincipalInvestigator.java",
+          "contents": "public class PrincipalInvestigator extends Researcher {\n    // TODO: private double labOverhead\n\n    // TODO: constructor(String, double, double) calling super(name, baseGrant)\n\n    // TODO: getLabOverhead()\n\n    // TODO: override funding(double) -> super.funding(match) + labOverhead\n\n    // TODO: override toString() -> super.toString() + \" {PI}\"\n}\n"
         },
         {
-          "filename": "Proratable.java",
-          "contents": "public interface Proratable {\n    double totalCost();\n    int weeks();\n\n    // TODO: default weeklyRate() -> totalCost()/weeks(); 0.0 if weeks() <= 0\n\n    // TODO: default refundFor(int usedWeeks) -> weeklyRate()*unused; floored at 0.0\n}\n"
-        },
-        {
-          "filename": "CommuterPermit.java",
-          "contents": "public class CommuterPermit extends ParkingPermit implements Proratable {\n    // TODO: constructor via super\n\n    @Override\n    public double calculatePermitCost() {\n        // TODO: semesterWeeks * 25.0\n        return 0.0;\n    }\n\n    @Override\n    public double totalCost() {\n        return calculatePermitCost();\n    }\n\n    @Override\n    public int weeks() {\n        return semesterWeeks;\n    }\n}\n"
-        },
-        {
-          "filename": "GaragePermit.java",
-          "contents": "public class GaragePermit extends ParkingPermit implements Proratable {\n    // TODO: private boolean coveredParking + constructor via super\n\n    @Override\n    public double calculatePermitCost() {\n        // TODO: weeks*40 + (75 if covered); -30 if weeks >= 16\n        return 0.0;\n    }\n\n    @Override\n    public double totalCost() {\n        return calculatePermitCost();\n    }\n\n    @Override\n    public int weeks() {\n        return semesterWeeks;\n    }\n}\n"
+          "filename": "Researcher.java",
+          "contents": "public class Researcher {\n    private String name;\n    private double baseGrant;\n    public Researcher(String name, double baseGrant) { this.name = name; this.baseGrant = baseGrant; }\n    public String getName() { return name; }\n    public double getBaseGrant() { return baseGrant; }\n    public double funding(double match) { return baseGrant + match; }\n    public String toString() { return \"Researcher \" + name + \" ($\" + String.format(\"%.1f\", baseGrant) + \")\"; }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Commuter permit cost and Garage permit with covered parking and 16-week rebate."
+          "description": "Super constructor, funding with overhead, toString() appending {PI}, polymorphic call."
         },
         {
-          "name": "Test 2 [Hidden] (15-Week Garage)",
+          "name": "Test 2 [Hidden] (Parent Recompilation Test)",
           "visible": false,
-          "description": "15-week garage permit does NOT receive the $30 rebate."
+          "description": "Recompiling against an updated parent class tests that super.funding(...) is called."
         },
         {
-          "name": "Test 3 [Hidden] (Exact 16-Week Boundary)",
+          "name": "Test 3 [Hidden] (Parent toString Call)",
           "visible": false,
-          "description": "Exactly 16 weeks applies rebate."
+          "description": "Calling super.toString() confirmed."
         },
         {
-          "name": "Test 4 [Hidden] (Uncovered Garage)",
+          "name": "Test 4 [Hidden] (Zero Overhead)",
           "visible": false,
-          "description": "coveredParking = false omits $75 surcharge."
+          "description": "Overhead of 0.0 adds nothing extra."
         },
         {
-          "name": "Test 5 [Hidden] (Weekly Rate)",
+          "name": "Test 5 [Hidden] (Private Field Check)",
           "visible": false,
-          "description": "weeklyRate prorates the total cost over the weeks."
-        },
-        {
-          "name": "Test 6 [Hidden] (Zero Weeks No Divide-By-Zero)",
-          "visible": false,
-          "description": "weeklyRate(0 weeks) returns 0.0 without dividing by zero."
-        },
-        {
-          "name": "Test 7 [Hidden] (Refund Non-Negative)",
-          "visible": false,
-          "description": "refundFor returns the prorated unused weeks and never a negative value."
+          "description": "New instance fields private."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        ParkingPermit commuter = new CommuterPermit(\"Alex\", 16);\n        ParkingPermit garage = new GaragePermit(\"Brooke\", 16, true);\n        System.out.println(\"Commuter: $\" + commuter.calculatePermitCost());\n        System.out.println(\"Garage: $\" + garage.calculatePermitCost());\n    }\n}\n",
-      "testerExpectedOutput": "Commuter: $400.0\nGarage: $685.0",
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        PrincipalInvestigator pi = new PrincipalInvestigator(\"Marie\", 50000.0, 15000.0);\n        System.out.println(pi.getName());\n        System.out.println(pi.funding(5000.0));\n        System.out.println(pi.toString());\n        Researcher r = pi;\n        System.out.println(r.funding(5000.0));\n    }\n}\n",
+      "testerExpectedOutput": "Marie\n70000.0\nResearcher Marie ($50000.0) {PI}\n70000.0",
       "graderCases": [
         {
-          "name": "Sample run (commuter + garage 16wk rebate + types)",
+          "name": "Sample run (funding, toString, polymorphism)",
           "hidden": false,
-          "body": "ParkingPermit commuter = new CommuterPermit(\"Alex\",16);\nParkingPermit garage = new GaragePermit(\"Brooke\",16,true);\neqD(commuter.calculatePermitCost(),400.0);\neqD(garage.calculatePermitCost(),685.0);\ncheck(commuter instanceof ParkingPermit, \"must extend ParkingPermit\");\ncheck(commuter instanceof Proratable, \"must implement Proratable\");"
+          "body": "PrincipalInvestigator pi = new PrincipalInvestigator(\"Marie\", 50000.0, 15000.0);\neq(pi.getName(), \"Marie\");\neqD(pi.funding(5000.0), 70000.0);\neq(pi.toString(), \"Researcher Marie ($50000.0) {PI}\");\nResearcher r = pi;\neqD(r.funding(5000.0), 70000.0);"
         },
         {
-          "name": "15-week garage: no rebate",
+          "name": "Lab overhead getter",
           "hidden": true,
-          "body": "GaragePermit g = new GaragePermit(\"X\",15,true);\neqD(g.calculatePermitCost(),15*40.0 + 75.0);"
+          "body": "PrincipalInvestigator pi = new PrincipalInvestigator(\"X\", 1000.0, 2500.0);\neqD(pi.getLabOverhead(), 2500.0);"
         },
         {
-          "name": "Exactly 16 weeks applies rebate",
+          "name": "Zero overhead adds nothing",
           "hidden": true,
-          "body": "GaragePermit g = new GaragePermit(\"X\",16,false);\neqD(g.calculatePermitCost(),16*40.0 - 30.0);"
+          "body": "PrincipalInvestigator pi = new PrincipalInvestigator(\"X\", 1000.0, 0.0);\neqD(pi.funding(100.0), 1100.0);"
         },
         {
-          "name": "Uncovered garage omits surcharge",
+          "name": "toString builds on parent",
           "hidden": true,
-          "body": "GaragePermit g = new GaragePermit(\"X\",10,false);\neqD(g.calculatePermitCost(),400.0);"
+          "body": "PrincipalInvestigator pi = new PrincipalInvestigator(\"Zed\", 20000.0, 0.0);\ncheck(pi.toString().endsWith(\" {PI}\"), \"must append {PI}\");\ncheck(pi.toString().startsWith(\"Researcher Zed ($20000.0)\"), \"must build on parent toString\");"
         },
         {
-          "name": "weeklyRate prorates total over weeks",
+          "name": "Fields private",
           "hidden": true,
-          "body": "CommuterPermit c = new CommuterPermit(\"X\",16);\neqD(c.weeklyRate(),25.0);"
-        },
-        {
-          "name": "weeklyRate with 0 weeks is 0.0 (no divide-by-zero)",
-          "hidden": true,
-          "body": "CommuterPermit c = new CommuterPermit(\"X\",0);\neqD(c.weeklyRate(),0.0);\neqD(c.calculatePermitCost(),0.0);"
-        },
-        {
-          "name": "refundFor unused weeks never negative",
-          "hidden": true,
-          "body": "CommuterPermit c = new CommuterPermit(\"X\",16);\neqD(c.refundFor(10),150.0);\neqD(c.refundFor(16),0.0);\neqD(c.refundFor(20),0.0);"
+          "body": "for (java.lang.reflect.Field f : PrincipalInvestigator.class.getDeclaredFields())\n    check(java.lang.reflect.Modifier.isPrivate(f.getModifiers()), \"all PrincipalInvestigator fields must be private\");"
         }
       ]
     },
     {
-      "id": "q10-nuclear-reactor-cooling-loop",
+      "id": "q10-telemetry-station-classifier",
       "order": 10,
-      "title": "Nuclear Reactor Controller",
-      "points": 14,
-      "theme": "Nuclear Engineering",
-      "prompt": "This capstone requires a question-specific abstract class **and** a question-specific interface, extended/implemented together by your concrete class.\n\nCreate an abstract class `Reactor` in `Reactor.java`:\n* **Protected fields:** `String coreId`, `int temp`, `int coolant`.\n* **Constructor:** `Reactor(String coreId, int startTemp, int startCoolant)`.\n* **Getters:** `getTemp()`, `getCoolant()`.\n* Method `isMeltdown()`: returns `true` when `temp >= 500` **OR** `coolant <= 0`.\n* Method `circulate()`: normal circulation raises `temp` by `10` and lowers `coolant` by `5`.\n* **Abstract method:** `public abstract boolean injectBoron();`\n\nCreate an interface `Coolable` in `Coolable.java`:\n* Abstract methods: `int coreTemp();`, `int meltdownTemp();`\n* Default method: `default int thermalMargin()`: `meltdownTemp() - coreTemp()`, **never negative** (floored at `0`).\n* Default method: `default boolean isCritical()`: returns `true` when `coreTemp() >= meltdownTemp()`.\n\nCreate a class `PWRReactor` in `PWRReactor.java` that **extends `Reactor` and implements `Coolable`**:\n* **Constructor:** `PWRReactor(String coreId, int startTemp, int startCoolant)` calling `super`.\n* `injectBoron()`: if `coolant < 20`, **refuse** — return `false` and change nothing. Otherwise deduct `20` coolant, drop `temp` by `40`, and return `true`.\n* `coreTemp()` returns the current temperature; `meltdownTemp()` returns `500`.",
-      "sampleRun": "PWRReactor r = new PWRReactor(\"C1\", 350, 100);\nr.circulate();\nSystem.out.println(\"Temp: \" + r.getTemp() + \"C | Coolant: \" + r.getCoolant() + \"%\");\nr.injectBoron();\nSystem.out.println(\"Temp: \" + r.getTemp() + \"C | Coolant: \" + r.getCoolant() + \"%\");\nSystem.out.println(\"Meltdown: \" + r.isMeltdown());",
-      "expectedOutput": "Temp: 360C | Coolant: 95%\nTemp: 320C | Coolant: 75%\nMeltdown: false",
+      "title": "Telemetry Station Classifier",
+      "points": 12,
+      "theme": "instanceof & Downcasting",
+      "prompt": "`Station.java`, `OpticalStation.java`, and `RadarStation.java` are given and read-only (provided as extra tabs):\n* `Station(String siteName)` with `getSiteName()`.\n* `OpticalStation extends Station`: has method `double getApertureMeters()`.\n* `RadarStation extends Station`: has method `int getFrequencyGHz()`.\n\nWrite `StationClassifier.java` containing two static methods:\n* `static String inspect(Station s)`:\n  * For an `OpticalStation`, returns `Optical: ` followed by site name and aperture (e.g. `Optical: Maui (3.6m)`).\n  * For a `RadarStation`, returns `Radar: ` followed by site name and frequency (e.g. `Radar: Haystack (10 GHz)`).\n  * For any other `Station`, returns `Station: ` followed by site name.\n  * If `s` is `null`, return `\"Offline\"`.\n* `static int countRadars(Station[] network)`: returns how many elements in the array are instances of `RadarStation`. Safely ignores `null` elements.",
+      "sampleRun": "Station s1 = new OpticalStation(\"Maui\", 3.6);\nStation s2 = new RadarStation(\"Haystack\", 10);\nStation s3 = new Station(\"Canberra\");\nSystem.out.println(StationClassifier.inspect(s1));\nSystem.out.println(StationClassifier.inspect(s2));\nSystem.out.println(StationClassifier.inspect(s3));\nSystem.out.println(StationClassifier.countRadars(new Station[] { s1, s2, s3 }));",
+      "expectedOutput": "Optical: Maui (3.6m)\nRadar: Haystack (10 GHz)\nStation: Canberra\n1",
       "starterFiles": [
         {
-          "filename": "Reactor.java",
-          "contents": "public abstract class Reactor {\n    protected String coreId;\n    protected int temp;\n    protected int coolant;\n\n    // TODO: constructor + getTemp()/getCoolant()\n\n    public boolean isMeltdown() {\n        // TODO: temp >= 500 OR coolant <= 0\n        return false;\n    }\n\n    public void circulate() {\n        // TODO: +10 temp, -5 coolant\n    }\n\n    public abstract boolean injectBoron();\n}\n"
+          "filename": "StationClassifier.java",
+          "contents": "public class StationClassifier {\n    public static String inspect(Station s) {\n        // TODO: null -> \"Offline\"; OpticalStation -> \"Optical: <name> (<aperture>m)\";\n        // RadarStation -> \"Radar: <name> (<freq> GHz)\"; else \"Station: <name>\"\n        return \"\";\n    }\n\n    public static int countRadars(Station[] network) {\n        // TODO: count RadarStation instances, skipping null\n        return 0;\n    }\n}\n"
         },
         {
-          "filename": "Coolable.java",
-          "contents": "public interface Coolable {\n    int coreTemp();\n    int meltdownTemp();\n\n    // TODO: default thermalMargin() -> meltdownTemp() - coreTemp(), floored at 0\n\n    // TODO: default isCritical() -> coreTemp() >= meltdownTemp()\n}\n"
+          "filename": "Station.java",
+          "contents": "public class Station {\n    private String siteName;\n    public Station(String siteName) { this.siteName = siteName; }\n    public String getSiteName() { return siteName; }\n}\n"
         },
         {
-          "filename": "PWRReactor.java",
-          "contents": "public class PWRReactor extends Reactor implements Coolable {\n    // TODO: constructor via super\n\n    @Override\n    public boolean injectBoron() {\n        // TODO: refuse (false) if coolant < 20; else -20 coolant, -40 temp, true\n        return false;\n    }\n\n    @Override\n    public int coreTemp() {\n        return 0;\n    }\n\n    @Override\n    public int meltdownTemp() {\n        return 500;\n    }\n}\n"
+          "filename": "OpticalStation.java",
+          "contents": "public class OpticalStation extends Station {\n    private double apertureMeters;\n    public OpticalStation(String siteName, double apertureMeters) { super(siteName); this.apertureMeters = apertureMeters; }\n    public double getApertureMeters() { return apertureMeters; }\n}\n"
+        },
+        {
+          "filename": "RadarStation.java",
+          "contents": "public class RadarStation extends Station {\n    private int frequencyGHz;\n    public RadarStation(String siteName, int frequencyGHz) { super(siteName); this.frequencyGHz = frequencyGHz; }\n    public int getFrequencyGHz() { return frequencyGHz; }\n}\n"
         }
       ],
       "tests": [
         {
           "name": "Test 1 [Visible] (Sample Run)",
           "visible": true,
-          "description": "Normal circulation heats and consumes coolant; boron injection cools; no meltdown yet."
+          "description": "Inspects OpticalStation, RadarStation, base Station; counts 1 radar."
         },
         {
-          "name": "Test 2 [Hidden] (Boron Refused Under 20%)",
+          "name": "Test 2 [Hidden] (Null Safety Checks)",
           "visible": false,
-          "description": "A refused boron injection returns false and leaves temp and coolant unchanged."
+          "description": "inspect(null) returns \"Offline\"; countRadars(new Station[]{null, s2, null}) returns 1."
         },
         {
-          "name": "Test 3 [Hidden] (Boron Exactly 20% to Meltdown)",
+          "name": "Test 3 [Hidden] (Unseen Station Subclass)",
           "visible": false,
-          "description": "Injecting with exactly 20% coolant depletes to 0% and triggers meltdown."
+          "description": "Subclass DeepSpaceArray extends Station returns Station: <siteName>."
         },
         {
-          "name": "Test 4 [Hidden] (Meltdown at 500C)",
+          "name": "Test 4 [Hidden] (Subclass of RadarStation)",
           "visible": false,
-          "description": "Temperature at exactly 500C is a meltdown and is critical."
+          "description": "Subclass PhasedArrayRadar extends RadarStation correctly identified as a RadarStation."
         },
         {
-          "name": "Test 5 [Hidden] (Safe Just Below Limit)",
+          "name": "Test 5 [Hidden] (Empty Array)",
           "visible": false,
-          "description": "499C with coolant remaining is not a meltdown and not critical."
-        },
-        {
-          "name": "Test 6 [Hidden] (Thermal Margin Non-Negative)",
-          "visible": false,
-          "description": "thermalMargin never returns a negative value, even over the limit."
-        },
-        {
-          "name": "Test 7 [Hidden] (Circulate Effects)",
-          "visible": false,
-          "description": "Each circulation raises temp by 10 and lowers coolant by 5."
+          "description": "new Station[0] returns 0."
         }
       ],
-      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        PWRReactor r = new PWRReactor(\"C1\", 350, 100);\n        r.circulate();\n        System.out.println(\"Temp: \" + r.getTemp() + \"C | Coolant: \" + r.getCoolant() + \"%\");\n        r.injectBoron();\n        System.out.println(\"Temp: \" + r.getTemp() + \"C | Coolant: \" + r.getCoolant() + \"%\");\n        System.out.println(\"Meltdown: \" + r.isMeltdown());\n    }\n}\n",
-      "testerExpectedOutput": "Temp: 360C | Coolant: 95%\nTemp: 320C | Coolant: 75%\nMeltdown: false",
+      "testerCode": "public class BoilerTester {\n    public static void main(String[] __args) throws Exception {\n        Station s1 = new OpticalStation(\"Maui\", 3.6);\n        Station s2 = new RadarStation(\"Haystack\", 10);\n        Station s3 = new Station(\"Canberra\");\n        System.out.println(StationClassifier.inspect(s1));\n        System.out.println(StationClassifier.inspect(s2));\n        System.out.println(StationClassifier.inspect(s3));\n        System.out.println(StationClassifier.countRadars(new Station[] { s1, s2, s3 }));\n    }\n}\n",
+      "testerExpectedOutput": "Optical: Maui (3.6m)\nRadar: Haystack (10 GHz)\nStation: Canberra\n1",
       "graderCases": [
         {
-          "name": "Sample run (circulate, boron, state + types)",
+          "name": "Sample run (inspect + count)",
           "hidden": false,
-          "body": "PWRReactor r = new PWRReactor(\"C1\",350,100);\nr.circulate();\neq(r.getTemp(),360); eq(r.getCoolant(),95);\ncheck(r.injectBoron(), \"should inject with coolant 95\");\neq(r.getTemp(),320); eq(r.getCoolant(),75);\ncheck(r instanceof Reactor, \"must extend Reactor\");\ncheck(r instanceof Coolable, \"must implement Coolable\");"
+          "body": "Station s1 = new OpticalStation(\"Maui\", 3.6);\nStation s2 = new RadarStation(\"Haystack\", 10);\nStation s3 = new Station(\"Canberra\");\neq(StationClassifier.inspect(s1), \"Optical: Maui (3.6m)\");\neq(StationClassifier.inspect(s2), \"Radar: Haystack (10 GHz)\");\neq(StationClassifier.inspect(s3), \"Station: Canberra\");\neq(StationClassifier.countRadars(new Station[]{ s1, s2, s3 }), 1);"
         },
         {
-          "name": "Boron refused when coolant < 20 (unchanged)",
+          "name": "Null safety",
           "hidden": true,
-          "body": "PWRReactor r = new PWRReactor(\"C\",300,15);\ncheck(!r.injectBoron(), \"coolant too low\");\neq(r.getTemp(),300); eq(r.getCoolant(),15);"
+          "body": "eq(StationClassifier.inspect(null), \"Offline\");\nStation s2 = new RadarStation(\"R\", 5);\neq(StationClassifier.countRadars(new Station[]{ null, s2, null }), 1);"
         },
         {
-          "name": "Boron with exactly 20 coolant depletes to 0 (meltdown)",
+          "name": "Subclass of RadarStation counts",
           "hidden": true,
-          "body": "PWRReactor r = new PWRReactor(\"C\",300,20);\ncheck(r.injectBoron(), \"20 is enough\");\neq(r.getCoolant(),0);\ncheck(r.isMeltdown(), \"coolant 0 means meltdown\");"
+          "body": "class PhasedArrayRadar extends RadarStation { PhasedArrayRadar(String n, int f) { super(n, f); } }\nStation s = new PhasedArrayRadar(\"Pave\", 3);\neq(StationClassifier.inspect(s), \"Radar: Pave (3 GHz)\");\neq(StationClassifier.countRadars(new Station[]{ s }), 1);"
         },
         {
-          "name": "Meltdown at temp limit 500",
+          "name": "Empty array",
           "hidden": true,
-          "body": "PWRReactor r = new PWRReactor(\"C\",500,100);\ncheck(r.isMeltdown(), \"500 is meltdown\");\ncheck(r.isCritical(), \"500 >= meltdownTemp\");"
-        },
-        {
-          "name": "Not meltdown just below limit with coolant",
-          "hidden": true,
-          "body": "PWRReactor r = new PWRReactor(\"C\",499,50);\ncheck(!r.isMeltdown(), \"499 with coolant is safe\");\ncheck(!r.isCritical(), \"499 < 500\");"
-        },
-        {
-          "name": "thermalMargin never negative",
-          "hidden": true,
-          "body": "PWRReactor r = new PWRReactor(\"C\",450,50);\neq(r.thermalMargin(),50);\nPWRReactor hot = new PWRReactor(\"C\",520,50);\neq(hot.thermalMargin(),0);"
-        },
-        {
-          "name": "circulate heats and consumes coolant",
-          "hidden": true,
-          "body": "PWRReactor r = new PWRReactor(\"C\",350,100);\nr.circulate(); r.circulate();\neq(r.getTemp(),370); eq(r.getCoolant(),90);"
+          "body": "eq(StationClassifier.countRadars(new Station[0]), 0);"
         }
       ]
     }
