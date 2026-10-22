@@ -1,10 +1,7 @@
 # Boiler CS — Stateless Purdue CS Practice Platform
 
 A in-browser coding practice platform for Purdue
-Computer Science. Built as a **Jamstack static site** for the **Vercel free tier**:
-no database, and **$0.00** hosting cost on Vercel's free tier. (One tiny serverless Route
-Handler proxies Java execution so the execution-service key stays secret; everything else is
-statically rendered.)
+Computer Science. 
 
 **Catalog:** CS 18000 (populated — Midterm 2 has four full practice exams; Midterms 1, 3, 4
 are scaffolded), plus scaffolding placeholders for CS 24000, CS 18200, and CS 25100.
