@@ -76,13 +76,13 @@ function buildGraderHarness(cases: GraderCase[]): string {
   const dispatch = cases
     .map(
       (c, i) =>
-        `        runCase(${i}, ${javaStr(c.name)}, Main::case${i});`,
+        `        runCase(${i}, ${javaStr(c.name)}, BoilerGrader::case${i});`,
     )
     .join('\n');
 
   return `import java.util.*;
 
-public class Main {
+public class BoilerGrader {
     interface CaseFn { void run() throws Throwable; }
 
     static void runCase(int idx, String name, CaseFn fn) {
@@ -191,18 +191,23 @@ function buildCode(body: RunBody): { code?: string; error?: string } {
   let keepPublic: string | null;
 
   if (body.graderCases && body.graderCases.length > 0) {
-    // Grading run: generate a harness that prints per-case PASS/FAIL.
-    units.push({ filename: 'Main.java', contents: buildGraderHarness(body.graderCases) });
-    keepPublic = 'Main';
+    // Grading run: generate a harness that prints per-case PASS/FAIL. The
+    // harness class is deliberately NOT named `Main`, so it never collides
+    // with a learner's own `Main` (e.g. file-I/O questions whose solution
+    // lives in Main.java). Grader bodies can still call the learner's entry
+    // point by its real class name (e.g. `Main.main(...)`).
+    units.push({ filename: 'BoilerGrader.java', contents: buildGraderHarness(body.graderCases) });
+    keepPublic = 'BoilerGrader';
   } else if (body.testerCode) {
-    // Normalize the tester's public class to `Main` (the entry point).
+    // Normalize the tester's public class to a reserved name (`BoilerTester`)
+    // that won't collide with any learner class, and make it the entry point.
     const origName = detectPublicType(body.testerCode) || 'BoilerTester';
     let normalized = body.testerCode;
-    if (origName !== 'Main') {
-      normalized = body.testerCode.replace(new RegExp(`\\b${origName}\\b`, 'g'), 'Main');
+    if (origName !== 'BoilerTester') {
+      normalized = body.testerCode.replace(new RegExp(`\\b${origName}\\b`, 'g'), 'BoilerTester');
     }
-    units.push({ filename: 'Main.java', contents: normalized });
-    keepPublic = 'Main';
+    units.push({ filename: 'BoilerTester.java', contents: normalized });
+    keepPublic = 'BoilerTester';
   } else {
     const mainClass = findMainClass(files);
     if (mainClass === null) {

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getClassUnitExamTriples, getClass, getUnit, getExam } from '@/lib/curriculum';
 import Icon from '@/components/Icon';
+import ExamScoreboard, { QuestionScorePill } from '@/components/ExamScoreboard';
 
 export function generateStaticParams() {
   return getClassUnitExamTriples().map((t) => ({
@@ -52,6 +53,11 @@ export default function ExamPage({
         </p>
       </header>
 
+      <ExamScoreboard
+        examSlug={exam.slug}
+        questions={exam.questions.map((q) => ({ id: q.id, points: q.points }))}
+      />
+
       <ol className="question-list">
         {exam.questions.map((q) => (
           <li key={q.id}>
@@ -61,6 +67,7 @@ export default function ExamPage({
                 <span className="question-row__theme">{q.theme}</span>
                 <span className="question-row__title">{q.title}</span>
               </div>
+              <QuestionScorePill examSlug={exam.slug} questionId={q.id} points={q.points} />
               <span className="meta">{q.points} pts</span>
               <Icon name="chevronRight" size={16} className="question-row__chev" />
             </Link>

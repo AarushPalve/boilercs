@@ -7,6 +7,13 @@ import type { RunResult } from '@/lib/runner/types';
 import { runJava, parseCaseResults, type CaseResult } from '@/lib/runner/javaRunner';
 import { runJavaScript, type JsRun } from '@/lib/runner/jsRunner';
 import { loadDraft, saveDraft, clearQuestionDrafts } from '@/lib/drafts';
+import {
+  loadScore,
+  recordScore,
+  clearScore,
+  earnedPoints,
+  type QuestionScore,
+} from '@/lib/scores';
 import Markdown from './Markdown';
 import CodeEditor from './CodeEditor';
 
@@ -59,6 +66,7 @@ export default function QuestionWorkspace({
   const [runMode, setRunMode] = useState<'run' | 'test' | 'grade'>('run');
   const [caseResults, setCaseResults] = useState<CaseResult[] | null>(null);
   const [dirty, setDirty] = useState(false);
+  const [savedScore, setSavedScore] = useState<QuestionScore | null>(null);
 
   const activeJsRun = useRef<JsRun | null>(null);
 
@@ -74,6 +82,8 @@ export default function QuestionWorkspace({
     setStdin('');
     setResult(null);
     setDirty(false);
+    setCaseResults(null);
+    setSavedScore(loadScore(examSlug, question.id));
   }, [question, examSlug]);
 
   // Warn before an accidental reload if there are unsaved-feeling changes.
@@ -154,6 +164,18 @@ export default function QuestionWorkspace({
           const parsed = parseCaseResults(res.stdout, question.graderCases);
           setCaseResults(parsed.cases);
           res = { ...res, stdout: parsed.cleanStdout };
+          // Persist the best score locally (only when cases actually ran).
+          if (res.ok && parsed.cases.length > 0) {
+            const passed = parsed.cases.filter((c) => c.passed).length;
+            const best = recordScore(
+              examSlug,
+              question.id,
+              passed,
+              parsed.cases.length,
+              question.points,
+            );
+            setSavedScore(best);
+          }
         } else if (mode === 'test' && question.testerCode) {
           res = await runJava({ files: payload, stdin, testerCode: question.testerCode });
         } else {
@@ -171,7 +193,17 @@ export default function QuestionWorkspace({
         setRunning(false);
       }
     },
-    [files, language, question.starterFiles, question.testerCode, question.graderCases, stdin],
+    [
+      files,
+      language,
+      question.starterFiles,
+      question.testerCode,
+      question.graderCases,
+      question.id,
+      question.points,
+      examSlug,
+      stdin,
+    ],
   );
 
   const handleRun = useCallback(() => execute('run'), [execute]);
@@ -256,6 +288,21 @@ export default function QuestionWorkspace({
             <h1 className="ed__title">{question.title}</h1>
             <div className="flex-row" style={{ marginBottom: '1rem' }}>
               <span className="tag">{question.points} points</span>
+              {savedScore ? (
+                <span
+                  className={`tag score-badge ${
+                    savedScore.total > 0 && savedScore.passed === savedScore.total
+                      ? 'score-badge--pass'
+                      : 'score-badge--partial'
+                  }`}
+                  title={`Best recorded: ${savedScore.passed}/${savedScore.total} tests passed`}
+                >
+                  Best: {savedScore.earned}/{savedScore.points} pts · {savedScore.passed}/
+                  {savedScore.total} tests
+                </span>
+              ) : hasGrader ? (
+                <span className="tag score-badge score-badge--none">Not graded yet</span>
+              ) : null}
             </div>
 
             <div className="md">
@@ -441,7 +488,33 @@ export default function QuestionWorkspace({
                         {gradeSummary.passed === gradeSummary.total ? '✓ ' : '✗ '}
                         Passed {gradeSummary.passed} of {gradeSummary.total} test
                         {gradeSummary.total === 1 ? '' : 's'}
+                        {' · '}
+                        {earnedPoints(
+                          gradeSummary.passed,
+                          gradeSummary.total,
+                          question.points,
+                        )}
+                        /{question.points} pts
                       </div>
+                      {savedScore ? (
+                        <p className="muted score-note">
+                          Best score saved on this device:{' '}
+                          <strong>
+                            {savedScore.earned}/{savedScore.points} pts
+                          </strong>{' '}
+                          ({savedScore.passed}/{savedScore.total} tests)
+                          <button
+                            type="button"
+                            className="link-btn score-clear"
+                            onClick={() => {
+                              clearScore(examSlug, question.id);
+                              setSavedScore(null);
+                            }}
+                          >
+                            clear
+                          </button>
+                        </p>
+                      ) : null}
                       <ul className="case-list">
                         {caseResults!.map((c) => (
                           <li
