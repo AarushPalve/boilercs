@@ -503,7 +503,7 @@ pre.output--error {
 .ed__split {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: var(--ed-col, 46%) 6px minmax(0, 1fr);
   min-height: 0;
 }
 
@@ -538,9 +538,56 @@ pre.output--error {
 /* Right pane: editor over console */
 .ed__right {
   display: grid;
-  grid-template-rows: 1fr minmax(170px, 38%);
+  grid-template-rows: var(--ed-row, 62%) 6px minmax(0, 1fr);
   min-height: 0;
   background: var(--c-green-black);
+}
+
+/* -------- Resize handles (NeetCode-style) -------- */
+.ed__resizer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-plum);
+  touch-action: none;
+  z-index: 2;
+}
+.ed__resizer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+.ed__resizer:hover::before,
+.ed__resizer:active::before {
+  background: var(--antique-gold);
+}
+.ed__resizer--col {
+  cursor: col-resize;
+  /* widen the hit area without changing the visible track */
+  margin: 0 -3px;
+  padding: 0 3px;
+}
+.ed__resizer--row {
+  cursor: row-resize;
+  margin: -3px 0;
+  padding: 3px 0;
+}
+.ed__resizer-grip {
+  position: relative;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  pointer-events: none;
+}
+.ed__resizer--col .ed__resizer-grip {
+  width: 2px;
+  height: 32px;
+}
+.ed__resizer--row .ed__resizer-grip {
+  width: 32px;
+  height: 2px;
 }
 
 .ed__editor {
@@ -823,6 +870,10 @@ pre.output--error {
   }
   .ed__console {
     min-height: 240px;
+  }
+  /* Panes stack vertically on narrow screens; hide the drag handles. */
+  .ed__resizer {
+    display: none;
   }
 }
 

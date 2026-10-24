@@ -94,6 +94,62 @@ export default function QuestionWorkspace({
 
   const activeJsRun = useRef<JsRun | null>(null);
 
+  // ---- Resizable panes (NeetCode-style) --------------------------------
+  // `splitRef` wraps the horizontal problem|right columns; `rightRef` wraps
+  // the vertical editor/console rows. Fractions are stored in state and
+  // applied as CSS variables so the grid templates can reference them.
+  const splitRef = useRef<HTMLDivElement | null>(null);
+  const rightRef = useRef<HTMLDivElement | null>(null);
+  // Fraction (0–1) of the horizontal split taken by the problem pane.
+  const [colFrac, setColFrac] = useState(0.46);
+  // Fraction (0–1) of the right pane taken by the editor (top row).
+  const [rowFrac, setRowFrac] = useState(0.62);
+
+  // Begin dragging the vertical divider between problem and editor columns.
+  const startColDrag = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    const container = splitRef.current;
+    if (!container) return;
+    const onMove = (ev: PointerEvent) => {
+      const rect = container.getBoundingClientRect();
+      const frac = (ev.clientX - rect.left) / rect.width;
+      // Clamp so neither pane collapses entirely.
+      setColFrac(Math.min(0.8, Math.max(0.2, frac)));
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  }, []);
+
+  // Begin dragging the horizontal divider between editor and console rows.
+  const startRowDrag = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    const container = rightRef.current;
+    if (!container) return;
+    const onMove = (ev: PointerEvent) => {
+      const rect = container.getBoundingClientRect();
+      const frac = (ev.clientY - rect.top) / rect.height;
+      setRowFrac(Math.min(0.85, Math.max(0.15, frac)));
+    };
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+  }, []);
+
   // Seed editor state on mount / question change.
   useEffect(() => {
     const seeded: Record<string, string> = {};
@@ -382,7 +438,11 @@ export default function QuestionWorkspace({
       </div>
 
       {/* ---- Split: problem | (editor over console) ---- */}
-      <div className="ed__split">
+      <div
+        className="ed__split"
+        ref={splitRef}
+        style={{ '--ed-col': `${colFrac * 100}%` } as React.CSSProperties}
+      >
         {/* Left: problem description pane */}
         <aside className="ed__pane ed__problem">
           <div className="ed__problem-inner">
@@ -454,8 +514,23 @@ export default function QuestionWorkspace({
           </div>
         </aside>
 
+        {/* Vertical drag handle between problem and editor columns */}
+        <div
+          className="ed__resizer ed__resizer--col"
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize problem panel"
+          onPointerDown={startColDrag}
+        >
+          <span className="ed__resizer-grip" aria-hidden />
+        </div>
+
         {/* Right: editor pane stacked over the console pane */}
-        <section className="ed__pane ed__right">
+        <section
+          className="ed__pane ed__right"
+          ref={rightRef}
+          style={{ '--ed-row': `${rowFrac * 100}%` } as React.CSSProperties}
+        >
           <div className="ed__editor">
             {/* File tab strip */}
             <div className="ed__tabs" role="tablist">
@@ -511,6 +586,17 @@ export default function QuestionWorkspace({
               onChange={(v) => updateFile(activeFile, v)}
               height="100%"
             />
+          </div>
+
+          {/* Horizontal drag handle between editor and console rows */}
+          <div
+            className="ed__resizer ed__resizer--row"
+            role="separator"
+            aria-orientation="horizontal"
+            aria-label="Resize console panel"
+            onPointerDown={startRowDrag}
+          >
+            <span className="ed__resizer-grip" aria-hidden />
           </div>
 
           {/* Console / run panel */}
